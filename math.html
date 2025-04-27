@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Math API 정리</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      font-family: 'Noto Sans', 'Roboto', sans-serif;
+      color: #e0e0e0;
+      text-align: center;
+    }
+    header {
+      padding: 40px 20px;
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 40px;
+    }
+    main {
+      padding: 20px;
+    }
+    .card {
+      background-color: #1e1e1e;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
+      text-align: left;
+    }
+    .card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .card li {
+      margin-bottom: 8px;
+    }
+    .code-block {
+      background-color: #2c2c2c;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 16px;
+      font-weight: bold;
+      color: #e0e0e0;
+      white-space: pre-line;
+    }
+    hr {
+      margin: 40px 0;
+      border: 0;
+      height: 1px;
+      background: #333;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🧮 Math API 정리</h1>
+  </header>
+  <main>
+
+    <div class="card">
+      <h3>🛠️ Math.abs()</h3>
+      <ul>
+        <li><b>풀네임</b>: Math.abs</li>
+        <li><b>한글 뜻</b>: 절댓값 반환</li>
+        <li><b>속한 클래스</b>: Math</li>
+        <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
+        <li><b>사용빈도</b>: 매우 자주</li>
+        <li><b>주요 사용처</b>: 값의 부호에 관계없이 거리, 차이 계산할 때</li>
+        <li><b>암기 키워드</b>: abs = 절댓값</li>
+      </ul>
+      <div class="code-block">
+int a = Math.abs(-10);<br>
+System.out.println(a); // 10
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🛠️ Math.max()</h3>
+      <ul>
+        <li><b>풀네임</b>: Math.max</li>
+        <li><b>한글 뜻</b>: 두 수 중 큰 값 반환</li>
+        <li><b>속한 클래스</b>: Math</li>
+        <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
+        <li><b>사용빈도</b>: 매우 자주</li>
+        <li><b>주요 사용처</b>: 최댓값 찾기, 조건 비교</li>
+        <li><b>암기 키워드</b>: max = 최대</li>
+      </ul>
+      <div class="code-block">
+int a = Math.max(7, 3);<br>
+System.out.println(a); // 7
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🛠️ Math.min()</h3>
+      <ul>
+        <li><b>풀네임</b>: Math.min</li>
+        <li><b>한글 뜻</b>: 두 수 중 작은 값 반환</li>
+        <li><b>속한 클래스</b>: Math</li>
+        <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
+        <li><b>사용빈도</b>: 매우 자주</li>
+        <li><b>주요 사용처</b>: 최솟값 찾기, 범위 설정</li>
+        <li><b>암기 키워드</b>: min = 최소</li>
+      </ul>
+      <div class="code-block">
+int a = Math.min(7, 3);<br>
+System.out.println(a); // 3
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🛠️ Math.pow()</h3>
+      <ul>
+        <li><b>풀네임</b>: Math.pow</li>
+        <li><b>한글 뜻</b>: 거듭제곱 계산</li>
+        <li><b>속한 클래스</b>: Math</li>
+        <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+        <li><b>사용빈도</b>: 자주</li>
+        <li><b>주요 사용처</b>: 제곱 계산, 지수 연산</li>
+        <li><b>암기 키워드</b>: pow = power (거듭제곱)</li>
+      </ul>
+      <div class="code-block">
+double a = Math.pow(2, 3);<br>
+System.out.println(a); // 8.0
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🛠️ Math.sqrt()</h3>
+      <ul>
+        <li><b>풀네임</b>: Math.sqrt</li>
+        <li><b>한글 뜻</b>: 제곱근 반환</li>
+        <li><b>속한 클래스</b>: Math</li>
+        <li><b>중요도</b>: ⭐⭐⭐ (가끔)</li>
+        <li><b>사용빈도</b>: 가끔</li>
+        <li><b>주요 사용처</b>: 피타고라스 정리, 거리 계산</li>
+        <li><b>암기 키워드</b>: sqrt = square root (제곱근)</li>
+      </ul>
+      <div class="code-block">
+double a = Math.sqrt(9);<br>
+System.out.println(a); // 3.0
+      </div>
+    </div>
+
+    <div class="card">
+        <h3>🛠️ Math.random()</h3>
+        <ul>
+          <li><b>풀네임</b>: Math.random</li>
+          <li><b>한글 뜻</b>: 0 이상 1 미만 난수 생성</li>
+          <li><b>속한 클래스</b>: Math</li>
+          <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
+          <li><b>사용빈도</b>: 매우 자주</li>
+          <li><b>주요 사용처</b>: 랜덤 값 생성 (예: 추첨, 시뮬레이션)</li>
+          <li><b>암기 키워드</b>: random = 랜덤</li>
+        </ul>
+        <div class="code-block">
+  double r = Math.random();<br>
+  System.out.println(r); // 0.0 이상 1.0 미만 값
+        </div>
+      </div>
+  
+      <div class="card">
+        <h3>🛠️ Math.round()</h3>
+        <ul>
+          <li><b>풀네임</b>: Math.round</li>
+          <li><b>한글 뜻</b>: 반올림</li>
+          <li><b>속한 클래스</b>: Math</li>
+          <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+          <li><b>사용빈도</b>: 자주</li>
+          <li><b>주요 사용처</b>: 소수점 반올림</li>
+          <li><b>암기 키워드</b>: round = 반올림</li>
+        </ul>
+        <div class="code-block">
+  long r = Math.round(3.6);<br>
+  System.out.println(r); // 4
+        </div>
+      </div>
+  
+      <div class="card">
+        <h3>🛠️ Math.floor()</h3>
+        <ul>
+          <li><b>풀네임</b>: Math.floor</li>
+          <li><b>한글 뜻</b>: 내림(버림)</li>
+          <li><b>속한 클래스</b>: Math</li>
+          <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+          <li><b>사용빈도</b>: 자주</li>
+          <li><b>주요 사용처</b>: 소수점 이하 버릴 때</li>
+          <li><b>암기 키워드</b>: floor = 바닥</li>
+        </ul>
+        <div class="code-block">
+  double r = Math.floor(3.9);<br>
+  System.out.println(r); // 3.0
+        </div>
+      </div>
+  
+      <div class="card">
+        <h3>🛠️ Math.ceil()</h3>
+        <ul>
+          <li><b>풀네임</b>: Math.ceil</li>
+          <li><b>한글 뜻</b>: 올림</li>
+          <li><b>속한 클래스</b>: Math</li>
+          <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+          <li><b>사용빈도</b>: 자주</li>
+          <li><b>주요 사용처</b>: 소수점 올림</li>
+          <li><b>암기 키워드</b>: ceil = 천장</li>
+        </ul>
+        <div class="code-block">
+  double r = Math.ceil(3.1);<br>
+  System.out.println(r); // 4.0
+        </div>
+      </div>
+  
+    </main>
+  </body>
+  </html>
+  

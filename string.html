@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Java API 통합 암기카드</title>
+    <style>
+        body {
+            background-color: #121212;
+            font-family: 'Noto Sans', 'Roboto', sans-serif;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #ffffff;
+        }
+        ul {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        ul li {
+            margin-bottom: 8px;
+            font-size: 17px;
+        }
+        .code-block {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+            font-size: 16px;
+            font-weight: bold;
+            color: #d0d0d0;
+            overflow-x: auto;
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+        hr {
+            margin: 40px 0;
+            border: none;
+            height: 1px;
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<h2>📚 Java API 통합 암기카드 - String</h2>
+
+<h3>🛠️ length()</h3>
+<ul>
+    <li><b>풀네임</b>: length</li>
+    <li><b>한글 뜻</b>: 문자열 길이 반환</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
+    <li><b>사용빈도</b>: 매우 자주</li>
+    <li><b>주요 사용처</b>: 문자열 입력값 길이 체크</li>
+    <li><b>암기 키워드</b>: length = 길이</li>
+</ul>
+<div class="code-block">
+String s = "Hello";<br>
+System.out.println(s.length()); // 5
+</div>
+<hr>
+
+<h3>🛠️ equals(Object obj)</h3>
+<ul>
+    <li><b>풀네임</b>: equals</li>
+    <li><b>한글 뜻</b>: 문자열 비교 (대소문자 구분)</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
+    <li><b>사용빈도</b>: 매우 자주</li>
+    <li><b>주요 사용처</b>: 두 문자열이 같은지 비교할 때</li>
+    <li><b>암기 키워드</b>: equals = 같다 비교</li>
+</ul>
+<div class="code-block">
+String s1 = "Hello";<br>
+String s2 = "Hello";<br>
+System.out.println(s1.equals(s2)); // true
+</div>
+<hr>
+
+<h3>🛠️ equalsIgnoreCase(String anotherString)</h3>
+<ul>
+    <li><b>풀네임</b>: equalsIgnoreCase</li>
+    <li><b>한글 뜻</b>: 문자열 비교 (대소문자 무시)</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+    <li><b>사용빈도</b>: 자주</li>
+    <li><b>주요 사용처</b>: 대소문자 무시하고 문자열 비교할 때</li>
+    <li><b>암기 키워드</b>: equalsIgnoreCase = 대소문자 무시 비교</li>
+</ul>
+<div class="code-block">
+String s1 = "hello";<br>
+String s2 = "HELLO";<br>
+System.out.println(s1.equalsIgnoreCase(s2)); // true
+</div>
+<hr>
+
+<h3>🛠️ substring(int beginIndex, int endIndex)</h3>
+<ul>
+    <li><b>풀네임</b>: substring</li>
+    <li><b>한글 뜻</b>: 부분 문자열 추출</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+    <li><b>사용빈도</b>: 자주</li>
+    <li><b>주요 사용처</b>: 문자열의 일부분만 잘라서 사용하고 싶을 때</li>
+    <li><b>암기 키워드</b>: substring = 조각 추출</li>
+</ul>
+<div class="code-block">
+String s = "Hello World";<br>
+System.out.println(s.substring(0, 5)); // "Hello"
+</div>
+<hr>
+
+<h3>🛠️ split(String regex)</h3>
+<ul>
+    <li><b>풀네임</b>: split by regular expression</li>
+    <li><b>한글 뜻</b>: 특정 구분자로 문자열 나누기</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+    <li><b>사용빈도</b>: 자주</li>
+    <li><b>주요 사용처</b>: 구분자를 기준으로 여러 조각으로 나누고 싶을 때</li>
+    <li><b>암기 키워드</b>: split = 나누기</li>
+</ul>
+<div class="code-block">
+String s = "apple,banana,orange";<br>
+String[] arr = s.split(",");<br>
+System.out.println(arr[0]); // "apple"
+</div>
+<hr>
+
+<h3>🛠️ replace(char oldChar, char newChar)</h3>
+<ul>
+    <li><b>풀네임</b>: replace character</li>
+    <li><b>한글 뜻</b>: 특정 문자 교체</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+    <li><b>사용빈도</b>: 자주</li>
+    <li><b>주요 사용처</b>: 문자열 안의 특정 문자 바꾸기</li>
+    <li><b>암기 키워드</b>: replace = 대체</li>
+</ul>
+<div class="code-block">
+String s = "Hello";<br>
+System.out.println(s.replace('e', 'a')); // "Hallo"
+</div>
+<hr>
+
+<h3>🛠️ replace(CharSequence target, CharSequence replacement)</h3>
+<ul>
+    <li><b>풀네임</b>: replace substring</li>
+    <li><b>한글 뜻</b>: 특정 문자열 교체</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+    <li><b>사용빈도</b>: 자주</li>
+    <li><b>주요 사용처</b>: 문자열 안의 특정 부분(문자열) 바꾸기</li>
+    <li><b>암기 키워드</b>: replace = 대체</li>
+</ul>
+<div class="code-block">
+String s = "I love Java";<br>
+System.out.println(s.replace("Java", "Python")); // "I love Python"
+</div>
+<hr>
+
+<h3>🛠️ toLowerCase()</h3>
+<ul>
+    <li><b>풀네임</b>: to lower case</li>
+    <li><b>한글 뜻</b>: 모두 소문자로 변환</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+    <li><b>사용빈도</b>: 자주</li>
+    <li><b>주요 사용처</b>: 입력값 대소문자 구분 없이 처리하고 싶을 때</li>
+    <li><b>암기 키워드</b>: lower = 소문자</li>
+</ul>
+<div class="code-block">
+String s = "Hello";<br>
+System.out.println(s.toLowerCase()); // "hello"
+</div>
+<hr>
+
+<h3>🛠️ toUpperCase()</h3>
+<ul>
+    <li><b>풀네임</b>: to upper case</li>
+    <li><b>한글 뜻</b>: 모두 대문자로 변환</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+    <li><b>사용빈도</b>: 자주</li>
+    <li><b>주요 사용처</b>: 출력 포맷을 대문자로 통일하고 싶을 때</li>
+    <li><b>암기 키워드</b>: upper = 대문자</li>
+</ul>
+<div class="code-block">
+String s = "hello";<br>
+System.out.println(s.toUpperCase()); // "HELLO"
+</div>
+<hr>
+
+<h3>🛠️ trim()</h3>
+<ul>
+    <li><b>풀네임</b>: trim</li>
+    <li><b>한글 뜻</b>: 문자열 앞뒤 공백 제거</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
+    <li><b>사용빈도</b>: 자주</li>
+    <li><b>주요 사용처</b>: 입력값 정리 (ex. 로그인 ID, 검색어)</li>
+    <li><b>암기 키워드</b>: trim = 다듬다</li>
+</ul>
+<h3>🛠️ indexOf(String str)</h3>
+<ul>
+    <li><b>풀네임</b>: indexOf</li>
+    <li><b>한글 뜻</b>: 특정 문자열의 첫 번째 위치 찾기</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐ (가끔)</li>
+    <li><b>사용빈도</b>: 가끔</li>
+    <li><b>주요 사용처</b>: 문자열 내 포함 여부, 위치 찾기</li>
+    <li><b>암기 키워드</b>: index = 위치</li>
+</ul>
+<div class="code-block">
+String s = "Hello World";<br>
+System.out.println(s.indexOf("World")); // 6
+</div>
+<hr>
+
+<h3>🛠️ lastIndexOf(String str)</h3>
+<ul>
+    <li><b>풀네임</b>: lastIndexOf</li>
+    <li><b>한글 뜻</b>: 특정 문자열의 마지막 위치 찾기</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐ (가끔)</li>
+    <li><b>사용빈도</b>: 가끔</li>
+    <li><b>주요 사용처</b>: 마지막으로 등장하는 문자열 위치 찾기</li>
+    <li><b>암기 키워드</b>: last = 마지막 + index = 위치</li>
+</ul>
+<div class="code-block">
+String s = "Hello Hello";<br>
+System.out.println(s.lastIndexOf("Hello")); // 6
+</div>
+<hr>
+
+<h3>🛠️ contains(CharSequence s)</h3>
+<ul>
+    <li><b>풀네임</b>: contains</li>
+    <li><b>한글 뜻</b>: 특정 문자열 포함 여부 확인</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐ (가끔)</li>
+    <li><b>사용빈도</b>: 가끔</li>
+    <li><b>주요 사용처</b>: 문자열에 어떤 단어가 포함되어 있는지 검사할 때</li>
+    <li><b>암기 키워드</b>: contains = 포함</li>
+</ul>
+<div class="code-block">
+String s = "I love Java";<br>
+System.out.println(s.contains("Java")); // true
+</div>
+<hr>
+
+<h3>🛠️ startsWith(String prefix)</h3>
+<ul>
+    <li><b>풀네임</b>: startsWith</li>
+    <li><b>한글 뜻</b>: 특정 문자열로 시작하는지 확인</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐ (가끔)</li>
+    <li><b>사용빈도</b>: 가끔</li>
+    <li><b>주요 사용처</b>: 입력값 검증 (ex. 특정 접두사 검사)</li>
+    <li><b>암기 키워드</b>: startsWith = ~로 시작하다</li>
+</ul>
+<div class="code-block">
+String s = "Java Programming";<br>
+System.out.println(s.startsWith("Java")); // true
+</div>
+<hr>
+
+<h3>🛠️ endsWith(String suffix)</h3>
+<ul>
+    <li><b>풀네임</b>: endsWith</li>
+    <li><b>한글 뜻</b>: 특정 문자열로 끝나는지 확인</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐ (가끔)</li>
+    <li><b>사용빈도</b>: 가끔</li>
+    <li><b>주요 사용처</b>: 파일 확장자 확인 등</li>
+    <li><b>암기 키워드</b>: endsWith = ~로 끝나다</li>
+</ul>
+<div class="code-block">
+String file = "photo.jpg";<br>
+System.out.println(file.endsWith(".jpg")); // true
+</div>
+<hr>
+
+<h3>🛠️ isEmpty()</h3>
+<ul>
+    <li><b>풀네임</b>: isEmpty</li>
+    <li><b>한글 뜻</b>: 문자열이 비었는지 확인</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐⭐ (가끔)</li>
+    <li><b>사용빈도</b>: 가끔</li>
+    <li><b>주요 사용처</b>: 문자열이 비었는지 빠르게 검사할 때 (length() == 0 대신)</li>
+    <li><b>암기 키워드</b>: isEmpty = 비어있는가?</li>
+</ul>
+<div class="code-block">
+String s = "";<br>
+System.out.println(s.isEmpty()); // true
+</div>
+<hr>
+
+<h3>🛠️ charAt(int index)</h3>
+<ul>
+    <li><b>풀네임</b>: character at index</li>
+    <li><b>한글 뜻</b>: 특정 인덱스의 문자 반환</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐ (가끔)</li>
+    <li><b>사용빈도</b>: 가끔</li>
+    <li><b>주요 사용처</b>: 문자열에서 특정 문자 추출</li>
+    <li><b>암기 키워드</b>: charAt = 위치 문자</li>
+</ul>
+<div class="code-block">
+String s = "Hello";<br>
+System.out.println(s.charAt(1)); // 'e'
+</div>
+<hr>
+
+<h3>🛠️ valueOf(기본형)</h3>
+<ul>
+    <li><b>풀네임</b>: valueOf</li>
+    <li><b>한글 뜻</b>: 기본형을 문자열로 변환</li>
+    <li><b>속한 클래스</b>: String</li>
+    <li><b>중요도</b>: ⭐⭐ (가끔)</li>
+    <li><b>사용빈도</b>: 가끔</li>
+    <li><b>주요 사용처</b>: 숫자나 boolean을 문자열로 바꿔야 할 때</li>
+    <li><b>암기 키워드</b>: valueOf = 문자열 변환</li>
+</ul>
+<div class="code-block">
+int num = 100;<br>
+String str = String.valueOf(num);<br>
+System.out.println(str); // "100"
+</div>
+<hr>
+
+</body>
+</html>
