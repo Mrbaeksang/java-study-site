@@ -3,20 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java API 학습 가이드</title>
+    <title>Java API 학습 로드맵</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .api-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            padding: 2rem;
-        }
-
-        .api-card {
+        .api-section {
             background: var(--vscode-darker);
             border: 1px solid var(--vscode-highlight);
             border-radius: 8px;
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 1200px;
+        }
+
+        .api-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .api-card {
+            background: var(--vscode-bg);
+            border-radius: 6px;
             padding: 1.5rem;
             transition: transform 0.2s;
         }
@@ -25,110 +33,214 @@
             transform: translateY(-5px);
         }
 
-        .api-card h3 {
-            margin-top: 0;
-            color: var(--vscode-blue);
+        .difficulty {
+            margin-top: 1rem;
+            font-size: 0.9em;
+        }
+
+        .beginner { color: #85e89d; }
+        .medium { color: #ffab70; }
+        .advanced { color: #f97583; }
+
+        .tags {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .tag {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            margin: 0.25rem;
             background: var(--vscode-highlight);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8em;
         }
 
-        .difficulty {
-            font-size: 0.9rem;
+        .learning-path {
+            border-left: 4px solid var(--vscode-blue);
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(0, 122, 204, 0.1);
+        }
+
+        .prerequisites {
+            font-size: 0.9em;
+            color: #888;
             margin-top: 0.5rem;
         }
-
-        .easy { color: #85e89d; }
-        .medium { color: #ffab70; }
-        .hard { color: #f97583; }
     </style>
 </head>
 <body>
     <header>
-        <h1>📚 Java API 학습 가이드</h1>
-        <p>Java의 주요 API들을 체계적으로 학습하세요</p>
+        <h1>📚 Java API 학습 로드맵</h1>
+        <nav>
+            <a href="index.html" class="button">홈으로 돌아가기</a>
+        </nav>
     </header>
 
     <main>
-        <div class="api-grid">
-            <!-- 기본 API -->
-            <div class="api-card">
-                <h3>기본 API</h3>
-                <a href="string.html" class="button">String API</a>
-                <a href="arrays.html" class="button">Arrays API</a>
-                <a href="math.html" class="button">Math API</a>
-                <div class="tags">
-                    <span class="tag">필수</span>
-                    <span class="tag">기초</span>
+        <!-- 1단계: 기본 데이터 처리 -->
+        <section class="api-section">
+            <h2>1️⃣ 기본 데이터 처리</h2>
+            <p>문자열 처리와 기본 데이터 타입 관리의 기초를 다지는 단계입니다.</p>
+            
+            <div class="api-cards">
+                <div class="api-card">
+                    <h3>String API</h3>
+                    <a href="string.html" class="button">학습하기</a>
+                    <div class="tags">
+                        <span class="tag">필수</span>
+                        <span class="tag">문자열</span>
+                    </div>
+                    <div class="difficulty">난이도: <span class="beginner">입문</span></div>
+                    <div class="prerequisites">선수 지식: Java 기초 문법</div>
                 </div>
-                <div class="difficulty">난이도: <span class="easy">쉬움</span></div>
+
+                <div class="api-card">
+                    <h3>StringBuilder API</h3>
+                    <a href="stringbuilder.html" class="button">학습하기</a>
+                    <div class="tags">
+                        <span class="tag">성능</span>
+                        <span class="tag">문자열</span>
+                    </div>
+                    <div class="difficulty">난이도: <span class="beginner">입문</span></div>
+                    <div class="prerequisites">선수 지식: String API</div>
+                </div>
+
+                <div class="api-card">
+                    <h3>Wrapper 클래스</h3>
+                    <a href="wrapper.html" class="button">학습하기</a>
+                    <div class="tags">
+                        <span class="tag">필수</span>
+                        <span class="tag">기본타입</span>
+                    </div>
+                    <div class="difficulty">난이도: <span class="beginner">입문</span></div>
+                    <div class="prerequisites">선수 지식: Java 기본 타입</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2단계: 컬렉션 프레임워크 -->
+        <section class="api-section">
+            <h2>2️⃣ 컬렉션 프레임워크</h2>
+            <p>데이터를 효율적으로 저장하고 관리하는 방법을 배우는 단계입니다.</p>
+            
+            <div class="learning-path">
+                <h4>💡 학습 순서 가이드</h4>
+                <ol>
+                    <li>Collections 유틸리티 (전체 개요)</li>
+                    <li>List 계열 (ArrayList → LinkedList)</li>
+                    <li>Set 계열 (HashSet → TreeSet)</li>
+                    <li>Map 계열 (HashMap → TreeMap)</li>
+                </ol>
             </div>
 
-            <!-- 컬렉션 API -->
-            <div class="api-card">
-                <h3>컬렉션 API</h3>
-                <a href="collections.html" class="button">Collections API</a>
-                <a href="arraylist.html" class="button">ArrayList API</a>
-                <a href="hashmap.html" class="button">HashMap API</a>
-                <div class="tags">
-                    <span class="tag">자료구조</span>
-                    <span class="tag">필수</span>
+            <div class="api-cards">
+                <div class="api-card">
+                    <h3>Collections API</h3>
+                    <a href="collections.html" class="button">학습하기</a>
+                    <div class="tags">
+                        <span class="tag">필수</span>
+                        <span class="tag">유틸리티</span>
+                    </div>
+                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
+                    <div class="prerequisites">선수 지식: Java 기초</div>
                 </div>
-                <div class="difficulty">난이도: <span class="medium">중간</span></div>
-            </div>
 
-            <!-- 유틸리티 API -->
-            <div class="api-card">
-                <h3>유틸리티 API</h3>
-                <a href="wrapper.html" class="button">Wrapper API</a>
-                <a href="stringbuilder.html" class="button">StringBuilder API</a>
-                <div class="tags">
-                    <span class="tag">유용</span>
-                    <span class="tag">성능</span>
+                <div class="api-card">
+                    <h3>ArrayList API</h3>
+                    <a href="arraylist.html" class="button">학습하기</a>
+                    <div class="tags">
+                        <span class="tag">필수</span>
+                        <span class="tag">List</span>
+                    </div>
+                    <div class="difficulty">난이도: <span class="beginner">입문</span></div>
+                    <div class="prerequisites">선수 지식: Collections API</div>
                 </div>
-                <div class="difficulty">난이도: <span class="easy">쉬움</span></div>
-            </div>
 
-            <!-- 고급 기능 -->
-            <div class="api-card">
-                <h3>고급 기능</h3>
-                <a href="exception.html" class="button">Exception API</a>
-                <a href="stream.html" class="button">Stream API</a>
-                <div class="tags">
-                    <span class="tag">고급</span>
-                    <span class="tag">현대적</span>
+                <div class="api-card">
+                    <h3>HashSet API</h3>
+                    <a href="hashset.html" class="button">학습하기</a>
+                    <div class="tags">
+                        <span class="tag">필수</span>
+                        <span class="tag">Set</span>
+                    </div>
+                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
+                    <div class="prerequisites">선수 지식: ArrayList</div>
                 </div>
-                <div class="difficulty">난이도: <span class="hard">어려움</span></div>
-            </div>
 
-            <!-- 파일 처리 -->
-            <div class="api-card">
-                <h3>파일 처리</h3>
-                <a href="file.html" class="button">File API</a>
-                <div class="tags">
-                    <span class="tag">IO</span>
-                    <span class="tag">실용</span>
+                <div class="api-card">
+                    <h3>HashMap API</h3>
+                    <a href="hashmap.html" class="button">학습하기</a>
+                    <div class="tags">
+                        <span class="tag">필수</span>
+                        <span class="tag">Map</span>
+                    </div>
+                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
+                    <div class="prerequisites">선수 지식: HashSet</div>
                 </div>
-                <div class="difficulty">난이도: <span class="medium">중간</span></div>
             </div>
+        </section>
 
-            <!-- JSON 처리 -->
-            <div class="api-card">
-                <h3>JSON 처리</h3>
-                <a href="json.html" class="button">JSON API</a>
-                <div class="tags">
-                    <span class="tag">웹</span>
-                    <span class="tag">데이터</span>
+        <!-- 3단계: 고급 데이터 처리 -->
+        <section class="api-section">
+            <h2>3️⃣ 고급 데이터 처리</h2>
+            <p>현대적인 Java 프로그래밍에 필수적인 스트림 처리와 함수형 프로그래밍을 배우는 단계입니다.</p>
+
+            <div class="api-cards">
+                <div class="api-card">
+                    <h3>Stream API</h3>
+                    <a href="stream.html" class="button">학습하기</a>
+                    <div class="tags">
+                        <span class="tag">필수</span>
+                        <span class="tag">함수형</span>
+                    </div>
+                    <div class="difficulty">난이도: <span class="advanced">고급</span></div>
+                    <div class="prerequisites">선수 지식: 컬렉션 프레임워크</div>
                 </div>
-                <div class="difficulty">난이도: <span class="medium">중간</span></div>
             </div>
-        </div>
+        </section>
+
+        <!-- 4단계: 실무 필수 API -->
+        <section class="api-section">
+            <h2>4️⃣ 실무 필수 API</h2>
+            <p>실제 애플리케이션 개발에 필수적인 예외 처리, 파일 처리, JSON 처리를 배우는 단계입니다.</p>
+
+            <div class="api-cards">
+                <div class="api-card">
+                    <h3>Exception API</h3>
+                    <a href="exception.html" class="button">학습하기</a>
+                    <div class="tags">
+                        <span class="tag">필수</span>
+                        <span class="tag">에러처리</span>
+                    </div>
+                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
+                    <div class="prerequisites">선수 지식: Java 기초</div>
+                </div>
+
+                <div class="api-card">
+                    <h3>File I/O API</h3>
+                    <a href="file.html" class="button">학습하기</a>
+                    <div class="tags">
+                        <span class="tag">필수</span>
+                        <span class="tag">파일처리</span>
+                    </div>
+                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
+                    <div class="prerequisites">선수 지식: Exception API</div>
+                </div>
+
+                <div class="api-card">
+                    <h3>JSON API</h3>
+                    <a href="json.html" class="button">학습하기</a>
+                    <div class="tags">
+                        <span class="tag">웹개발</span>
+                        <span class="tag">데이터</span>
+                    </div>
+                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
+                    <div class="prerequisites">선수 지식: File I/O, Collections</div>
+                </div>
+            </div>
+        </section>
     </main>
 </body>
 </html>

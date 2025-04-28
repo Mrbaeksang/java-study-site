@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HashSet API 완벽 가이드</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .section {
+            background: var(--vscode-darker);
+            border: 1px solid var(--vscode-highlight);
+            border-radius: 8px;
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 1000px;
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .example-box {
+            background: var(--vscode-bg);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .note {
+            border-left: 4px solid var(--vscode-blue);
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(0, 122, 204, 0.1);
+        }
+
+        .warning {
+            border-left: 4px solid #f97583;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(249, 117, 131, 0.1);
+        }
+
+        .tip {
+            border-left: 4px solid #85e89d;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(133, 232, 157, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎯 HashSet API 완벽 가이드</h1>
+        <nav>
+            <a href="index.html" class="button">홈으로 돌아가기</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 개요 섹션 -->
+        <section class="section">
+            <h2>📚 HashSet 개요</h2>
+            <p>HashSet은 Set 인터페이스를 구현한 해시 테이블 기반의 컬렉션입니다. 중복을 허용하지 않고 순서를 보장하지 않는 특징이 있습니다.</p>
+
+            <div class="note">
+                <h3>주요 특징</h3>
+                <ul>
+                    <li>중복 요소를 허용하지 않음</li>
+                    <li>순서를 보장하지 않음 (삽입 순서 유지 X)</li>
+                    <li>null 값을 허용</li>
+                    <li>해시 테이블을 사용하여 빠른 검색 속도</li>
+                    <li>스레드에 안전하지 않음 (동기화되지 않음)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 기본 사용법 -->
+        <section class="section">
+            <h2>🔨 기본 사용법</h2>
+
+            <div class="example-box">
+                <h3>HashSet 생성과 기본 연산</h3>
+                <div class="code-block">
+// 빈 HashSet 생성
+HashSet<String> fruits = new HashSet<>();
+
+// 요소 추가
+fruits.add("사과");
+fruits.add("바나나");
+fruits.add("오렌지");
+fruits.add("사과");  // 중복된 요소는 추가되지 않음
+
+System.out.println(fruits);  // [바나나, 오렌지, 사과] (순서는 보장되지 않음)
+
+// 요소 포함 여부 확인
+boolean hasApple = fruits.contains("사과");  // true
+
+// 요소 제거
+fruits.remove("바나나");
+
+// 크기 확인
+int size = fruits.size();  // 2
+
+// 모든 요소 제거
+fruits.clear();</div>
+            </div>
+
+            <div class="example-box">
+                <h3>다른 컬렉션으로부터 HashSet 생성</h3>
+                <div class="code-block">
+// List로부터 HashSet 생성 (중복 제거에 유용)
+List<String> numberList = Arrays.asList("1", "2", "2", "3", "3", "3");
+HashSet<String> uniqueNumbers = new HashSet<>(numberList);
+System.out.println(uniqueNumbers);  // [1, 2, 3]
+
+// 초기 용량 지정
+HashSet<Integer> numbers = new HashSet<>(16, 0.75f);  // 초기 용량 16, 로드 팩터 0.75</div>
+            </div>
+        </section>
+
+        <!-- 실전 예제 -->
+        <section class="section">
+            <h2>💡 실전 예제</h2>
+            
+            <div class="example-box">
+                <h3>1. 중복 제거 활용</h3>
+                <div class="code-block">
+// 사용자 정의 클래스
+class User {
+    String id;
+    String name;
+    
+    public User(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+}
+
+// 중복 사용자 제거
+HashSet<User> users = new HashSet<>();
+users.add(new User("1", "김철수"));
+users.add(new User("1", "김철수2"));  // 같은 id를 가진 사용자는 추가되지 않음
+users.add(new User("2", "이영희"));</div>
+                <div class="note">
+                    <h4>중요 포인트</h4>
+                    <ul>
+                        <li>equals()와 hashCode()를 올바르게 구현해야 중복 제거가 정상 작동</li>
+                        <li>id만 같으면 중복으로 간주 (비즈니스 로직에 따라 다르게 구현 가능)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h3>2. 집합 연산</h3>
+                <div class="code-block">
+HashSet<String> set1 = new HashSet<>(Arrays.asList("A", "B", "C"));
+HashSet<String> set2 = new HashSet<>(Arrays.asList("B", "C", "D"));
+
+// 합집합
+HashSet<String> union = new HashSet<>(set1);
+union.addAll(set2);
+System.out.println("합집합: " + union);  // [A, B, C, D]
+
+// 교집합
+HashSet<String> intersection = new HashSet<>(set1);
+intersection.retainAll(set2);
+System.out.println("교집합: " + intersection);  // [B, C]
+
+// 차집합
+HashSet<String> difference = new HashSet<>(set1);
+difference.removeAll(set2);
+System.out.println("차집합: " + difference);  // [A]</div>
+            </div>
+
+            <div class="example-box">
+                <h3>3. Stream API와 함께 사용</h3>
+                <div class="code-block">
+List<String> words = Arrays.asList("apple", "banana", "apple", "cherry", "banana");
+
+// 중복 제거 후 길이가 6자 이상인 단어만 필터링
+Set<String> longWords = words.stream()
+    .filter(word -> word.length() >= 6)
+    .collect(Collectors.toSet());
+
+// 문자열 길이별로 그룹화
+Map<Integer, Set<String>> wordsByLength = words.stream()
+    .collect(Collectors.groupingBy(
+        String::length,
+        Collectors.toCollection(HashSet::new)
+    ));</div>
+            </div>
+        </section>
+
+        <!-- 성능과 주의사항 -->
+        <section class="section">
+            <h2>⚡ 성능과 주의사항</h2>
+            
+            <div class="warning">
+                <h3>성능 특성</h3>
+                <ul>
+                    <li>add(), remove(), contains() 연산의 평균 시간 복잡도: O(1)</li>
+                    <li>최악의 경우 (해시 충돌이 많은 경우): O(n)</li>
+                    <li>순회 연산의 시간 복잡도: O(n)</li>
+                </ul>
+            </div>
+
+            <div class="tip">
+                <h3>실무 사용 팁</h3>
+                <ul>
+                    <li>순서가 중요하다면 LinkedHashSet 사용 고려</li>
+                    <li>정렬이 필요하다면 TreeSet 사용 고려</li>
+                    <li>멀티스레드 환경에서는 Collections.synchronizedSet() 사용</li>
+                    <li>초기 용량을 적절히 설정하여 리해싱 횟수 최소화</li>
+                </ul>
+            </div>
+
+            <div class="example-box">
+                <h3>멀티스레드 환경에서의 사용</h3>
+                <div class="code-block">
+// 스레드 안전한 HashSet 생성
+Set<String> syncSet = Collections.synchronizedSet(new HashSet<>());
+
+// 동기화된 블록에서 순회
+synchronized (syncSet) {
+    for (String item : syncSet) {
+        System.out.println(item);
+    }
+}</div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
