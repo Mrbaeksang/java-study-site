@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HashMap API 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .example-box {
+      background: var(--vscode-bg);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--vscode-highlight);
+      text-align: left;
+    }
+
+    .comparison-table th {
+      background: var(--vscode-bg);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 0.5rem;
+      background: var(--vscode-highlight);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🗺️ HashMap API 완벽 가이드</h1>
+    <nav>
+      <a href="index.html" class="button">홈으로 돌아가기</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 개요 섹션 -->
+    <section class="section">
+      <h2>📚 HashMap 개요</h2>
+      <p>HashMap은 키-값 쌍을 저장하는 자료구조로, 빠른 데이터 검색이 필요할 때 사용됩니다.</p>
+      
+      <div class="note">
+        <h3>주요 특징</h3>
+        <ul>
+          <li>키-값 쌍으로 데이터 저장</li>
+          <li>O(1) 시간 복잡도로 검색</li>
+          <li>키는 중복될 수 없음</li>
+          <li>값은 중복 가능</li>
+          <li>null 키와 값 허용</li>
+        </ul>
+      </div>
+
+      <div class="warning">
+        <h3>HashMap vs HashTable vs TreeMap</h3>
+        <table class="comparison-table">
+          <tr>
+            <th>특성</th>
+            <th>HashMap</th>
+            <th>HashTable</th>
+            <th>TreeMap</th>
+          </tr>
+          <tr>
+            <td>동기화</td>
+            <td>비동기</td>
+            <td>동기화</td>
+            <td>비동기</td>
+          </tr>
+          <tr>
+            <td>Null 허용</td>
+            <td>키/값 모두</td>
+            <td>불가능</td>
+            <td>값만</td>
+          </tr>
+          <tr>
+            <td>순서</td>
+            <td>무작위</td>
+            <td>무작위</td>
+            <td>정렬됨</td>
+          </tr>
+          <tr>
+            <td>성능</td>
+            <td>빠름</td>
+            <td>보통</td>
+            <td>느림</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 기본 메서드 -->
+    <section class="section">
+      <h2>🛠 기본 메서드</h2>
+      
+      <div class="method-grid">
+        <!-- put -->
+        <div class="card">
+          <h3>put()</h3>
+          <div class="tag">추가/수정</div>
+          <div class="tag">자주 사용</div>
+          
+          <div class="code-block">
+            <span class="method-name">put</span>(<span class="parameter">K key, V value</span>)
+          </div>
+          
+          <p>키-값 쌍을 추가하거나 수정합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+HashMap<String, Integer> map = new HashMap<>();
+map.put("Apple", 1);
+map.put("Banana", 2);
+            </div>
+          </div>
+        </div>
+
+        <!-- get -->
+        <div class="card">
+          <h3>get()</h3>
+          <div class="tag">조회</div>
+          <div class="tag">자주 사용</div>
+          
+          <div class="code-block">
+            <span class="method-name">get</span>(<span class="parameter">Object key</span>)
+          </div>
+          
+          <p>키에 해당하는 값을 반환합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+Integer value = map.get("Apple"); // 1
+            </div>
+          </div>
+        </div>
+
+        <!-- remove -->
+        <div class="card">
+          <h3>remove()</h3>
+          <div class="tag">삭제</div>
+          
+          <div class="code-block">
+            <span class="method-name">remove</span>(<span class="parameter">Object key</span>)
+          </div>
+          
+          <p>키에 해당하는 항목을 삭제합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+map.remove("Apple"); // 제거
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 검색과 확인 -->
+    <section class="section">
+      <h2>🔍 검색과 확인</h2>
+      
+      <div class="method-grid">
+        <!-- containsKey -->
+        <div class="card">
+          <h3>containsKey()</h3>
+          <div class="tag">검색</div>
+          
+          <div class="code-block">
+            <span class="method-name">containsKey</span>(<span class="parameter">Object key</span>)
+          </div>
+          
+          <p>키의 존재 여부를 확인합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+boolean hasKey = map.containsKey("Apple");
+            </div>
+          </div>
+        </div>
+
+        <!-- containsValue -->
+        <div class="card">
+          <h3>containsValue()</h3>
+          <div class="tag">검색</div>
+          
+          <div class="code-block">
+            <span class="method-name">containsValue</span>(<span class="parameter">Object value</span>)
+          </div>
+          
+          <p>값의 존재 여부를 확인합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+boolean hasValue = map.containsValue(1);
+            </div>
+          </div>
+        </div>
+
+        <!-- getOrDefault -->
+        <div class="card">
+          <h3>getOrDefault()</h3>
+          <div class="tag">조회</div>
+          <div class="tag">안전</div>
+          
+          <div class="code-block">
+            <span class="method-name">getOrDefault</span>(<span class="parameter">Object key, V defaultValue</span>)
+          </div>
+          
+          <p>키가 없을 때 기본값을 반환합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+int value = map.getOrDefault("Orange", 0);
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 실전 예제 -->
+    <section class="section">
+      <h2>💡 실전 예제</h2>
+      
+      <div class="example-box">
+        <h3>1. 단어 빈도수 계산</h3>
+        <div class="code-block">
+String text = "apple banana apple cherry banana apple";
+HashMap<String, Integer> frequency = new HashMap<>();
+
+for (String word : text.split(" ")) {
+    frequency.put(word, frequency.getOrDefault(word, 0) + 1);
+}
+// 결과: {apple=3, banana=2, cherry=1}
+        </div>
+      </div>
+
+      <div class="example-box">
+        <h3>2. 그룹화</h3>
+        <div class="code-block">
+ArrayList<String> fruits = new ArrayList<>(Arrays.asList(
+    "Apple", "Banana", "Cherry", "Date", "Elderberry"
+));
+
+HashMap<Character, List<String>> groups = new HashMap<>();
+for (String fruit : fruits) {
+    char firstChar = fruit.charAt(0);
+    groups.computeIfAbsent(firstChar, k -> new ArrayList<>()).add(fruit);
+}
+// 결과: {A=[Apple], B=[Banana], C=[Cherry], D=[Date], E=[Elderberry]}
+        </div>
+      </div>
+
+      <div class="example-box">
+        <h3>3. 캐시 구현</h3>
+        <div class="code-block">
+class SimpleCache<K, V> {
+    private final HashMap<K, V> cache = new HashMap<>();
+    private final int capacity;
+
+    public SimpleCache(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public V get(K key) {
+        return cache.get(key);
+    }
+
+    public void put(K key, V value) {
+        if (cache.size() >= capacity) {
+            K firstKey = cache.keySet().iterator().next();
+            cache.remove(firstKey);
+        }
+        cache.put(key, value);
+    }
+}
+        </div>
+      </div>
+    </section>
+
+    <!-- 성능 최적화 팁 -->
+    <section class="section">
+      <h2>⚡ 성능 최적화 팁</h2>
+      
+      <div class="tip">
+        <h3>1. 초기 용량 설정</h3>
+        <p>예상되는 크기로 초기 용량을 설정하면 재해시를 줄일 수 있습니다.</p>
+        <div class="code-block">
+// 권장
+HashMap<String, Integer> map = new HashMap<>(1000);<br>
+// 비권장
+HashMap<String, Integer> map = new HashMap<>();
+        </div>
+      </div>
+
+      <div class="tip">
+        <h3>2. equals()와 hashCode() 구현</h3>
+        <p>커스텀 키 클래스는 반드시 두 메서드를 올바르게 구현해야 합니다.</p>
+        <div class="code-block">
+class CustomKey {
+    private final String id;
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CustomKey)) return false;
+        CustomKey that = (CustomKey) o;
+        return Objects.equals(id, that.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+}
+        </div>
+      </div>
+
+      <div class="warning">
+        <h3>주의사항</h3>
+        <ul>
+          <li>키의 불변성 유지</li>
+          <li>적절한 초기 용량 설정</li>
+          <li>반복문에서의 효율적인 접근</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

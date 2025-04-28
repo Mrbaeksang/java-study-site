@@ -1,46 +1,134 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>Java API 공부</title>
-  <link rel="stylesheet" href="css/style.css">
-  <style>
-    nav {
-      margin-bottom: 30px;
-    }
-    .button-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      margin-top: 40px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java API 학습 가이드</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .api-card {
+            background: var(--vscode-darker);
+            border: 1px solid var(--vscode-highlight);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .api-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .api-card h3 {
+            margin-top: 0;
+            color: var(--vscode-blue);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin: 0.25rem;
+            background: var(--vscode-highlight);
+        }
+
+        .difficulty {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .easy { color: #85e89d; }
+        .medium { color: #ffab70; }
+        .hard { color: #f97583; }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>📚 Java API 학습 가이드</h1>
+        <p>Java의 주요 API들을 체계적으로 학습하세요</p>
+    </header>
 
-  <header>
-    <h1>📚 Java API 공부</h1>
-    <nav>
-      <a href="index.html" class="button">홈으로 돌아가기</a>
-    </nav>
-  </header>
+    <main>
+        <div class="api-grid">
+            <!-- 기본 API -->
+            <div class="api-card">
+                <h3>기본 API</h3>
+                <a href="string.html" class="button">String API</a>
+                <a href="arrays.html" class="button">Arrays API</a>
+                <a href="math.html" class="button">Math API</a>
+                <div class="tags">
+                    <span class="tag">필수</span>
+                    <span class="tag">기초</span>
+                </div>
+                <div class="difficulty">난이도: <span class="easy">쉬움</span></div>
+            </div>
 
-  <main>
-    <h2>🎯 주요 Java API</h2>
+            <!-- 컬렉션 API -->
+            <div class="api-card">
+                <h3>컬렉션 API</h3>
+                <a href="collections.html" class="button">Collections API</a>
+                <a href="arraylist.html" class="button">ArrayList API</a>
+                <a href="hashmap.html" class="button">HashMap API</a>
+                <div class="tags">
+                    <span class="tag">자료구조</span>
+                    <span class="tag">필수</span>
+                </div>
+                <div class="difficulty">난이도: <span class="medium">중간</span></div>
+            </div>
 
-    <div class="button-group">
-      <a href="string.html" class="button">String API</a>
-      <a href="math.html" class="button">Math API</a>
-      <a href="arrays.html" class="button">Arrays API</a>
-      <a href="wrapper.html" class="button">Wrapper 클래스 API</a>
-      <a href="stringbuilder.html" class="button">StringBuilder API</a>
-      <a href="arraylist.html" class="button">ArrayList API</a>
-    </div>
+            <!-- 유틸리티 API -->
+            <div class="api-card">
+                <h3>유틸리티 API</h3>
+                <a href="wrapper.html" class="button">Wrapper API</a>
+                <a href="stringbuilder.html" class="button">StringBuilder API</a>
+                <div class="tags">
+                    <span class="tag">유용</span>
+                    <span class="tag">성능</span>
+                </div>
+                <div class="difficulty">난이도: <span class="easy">쉬움</span></div>
+            </div>
 
-    <p style="margin-top:40px;">각 API를 클릭하여 해당 메서드 설명을 확인하세요!</p>
+            <!-- 고급 기능 -->
+            <div class="api-card">
+                <h3>고급 기능</h3>
+                <a href="exception.html" class="button">Exception API</a>
+                <a href="stream.html" class="button">Stream API</a>
+                <div class="tags">
+                    <span class="tag">고급</span>
+                    <span class="tag">현대적</span>
+                </div>
+                <div class="difficulty">난이도: <span class="hard">어려움</span></div>
+            </div>
 
-  </main>
+            <!-- 파일 처리 -->
+            <div class="api-card">
+                <h3>파일 처리</h3>
+                <a href="file.html" class="button">File API</a>
+                <div class="tags">
+                    <span class="tag">IO</span>
+                    <span class="tag">실용</span>
+                </div>
+                <div class="difficulty">난이도: <span class="medium">중간</span></div>
+            </div>
 
+            <!-- JSON 처리 -->
+            <div class="api-card">
+                <h3>JSON 처리</h3>
+                <a href="json.html" class="button">JSON API</a>
+                <div class="tags">
+                    <span class="tag">웹</span>
+                    <span class="tag">데이터</span>
+                </div>
+                <div class="difficulty">난이도: <span class="medium">중간</span></div>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

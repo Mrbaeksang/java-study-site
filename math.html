@@ -2,221 +2,416 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>Math API 정리</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math API 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #121212;
-      font-family: 'Noto Sans', 'Roboto', sans-serif;
-      color: #e0e0e0;
-      text-align: center;
-    }
-    header {
-      padding: 40px 20px;
-    }
-    h1 {
-      font-size: 36px;
-      margin-bottom: 40px;
-    }
-    main {
-      padding: 20px;
-    }
-    .card {
-      background-color: #1e1e1e;
-      margin: 20px auto;
-      padding: 20px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
-      text-align: left;
-    }
-    .card ul {
-      list-style: none;
-      padding: 0;
-    }
-    .card li {
-      margin-bottom: 8px;
-    }
-    .code-block {
-      background-color: #2c2c2c;
-      padding: 12px;
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
       border-radius: 8px;
-      font-family: monospace;
-      font-size: 16px;
-      font-weight: bold;
-      color: #e0e0e0;
-      white-space: pre-line;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
     }
-    hr {
-      margin: 40px 0;
-      border: 0;
-      height: 1px;
-      background: #333;
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .example-box {
+      background: var(--vscode-bg);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 0.5rem;
+      background: var(--vscode-highlight);
+    }
+
+    .formula {
+      font-family: 'Cambria Math', 'Times New Roman', serif;
+      font-style: italic;
+      margin: 1rem 0;
+      text-align: center;
+      color: #e0e0e0;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>🧮 Math API 정리</h1>
+    <h1>🔢 Math API 완벽 가이드</h1>
+    <nav>
+      <a href="index.html" class="button">홈으로 돌아가기</a>
+    </nav>
   </header>
+
   <main>
-
-    <div class="card">
-      <h3>🛠️ Math.abs()</h3>
-      <ul>
-        <li><b>풀네임</b>: Math.abs</li>
-        <li><b>한글 뜻</b>: 절댓값 반환</li>
-        <li><b>속한 클래스</b>: Math</li>
-        <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
-        <li><b>사용빈도</b>: 매우 자주</li>
-        <li><b>주요 사용처</b>: 값의 부호에 관계없이 거리, 차이 계산할 때</li>
-        <li><b>암기 키워드</b>: abs = 절댓값</li>
-      </ul>
-      <div class="code-block">
-int a = Math.abs(-10);<br>
-System.out.println(a); // 10
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>🛠️ Math.max()</h3>
-      <ul>
-        <li><b>풀네임</b>: Math.max</li>
-        <li><b>한글 뜻</b>: 두 수 중 큰 값 반환</li>
-        <li><b>속한 클래스</b>: Math</li>
-        <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
-        <li><b>사용빈도</b>: 매우 자주</li>
-        <li><b>주요 사용처</b>: 최댓값 찾기, 조건 비교</li>
-        <li><b>암기 키워드</b>: max = 최대</li>
-      </ul>
-      <div class="code-block">
-int a = Math.max(7, 3);<br>
-System.out.println(a); // 7
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>🛠️ Math.min()</h3>
-      <ul>
-        <li><b>풀네임</b>: Math.min</li>
-        <li><b>한글 뜻</b>: 두 수 중 작은 값 반환</li>
-        <li><b>속한 클래스</b>: Math</li>
-        <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
-        <li><b>사용빈도</b>: 매우 자주</li>
-        <li><b>주요 사용처</b>: 최솟값 찾기, 범위 설정</li>
-        <li><b>암기 키워드</b>: min = 최소</li>
-      </ul>
-      <div class="code-block">
-int a = Math.min(7, 3);<br>
-System.out.println(a); // 3
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>🛠️ Math.pow()</h3>
-      <ul>
-        <li><b>풀네임</b>: Math.pow</li>
-        <li><b>한글 뜻</b>: 거듭제곱 계산</li>
-        <li><b>속한 클래스</b>: Math</li>
-        <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
-        <li><b>사용빈도</b>: 자주</li>
-        <li><b>주요 사용처</b>: 제곱 계산, 지수 연산</li>
-        <li><b>암기 키워드</b>: pow = power (거듭제곱)</li>
-      </ul>
-      <div class="code-block">
-double a = Math.pow(2, 3);<br>
-System.out.println(a); // 8.0
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>🛠️ Math.sqrt()</h3>
-      <ul>
-        <li><b>풀네임</b>: Math.sqrt</li>
-        <li><b>한글 뜻</b>: 제곱근 반환</li>
-        <li><b>속한 클래스</b>: Math</li>
-        <li><b>중요도</b>: ⭐⭐⭐ (가끔)</li>
-        <li><b>사용빈도</b>: 가끔</li>
-        <li><b>주요 사용처</b>: 피타고라스 정리, 거리 계산</li>
-        <li><b>암기 키워드</b>: sqrt = square root (제곱근)</li>
-      </ul>
-      <div class="code-block">
-double a = Math.sqrt(9);<br>
-System.out.println(a); // 3.0
-      </div>
-    </div>
-
-    <div class="card">
-        <h3>🛠️ Math.random()</h3>
+    <!-- 개요 섹션 -->
+    <section class="section">
+      <h2>📚 Math 클래스 개요</h2>
+      <p>java.lang.Math는 수학적 연산을 위한 정적 메서드들을 제공하는 유틸리티 클래스입니다.</p>
+      
+      <div class="note">
+        <h3>주요 특징</h3>
         <ul>
-          <li><b>풀네임</b>: Math.random</li>
-          <li><b>한글 뜻</b>: 0 이상 1 미만 난수 생성</li>
-          <li><b>속한 클래스</b>: Math</li>
-          <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
-          <li><b>사용빈도</b>: 매우 자주</li>
-          <li><b>주요 사용처</b>: 랜덤 값 생성 (예: 추첨, 시뮬레이션)</li>
-          <li><b>암기 키워드</b>: random = 랜덤</li>
+          <li>모든 메서드가 static</li>
+          <li>기본적인 수학 연산 제공</li>
+          <li>삼각함수 지원</li>
+          <li>지수/로그 함수 지원</li>
         </ul>
-        <div class="code-block">
-  double r = Math.random();<br>
-  System.out.println(r); // 0.0 이상 1.0 미만 값
+      </div>
+    </section>
+
+    <!-- 기본 연산 섹션 -->
+    <section class="section">
+      <h2>🔍 기본 연산</h2>
+      
+      <div class="method-grid">
+        <!-- abs() -->
+        <div class="card">
+          <h3>abs()</h3>
+          <div class="tag">기본</div>
+          <div class="tag">자주 사용</div>
+          
+          <div class="code-block">
+            <span class="method-name">abs</span>(<span class="parameter">double a</span>)
+          </div>
+          
+          <p>숫자의 절대값을 반환합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+double num = -5.7;<br>
+double abs = Math.abs(num); // 5.7
+            </div>
+          </div>
+        </div>
+
+        <!-- max() / min() -->
+        <div class="card">
+          <h3>max() / min()</h3>
+          <div class="tag">기본</div>
+          <div class="tag">자주 사용</div>
+          
+          <div class="code-block">
+            <span class="method-name">max</span>(<span class="parameter">double a, double b</span>)<br>
+            <span class="method-name">min</span>(<span class="parameter">double a, double b</span>)
+          </div>
+          
+          <div class="example-box">
+            <div class="code-block">
+double max = Math.max(10.5, 20.7); // 20.7<br>
+double min = Math.min(10.5, 20.7); // 10.5
+            </div>
+          </div>
+        </div>
+
+        <!-- pow() -->
+        <div class="card">
+          <h3>pow()</h3>
+          <div class="tag">지수</div>
+          <div class="tag">자주 사용</div>
+          
+          <div class="code-block">
+            <span class="method-name">pow</span>(<span class="parameter">double base, double exponent</span>)
+          </div>
+          
+          <p>거듭제곱을 계산합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+double result = Math.pow(2, 3); // 8.0 (2³)
+            </div>
+          </div>
         </div>
       </div>
-  
-      <div class="card">
-        <h3>🛠️ Math.round()</h3>
-        <ul>
-          <li><b>풀네임</b>: Math.round</li>
-          <li><b>한글 뜻</b>: 반올림</li>
-          <li><b>속한 클래스</b>: Math</li>
-          <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
-          <li><b>사용빈도</b>: 자주</li>
-          <li><b>주요 사용처</b>: 소수점 반올림</li>
-          <li><b>암기 키워드</b>: round = 반올림</li>
-        </ul>
-        <div class="code-block">
-  long r = Math.round(3.6);<br>
-  System.out.println(r); // 4
+    </section>
+
+    <!-- 반올림/올림/내림 섹션 -->
+    <section class="section">
+      <h2>🎯 반올림/올림/내림</h2>
+      
+      <div class="method-grid">
+        <!-- round() -->
+        <div class="card">
+          <h3>round()</h3>
+          <div class="tag">반올림</div>
+          <div class="tag">자주 사용</div>
+          
+          <div class="code-block">
+            <span class="method-name">round</span>(<span class="parameter">double a</span>)
+          </div>
+          
+          <p>가장 가까운 정수로 반올림합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+double num = 3.7;<br>
+long rounded = Math.round(num); // 4
+            </div>
+          </div>
+        </div>
+
+        <!-- ceil() -->
+        <div class="card">
+          <h3>ceil()</h3>
+          <div class="tag">올림</div>
+          
+          <div class="code-block">
+            <span class="method-name">ceil</span>(<span class="parameter">double a</span>)
+          </div>
+          
+          <p>주어진 숫자보다 크거나 같은 가장 작은 정수를 반환합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+double num = 3.1;<br>
+double ceiling = Math.ceil(num); // 4.0
+            </div>
+          </div>
+        </div>
+
+        <!-- floor() -->
+        <div class="card">
+          <h3>floor()</h3>
+          <div class="tag">내림</div>
+          
+          <div class="code-block">
+            <span class="method-name">floor</span>(<span class="parameter">double a</span>)
+          </div>
+          
+          <p>주어진 숫자보다 작거나 같은 가장 큰 정수를 반환합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+double num = 3.9;<br>
+double floored = Math.floor(num); // 3.0
+            </div>
+          </div>
         </div>
       </div>
-  
-      <div class="card">
-        <h3>🛠️ Math.floor()</h3>
-        <ul>
-          <li><b>풀네임</b>: Math.floor</li>
-          <li><b>한글 뜻</b>: 내림(버림)</li>
-          <li><b>속한 클래스</b>: Math</li>
-          <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
-          <li><b>사용빈도</b>: 자주</li>
-          <li><b>주요 사용처</b>: 소수점 이하 버릴 때</li>
-          <li><b>암기 키워드</b>: floor = 바닥</li>
-        </ul>
-        <div class="code-block">
-  double r = Math.floor(3.9);<br>
-  System.out.println(r); // 3.0
+    </section>
+
+    <!-- 삼각함수 섹션 -->
+    <section class="section">
+      <h2>📐 삼각함수</h2>
+      
+      <div class="method-grid">
+        <!-- sin() -->
+        <div class="card">
+          <h3>sin()</h3>
+          <div class="tag">삼각함수</div>
+          
+          <div class="code-block">
+            <span class="method-name">sin</span>(<span class="parameter">double theta</span>)
+          </div>
+          
+          <p>각도의 사인값을 반환합니다 (라디안 단위).</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+double angle = Math.PI / 2; // 90도<br>
+double result = Math.sin(angle); // 1.0
+            </div>
+          </div>
+        </div>
+
+        <!-- cos() -->
+        <div class="card">
+          <h3>cos()</h3>
+          <div class="tag">삼각함수</div>
+          
+          <div class="code-block">
+            <span class="method-name">cos</span>(<span class="parameter">double theta</span>)
+          </div>
+          
+          <p>각도의 코사인값을 반환합니다 (라디안 단위).</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+double angle = Math.PI; // 180도<br>
+double result = Math.cos(angle); // -1.0
+            </div>
+          </div>
+        </div>
+
+        <!-- tan() -->
+        <div class="card">
+          <h3>tan()</h3>
+          <div class="tag">삼각함수</div>
+          
+          <div class="code-block">
+            <span class="method-name">tan</span>(<span class="parameter">double theta</span>)
+          </div>
+          
+          <p>각도의 탄젠트값을 반환합니다 (라디안 단위).</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+double angle = Math.PI / 4; // 45도<br>
+double result = Math.tan(angle); // 1.0
+            </div>
+          </div>
         </div>
       </div>
-  
-      <div class="card">
-        <h3>🛠️ Math.ceil()</h3>
-        <ul>
-          <li><b>풀네임</b>: Math.ceil</li>
-          <li><b>한글 뜻</b>: 올림</li>
-          <li><b>속한 클래스</b>: Math</li>
-          <li><b>중요도</b>: ⭐⭐⭐⭐ (자주)</li>
-          <li><b>사용빈도</b>: 자주</li>
-          <li><b>주요 사용처</b>: 소수점 올림</li>
-          <li><b>암기 키워드</b>: ceil = 천장</li>
-        </ul>
+
+      <div class="tip">
+        <h3>각도 변환</h3>
         <div class="code-block">
-  double r = Math.ceil(3.1);<br>
-  System.out.println(r); // 4.0
+// 도(degree)를 라디안(radian)으로 변환
+double radian = degree * Math.PI / 180.0;<br>
+// 라디안을 도로 변환
+double degree = radian * 180.0 / Math.PI;
         </div>
       </div>
-  
-    </main>
-  </body>
-  </html>
-  
+    </section>
+
+    <!-- 로그/지수 함수 섹션 -->
+    <section class="section">
+      <h2>📈 로그/지수 함수</h2>
+      
+      <div class="method-grid">
+        <!-- log() -->
+        <div class="card">
+          <h3>log()</h3>
+          <div class="tag">로그</div>
+          
+          <div class="code-block">
+            <span class="method-name">log</span>(<span class="parameter">double a</span>)
+          </div>
+          
+          <p>자연로그(밑이 e인 로그)를 계산합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+double result = Math.log(Math.E); // 1.0
+            </div>
+          </div>
+        </div>
+
+        <!-- exp() -->
+        <div class="card">
+          <h3>exp()</h3>
+          <div class="tag">지수</div>
+          
+          <div class="code-block">
+            <span class="method-name">exp</span>(<span class="parameter">double a</span>)
+          </div>
+          
+          <p>e의 거듭제곱을 계산합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+double result = Math.exp(1); // 2.718... (e¹)
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 실전 예제 -->
+    <section class="section">
+      <h2>💡 실전 예제</h2>
+      
+      <div class="example-box">
+        <h3>1. 원의 넓이 계산</h3>
+        <div class="code-block">
+public static double calculateCircleArea(double radius) {
+    return Math.PI * Math.pow(radius, 2);
+}
+        </div>
+      </div>
+
+      <div class="example-box">
+        <h3>2. 두 점 사이의 거리 계산</h3>
+        <div class="code-block">
+public static double calculateDistance(double x1, double y1, double x2, double y2) {
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+}
+        </div>
+      </div>
+
+      <div class="example-box">
+        <h3>3. 숫자 반올림 (소수점 지정)</h3>
+        <div class="code-block">
+public static double round(double value, int places) {
+    double scale = Math.pow(10, places);
+    return Math.round(value * scale) / scale;
+}
+        </div>
+      </div>
+    </section>
+
+    <!-- 성능 최적화 팁 -->
+    <section class="section">
+      <h2>⚡ 성능 최적화 팁</h2>
+      
+      <div class="tip">
+        <h3>1. 상수 활용</h3>
+        <p>자주 사용하는 값은 Math 클래스의 상수를 활용하세요.</p>
+        <div class="code-block">
+// Bad
+double pi = 3.14159;<br>
+// Good
+double pi = Math.PI;
+        </div>
+      </div>
+
+      <div class="tip">
+        <h3>2. BigDecimal 사용</h3>
+        <p>정확한 소수점 계산이 필요한 경우 BigDecimal을 사용하세요.</p>
+        <div class="code-block">
+// 부정확할 수 있음
+double result = 0.1 + 0.2;<br>
+// 정확한 계산
+BigDecimal a = new BigDecimal("0.1");
+BigDecimal b = new BigDecimal("0.2");
+BigDecimal result = a.add(b);
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

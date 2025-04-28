@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON API 가이드</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .section {
+            background: var(--vscode-darker);
+            border: 1px solid var(--vscode-highlight);
+            border-radius: 8px;
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 1000px;
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .example-box {
+            background: var(--vscode-bg);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .note {
+            border-left: 4px solid var(--vscode-blue);
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(0, 122, 204, 0.1);
+        }
+
+        .warning {
+            border-left: 4px solid #f97583;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(249, 117, 131, 0.1);
+        }
+
+        .tip {
+            border-left: 4px solid #85e89d;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(133, 232, 157, 0.1);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 0.75rem;
+            border: 1px solid var(--vscode-highlight);
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: var(--vscode-bg);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🔄 JSON API 가이드</h1>
+        <nav>
+            <a href="index.html" class="button">홈으로 돌아가기</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 개요 섹션 -->
+        <section class="section">
+            <h2>📚 Jackson 라이브러리 개요</h2>
+            <p>Jackson은 Java에서 가장 널리 사용되는 JSON 처리 라이브러리입니다.</p>
+            
+            <div class="note">
+                <h3>주요 모듈</h3>
+                <ul>
+                    <li>jackson-core: 기본 스트리밍 API</li>
+                    <li>jackson-databind: 데이터 바인딩 기능</li>
+                    <li>jackson-annotations: 어노테이션 지원</li>
+                </ul>
+            </div>
+
+            <div class="example-box">
+                <h3>의존성 추가</h3>
+                <div class="code-block">
+&lt;dependency&gt;
+    &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+    &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+    &lt;version&gt;2.15.2&lt;/version&gt;
+&lt;/dependency&gt;
+                </div>
+            </div>
+        </section>
+
+        <!-- 기본 사용법 -->
+        <section class="section">
+            <h2>🔰 기본 사용법</h2>
+            
+            <div class="method-grid">
+                <!-- ObjectMapper 생성 -->
+                <div class="card">
+                    <h3>ObjectMapper 초기화</h3>
+                    <div class="code-block">
+ObjectMapper mapper = new ObjectMapper();
+                    </div>
+                </div>
+
+                <!-- JSON 직렬화 -->
+                <div class="card">
+                    <h3>객체를 JSON으로 변환</h3>
+                    <div class="code-block">
+String json = mapper.writeValueAsString(object);
+                    </div>
+                </div>
+
+                <!-- JSON 역직렬화 -->
+                <div class="card">
+                    <h3>JSON을 객체로 변환</h3>
+                    <div class="code-block">
+MyClass obj = mapper.readValue(json, MyClass.class);
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 어노테이션 -->
+        <section class="section">
+            <h2>🏷️ 주요 어노테이션</h2>
+            
+            <table class="comparison-table">
+                <tr>
+                    <th>어노테이션</th>
+                    <th>설명</th>
+                    <th>예제</th>
+                </tr>
+                <tr>
+                    <td>@JsonProperty</td>
+                    <td>JSON 필드명 지정</td>
+                    <td>@JsonProperty("first_name")</td>
+                </tr>
+                <tr>
+                    <td>@JsonIgnore</td>
+                    <td>직렬화/역직렬화 제외</td>
+                    <td>@JsonIgnore</td>
+                </tr>
+                <tr>
+                    <td>@JsonFormat</td>
+                    <td>날짜/시간 형식 지정</td>
+                    <td>@JsonFormat(pattern = "yyyy-MM-dd")</td>
+                </tr>
+                <tr>
+                    <td>@JsonInclude</td>
+                    <td>null 값 처리 방식</td>
+                    <td>@JsonInclude(NON_NULL)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 고급 기능 -->
+        <section class="section">
+            <h2>🚀 고급 기능</h2>
+            
+            <div class="example-box">
+                <h3>1. 컬렉션 처리</h3>
+                <div class="code-block">
+// List 직렬화
+List<MyClass> list = Arrays.asList(obj1, obj2);
+String json = mapper.writeValueAsString(list);
+
+// List 역직렬화
+List<MyClass> result = mapper.readValue(json,
+    new TypeReference<List<MyClass>>() {});
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h3>2. 트리 모델 사용</h3>
+                <div class="code-block">
+JsonNode node = mapper.readTree(json);
+String name = node.get("name").asText();
+int age = node.get("age").asInt();
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h3>3. ObjectMapper 설정</h3>
+                <div class="code-block">
+mapper.setSerializationInclusion(NON_NULL);
+mapper.configure(
+    DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, 
+    false);
+                </div>
+            </div>
+        </section>
+
+        <!-- 실전 예제 -->
+        <section class="section">
+            <h2>💡 실전 예제</h2>
+            
+            <div class="example-box">
+                <h3>1. REST API 응답 처리</h3>
+                <div class="code-block">
+@RestController
+public class UserController {
+    @GetMapping("/users/{id}")
+    public User getUser(@PathVariable Long id) {
+        // User 객체는 자동으로 JSON으로 변환됨
+        return userService.findById(id);
+    }
+}
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h3>2. 중첩된 객체 처리</h3>
+                <div class="code-block">
+public class User {
+    private String name;
+    private Address address;
+    // getters, setters
+}
+
+public class Address {
+    private String street;
+    private String city;
+    // getters, setters
+}
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h3>3. 날짜 처리</h3>
+                <div class="code-block">
+public class Event {
+    @JsonFormat(
+        pattern = "yyyy-MM-dd HH:mm:ss",
+        timezone = "Asia/Seoul"
+    )
+    private LocalDateTime datetime;
+}
+                </div>
+            </div>
+        </section>
+
+        <!-- 성능 최적화 -->
+        <section class="section">
+            <h2>⚡ 성능 최적화 팁</h2>
+            
+            <div class="tip">
+                <h3>1. ObjectMapper 재사용</h3>
+                <p>ObjectMapper는 스레드 안전하므로 싱글톤으로 관리하세요.</p>
+            </div>
+
+            <div class="tip">
+                <h3>2. 불필요한 필드 제외</h3>
+                <p>@JsonIgnore나 @JsonIgnoreProperties를 활용하세요.</p>
+            </div>
+
+            <div class="tip">
+                <h3>3. 버퍼 크기 최적화</h3>
+                <p>대용량 JSON 처리 시 스트리밍 API를 사용하세요.</p>
+            </div>
+
+            <div class="warning">
+                <h3>주의사항</h3>
+                <ul>
+                    <li>순환 참조 주의</li>
+                    <li>예외 처리 필수</li>
+                    <li>날짜/시간 형식 주의</li>
+                    <li>보안 취약점 주의</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

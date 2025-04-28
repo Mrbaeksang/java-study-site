@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File API 가이드</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .section {
+            background: var(--vscode-darker);
+            border: 1px solid var(--vscode-highlight);
+            border-radius: 8px;
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 1000px;
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .example-box {
+            background: var(--vscode-bg);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Consolas', monospace;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .note {
+            border-left: 4px solid var(--vscode-blue);
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(0, 122, 204, 0.1);
+        }
+
+        .warning {
+            border-left: 4px solid #f97583;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(249, 117, 131, 0.1);
+        }
+
+        .tip {
+            border-left: 4px solid #85e89d;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(133, 232, 157, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📁 File API 가이드</h1>
+        <nav>
+            <a href="index.html" class="button">홈으로 돌아가기</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 개요 섹션 -->
+        <section class="section">
+            <h2>📚 File API 개요</h2>
+            <p>Java의 File API는 파일과 디렉토리를 다루는 기본적인 기능을 제공합니다.</p>
+            
+            <div class="note">
+                <h3>주요 클래스</h3>
+                <ul>
+                    <li>java.io.File: 파일 시스템의 파일과 디렉토리를 표현</li>
+                    <li>java.nio.file.Path: 현대적인 파일 경로 표현</li>
+                    <li>java.nio.file.Files: 파일 작업을 위한 유틸리티 메서드 제공</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- File 클래스 -->
+        <section class="section">
+            <h2>📄 File 클래스 기본 사용법</h2>
+            
+            <div class="method-grid">
+                <!-- 파일 생성 -->
+                <div class="card">
+                    <h3>파일 생성</h3>
+                    <div class="code-block">
+File file = new File("test.txt");
+boolean created = file.createNewFile();
+                    </div>
+                </div>
+
+                <!-- 파일 정보 확인 -->
+                <div class="card">
+                    <h3>파일 정보 확인</h3>
+                    <div class="code-block">
+boolean exists = file.exists();
+long length = file.length();
+boolean isDirectory = file.isDirectory();
+                    </div>
+                </div>
+
+                <!-- 디렉토리 생성 -->
+                <div class="card">
+                    <h3>디렉토리 생성</h3>
+                    <div class="code-block">
+File dir = new File("newDir");
+boolean created = dir.mkdir();
+// 여러 단계의 디렉토리 생성
+boolean created = dir.mkdirs();
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NIO.2 API -->
+        <section class="section">
+            <h2>🔄 NIO.2 API (현대적인 방식)</h2>
+            
+            <div class="example-box">
+                <h3>Path 사용</h3>
+                <div class="code-block">
+// 경로 생성
+Path path = Paths.get("test.txt");
+
+// 경로 결합
+Path fullPath = Paths.get("/home", "user", "docs");
+
+// 상대 경로
+Path relativePath = Paths.get("parent").resolve("child");
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h3>Files 유틸리티</h3>
+                <div class="code-block">
+// 파일 쓰기
+Files.write(path, content.getBytes());
+
+// 파일 읽기
+List<String> lines = Files.readAllLines(path);
+
+// 파일 복사
+Files.copy(source, target);
+
+// 파일 이동
+Files.move(source, target);
+                </div>
+            </div>
+        </section>
+
+        <!-- 파일 입출력 -->
+        <section class="section">
+            <h2>📝 파일 입출력</h2>
+            
+            <div class="method-grid">
+                <!-- 텍스트 파일 읽기 -->
+                <div class="card">
+                    <h3>텍스트 파일 읽기</h3>
+                    <div class="code-block">
+try (BufferedReader reader = 
+        new BufferedReader(
+            new FileReader("input.txt"))) {
+    String line;
+    while ((line = reader.readLine()) != null) {
+        System.out.println(line);
+    }
+}
+                    </div>
+                </div>
+
+                <!-- 텍스트 파일 쓰기 -->
+                <div class="card">
+                    <h3>텍스트 파일 쓰기</h3>
+                    <div class="code-block">
+try (BufferedWriter writer = 
+        new BufferedWriter(
+            new FileWriter("output.txt"))) {
+    writer.write("Hello, File IO!");
+    writer.newLine();
+}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 성능 최적화 -->
+        <section class="section">
+            <h2>⚡ 성능 최적화 팁</h2>
+            
+            <div class="tip">
+                <h3>1. 버퍼 사용</h3>
+                <p>BufferedReader와 BufferedWriter를 사용하여 I/O 성능을 향상시키세요.</p>
+            </div>
+
+            <div class="tip">
+                <h3>2. try-with-resources 사용</h3>
+                <p>자원을 자동으로 닫기 위해 try-with-resources를 사용하세요.</p>
+            </div>
+
+            <div class="tip">
+                <h3>3. NIO 사용</h3>
+                <p>대용량 파일 처리 시 NIO의 Channel과 Buffer를 활용하세요.</p>
+            </div>
+
+            <div class="warning">
+                <h3>주의사항</h3>
+                <ul>
+                    <li>항상 파일 스트림을 닫아주세요</li>
+                    <li>예외 처리를 적절히 하세요</li>
+                    <li>파일 경로는 플랫폼 독립적으로 처리하세요</li>
+                    <li>대용량 파일은 청크 단위로 처리하세요</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 실전 예제 -->
+        <section class="section">
+            <h2>💡 실전 예제</h2>
+            
+            <div class="example-box">
+                <h3>1. 파일 복사 유틸리티</h3>
+                <div class="code-block">
+public static void copyFile(String source, String dest) 
+        throws IOException {
+    Path sourcePath = Paths.get(source);
+    Path destPath = Paths.get(dest);
+    Files.copy(sourcePath, destPath, 
+        StandardCopyOption.REPLACE_EXISTING);
+}
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h3>2. 디렉토리 탐색</h3>
+                <div class="code-block">
+Files.walk(Paths.get("directory"))
+     .filter(Files::isRegularFile)
+     .forEach(System.out::println);
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h3>3. 파일 감시</h3>
+                <div class="code-block">
+WatchService watcher = 
+    FileSystems.getDefault().newWatchService();
+Path dir = Paths.get("directory");
+dir.register(watcher, 
+    StandardWatchEventKinds.ENTRY_CREATE,
+    StandardWatchEventKinds.ENTRY_DELETE,
+    StandardWatchEventKinds.ENTRY_MODIFY);
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

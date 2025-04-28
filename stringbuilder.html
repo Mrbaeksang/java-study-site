@@ -2,180 +2,359 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>StringBuilder </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StringBuilder API 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #121212;
-      font-family: 'Noto Sans', 'Roboto', sans-serif;
-      color: #e0e0e0;
-      text-align: center;
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
     }
-    header {
-      padding: 40px 20px;
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
     }
-    h1 {
-      font-size: 36px;
-      margin-bottom: 40px;
+
+    .example-box {
+      background: var(--vscode-bg);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1rem 0;
     }
-    main {
-      padding: 20px;
+
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
     }
-    .card {
-      background-color: #1e1e1e;
-      margin: 20px auto;
-      padding: 20px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
+
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 0.5rem;
+      background: var(--vscode-highlight);
+    }
+
+    .performance-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    .performance-table th,
+    .performance-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--vscode-highlight);
       text-align: left;
     }
-    .card ul {
-      list-style: none;
-      padding: 0;
-    }
-    .card li {
-      margin-bottom: 8px;
-    }
-    .code-block {
-      background-color: #2c2c2c;
-      padding: 12px;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 16px;
-      font-weight: bold;
-      color: #e0e0e0;
-      white-space: pre-line;
-    }
-    hr {
-      margin: 40px 0;
-      border: 0;
-      height: 1px;
-      background: #333;
+
+    .performance-table th {
+      background: var(--vscode-bg);
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>🧵 StringBuilder / StringBuffer 정리</h1>
+    <h1>🔧 StringBuilder API 완벽 가이드</h1>
+    <nav>
+      <a href="index.html" class="button">홈으로 돌아가기</a>
+    </nav>
   </header>
+
   <main>
-
-    <div class="card">
-      <h3>🛠️ StringBuilder.append()</h3>
-      <ul>
-        <li><b>풀네임</b>: StringBuilder.append</li>
-        <li><b>한글 뜻</b>: 문자열 끝에 추가</li>
-        <li><b>속한 클래스</b>: StringBuilder</li>
-        <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
-        <li><b>사용빈도</b>: 매우 자주</li>
-        <li><b>주요 사용처</b>: 반복 문자열 추가 시 (예: 반복문 안에서)</li>
-        <li><b>암기 키워드</b>: append = 뒤에 붙이기</li>
-      </ul>
-      <div class="code-block">
-StringBuilder sb = new StringBuilder();<br>
-sb.append("Hello");<br>
-sb.append(" World");<br>
-System.out.println(sb.toString()); // Hello World
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>🛠️ StringBuilder.insert()</h3>
-      <ul>
-        <li><b>풀네임</b>: StringBuilder.insert</li>
-        <li><b>한글 뜻</b>: 특정 위치에 문자열 삽입</li>
-        <li><b>속한 클래스</b>: StringBuilder</li>
-        <li><b>중요도</b>: ⭐⭐⭐ (가끔)</li>
-        <li><b>사용빈도</b>: 가끔</li>
-        <li><b>주요 사용처</b>: 중간에 문자열 추가할 때</li>
-        <li><b>암기 키워드</b>: insert = 삽입</li>
-      </ul>
-      <div class="code-block">
-StringBuilder sb = new StringBuilder("Hello");<br>
-sb.insert(5, " World");<br>
-System.out.println(sb.toString()); // Hello World
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>🛠️ StringBuilder.delete()</h3>
-      <ul>
-        <li><b>풀네임</b>: StringBuilder.delete</li>
-        <li><b>한글 뜻</b>: 문자열 일부 삭제</li>
-        <li><b>속한 클래스</b>: StringBuilder</li>
-        <li><b>중요도</b>: ⭐⭐⭐ (가끔)</li>
-        <li><b>사용빈도</b>: 가끔</li>
-        <li><b>주요 사용처</b>: 필요 없는 문자열 제거할 때</li>
-        <li><b>암기 키워드</b>: delete = 삭제</li>
-      </ul>
-      <div class="code-block">
-StringBuilder sb = new StringBuilder("Hello World");<br>
-sb.delete(5, 11);<br>
-System.out.println(sb.toString()); // Hello
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>🛠️ StringBuilder.replace()</h3>
-      <ul>
-        <li><b>풀네임</b>: StringBuilder.replace</li>
-        <li><b>한글 뜻</b>: 문자열 일부 교체</li>
-        <li><b>속한 클래스</b>: StringBuilder</li>
-        <li><b>중요도</b>: ⭐⭐⭐ (가끔)</li>
-        <li><b>사용빈도</b>: 가끔</li>
-        <li><b>주요 사용처</b>: 특정 부분 문자열 교체할 때</li>
-        <li><b>암기 키워드</b>: replace = 교체</li>
-      </ul>
-      <div class="code-block">
-StringBuilder sb = new StringBuilder("Hello World");<br>
-sb.replace(6, 11, "Java");<br>
-System.out.println(sb.toString()); // Hello Java
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>🛠️ StringBuilder.reverse()</h3>
-      <ul>
-        <li><b>풀네임</b>: StringBuilder.reverse</li>
-        <li><b>한글 뜻</b>: 문자열 뒤집기</li>
-        <li><b>속한 클래스</b>: StringBuilder</li>
-        <li><b>중요도</b>: ⭐⭐ (드물게)</li>
-        <li><b>사용빈도</b>: 드물게</li>
-        <li><b>주요 사용처</b>: 문자열을 뒤집을 때</li>
-        <li><b>암기 키워드</b>: reverse = 뒤집기</li>
-      </ul>
-      <div class="code-block">
-StringBuilder sb = new StringBuilder("Hello");<br>
-sb.reverse();<br>
-System.out.println(sb.toString()); // olleH
-      </div>
-
-      <div class="card">
-        <h3>🛠️ StringBuilder.toString()</h3>
+    <!-- 개요 섹션 -->
+    <section class="section">
+      <h2>📚 StringBuilder 개요</h2>
+      <p>StringBuilder는 가변(mutable) 문자열을 효율적으로 처리하기 위한 클래스입니다.</p>
+      
+      <div class="note">
+        <h3>주요 특징</h3>
         <ul>
-          <li><b>풀네임</b>: StringBuilder.toString</li>
-          <li><b>한글 뜻</b>: StringBuilder를 문자열(String)로 변환</li>
-          <li><b>속한 클래스</b>: StringBuilder</li>
-          <li><b>중요도</b>: ⭐⭐⭐⭐⭐ (매우 자주)</li>
-          <li><b>사용빈도</b>: 매우 자주</li>
-          <li><b>주요 사용처</b>: 최종 결과물을 String 타입으로 얻을 때</li>
-          <li><b>암기 키워드</b>: toString = 문자열로 변환</li>
+          <li>문자열 수정 가능 (가변)</li>
+          <li>스레드 안전하지 않음 (단일 스레드에서 사용)</li>
+          <li>문자열 연산 성능 최적화</li>
+          <li>메모리 효율성</li>
         </ul>
-        <div class="code-block">
-      StringBuilder sb = new StringBuilder();<br>
-      sb.append("Hello");<br>
-      String result = sb.toString();<br>
-      System.out.println(result); // Hello
+      </div>
+
+      <div class="warning">
+        <h3>String vs StringBuilder</h3>
+        <table class="performance-table">
+          <tr>
+            <th>특성</th>
+            <th>String</th>
+            <th>StringBuilder</th>
+          </tr>
+          <tr>
+            <td>가변성</td>
+            <td>불변(Immutable)</td>
+            <td>가변(Mutable)</td>
+          </tr>
+          <tr>
+            <td>스레드 안전성</td>
+            <td>안전</td>
+            <td>불안전</td>
+          </tr>
+          <tr>
+            <td>성능</td>
+            <td>수정 시 새 객체 생성</td>
+            <td>수정 시 기존 객체 재사용</td>
+          </tr>
+          <tr>
+            <td>메모리</td>
+            <td>수정마다 새로운 메모리</td>
+            <td>동적으로 크기 조절</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 기본 메서드 -->
+    <section class="section">
+      <h2>🛠 기본 메서드</h2>
+      
+      <div class="method-grid">
+        <!-- append -->
+        <div class="card">
+          <h3>append()</h3>
+          <div class="tag">추가</div>
+          <div class="tag">자주 사용</div>
+          
+          <div class="code-block">
+            <span class="method-name">append</span>(<span class="parameter">String str</span>)
+          </div>
+          
+          <p>문자열 끝에 새로운 내용을 추가합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+StringBuilder sb = new StringBuilder("Hello");<br>
+sb.append(" World"); // "Hello World"
+            </div>
+          </div>
+        </div>
+
+        <!-- insert -->
+        <div class="card">
+          <h3>insert()</h3>
+          <div class="tag">삽입</div>
+          
+          <div class="code-block">
+            <span class="method-name">insert</span>(<span class="parameter">int offset, String str</span>)
+          </div>
+          
+          <p>지정된 위치에 문자열을 삽입합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+StringBuilder sb = new StringBuilder("Hello World");<br>
+sb.insert(5, " Beautiful"); // "Hello Beautiful World"
+            </div>
+          </div>
+        </div>
+
+        <!-- delete -->
+        <div class="card">
+          <h3>delete()</h3>
+          <div class="tag">삭제</div>
+          
+          <div class="code-block">
+            <span class="method-name">delete</span>(<span class="parameter">int start, int end</span>)
+          </div>
+          
+          <p>지정된 범위의 문자를 삭제합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+StringBuilder sb = new StringBuilder("Hello World");<br>
+sb.delete(5, 11); // "Hello"
+            </div>
+          </div>
         </div>
       </div>
+    </section>
+
+    <!-- 수정 메서드 -->
+    <section class="section">
+      <h2>✏️ 수정 메서드</h2>
       
-    </div>
+      <div class="method-grid">
+        <!-- replace -->
+        <div class="card">
+          <h3>replace()</h3>
+          <div class="tag">수정</div>
+          
+          <div class="code-block">
+            <span class="method-name">replace</span>(<span class="parameter">int start, int end, String str</span>)
+          </div>
+          
+          <p>지정된 범위의 문자열을 새로운 문자열로 교체합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+StringBuilder sb = new StringBuilder("Hello World");<br>
+sb.replace(6, 11, "Java"); // "Hello Java"
+            </div>
+          </div>
+        </div>
 
-    <hr>
+        <!-- reverse -->
+        <div class="card">
+          <h3>reverse()</h3>
+          <div class="tag">변환</div>
+          
+          <div class="code-block">
+            <span class="method-name">reverse</span>()
+          </div>
+          
+          <p>문자열을 역순으로 뒤집습니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+StringBuilder sb = new StringBuilder("Hello");<br>
+sb.reverse(); // "olleH"
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <!-- 실전 예제 -->
+    <section class="section">
+      <h2>💡 실전 예제</h2>
+      
+      <div class="example-box">
+        <h3>1. CSV 문자열 생성</h3>
+        <div class="code-block">
+public static String createCSV(String... items) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < items.length; i++) {
+        sb.append(items[i]);
+        if (i < items.length - 1) {
+            sb.append(",");
+        }
+    }
+    return sb.toString();
+}
+
+// 사용 예
+String csv = createCSV("apple", "banana", "orange"); // "apple,banana,orange"
+        </div>
+      </div>
+
+      <div class="example-box">
+        <h3>2. 문자열 반복</h3>
+        <div class="code-block">
+public static String repeat(String str, int times) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < times; i++) {
+        sb.append(str);
+    }
+    return sb.toString();
+}
+
+// 사용 예
+String repeated = repeat("Ha", 3); // "HaHaHa"
+        </div>
+      </div>
+
+      <div class="example-box">
+        <h3>3. URL 파라미터 생성</h3>
+        <div class="code-block">
+public static String buildUrl(String baseUrl, Map<String, String> params) {
+    StringBuilder sb = new StringBuilder(baseUrl);
+    if (!params.isEmpty()) {
+        sb.append('?');
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            sb.append(entry.getKey())
+              .append('=')
+              .append(entry.getValue())
+              .append('&');
+        }
+        sb.setLength(sb.length() - 1); // 마지막 & 제거
+    }
+    return sb.toString();
+}
+
+// 사용 예
+Map<String, String> params = new HashMap<>();
+params.put("name", "John");
+params.put("age", "30");
+String url = buildUrl("http://example.com", params);
+// "http://example.com?name=John&age=30"
+        </div>
+      </div>
+    </section>
+
+    <!-- 성능 최적화 팁 -->
+    <section class="section">
+      <h2>⚡ 성능 최적화 팁</h2>
+      
+      <div class="tip">
+        <h3>1. 초기 용량 설정</h3>
+        <p>예상되는 최종 문자열 길이로 초기 용량을 설정하면 메모리 재할당을 줄일 수 있습니다.</p>
+        <div class="code-block">
+// 권장
+StringBuilder sb = new StringBuilder(1000);<br>
+// 비권장
+StringBuilder sb = new StringBuilder();
+        </div>
+      </div>
+
+      <div class="tip">
+        <h3>2. 메서드 체이닝 활용</h3>
+        <p>여러 작업을 한 번에 수행할 수 있습니다.</p>
+        <div class="code-block">
+StringBuilder sb = new StringBuilder()
+    .append("Hello")
+    .append(" ")
+    .append("World")
+    .append("!");
+        </div>
+      </div>
+
+      <div class="warning">
+        <h3>주의사항</h3>
+        <ul>
+          <li>스레드 안전성이 필요한 경우 StringBuffer 사용</li>
+          <li>불필요한 toString() 호출 피하기</li>
+          <li>적절한 초기 용량 설정으로 성능 최적화</li>
+        </ul>
+      </div>
+    </section>
   </main>
 </body>
 </html>

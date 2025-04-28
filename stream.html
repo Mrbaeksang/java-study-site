@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stream API 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .example-box {
+      background: var(--vscode-bg);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--vscode-highlight);
+      text-align: left;
+    }
+
+    .comparison-table th {
+      background: var(--vscode-bg);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 0.5rem;
+      background: var(--vscode-highlight);
+    }
+
+    .pipeline-diagram {
+      margin: 2rem 0;
+      padding: 1rem;
+      background: var(--vscode-bg);
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .pipeline-step {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      margin: 0.5rem;
+      background: var(--vscode-darker);
+      border-radius: 4px;
+    }
+
+    .pipeline-arrow {
+      display: inline-block;
+      margin: 0 0.5rem;
+      color: var(--vscode-blue);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌊 Stream API 완벽 가이드</h1>
+    <nav>
+      <a href="index.html" class="button">홈으로 돌아가기</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 개요 섹션 -->
+    <section class="section">
+      <h2>📚 Stream 개요</h2>
+      <p>Stream API는 컬렉션의 요소를 함수형 스타일로 처리할 수 있게 해주는 현대적인 방식입니다.</p>
+      
+      <div class="note">
+        <h3>주요 특징</h3>
+        <ul>
+          <li>파이프라인 형태의 연산</li>
+          <li>중간 연산과 최종 연산</li>
+          <li>지연 평가 (Lazy Evaluation)</li>
+          <li>내부 반복</li>
+          <li>병렬 처리 지원</li>
+        </ul>
+      </div>
+
+      <div class="pipeline-diagram">
+        <div class="pipeline-step">컬렉션</div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step">필터링</div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step">변환</div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step">수집</div>
+      </div>
+
+      <div class="warning">
+        <h3>Stream vs Collection</h3>
+        <table class="comparison-table">
+          <tr>
+            <th>특성</th>
+            <th>Stream</th>
+            <th>Collection</th>
+          </tr>
+          <tr>
+            <td>데이터 접근</td>
+            <td>한 번만</td>
+            <td>여러 번</td>
+          </tr>
+          <tr>
+            <td>처리 방식</td>
+            <td>함수형</td>
+            <td>반복문</td>
+          </tr>
+          <tr>
+            <td>처리 시점</td>
+            <td>지연 처리</td>
+            <td>즉시 처리</td>
+          </tr>
+          <tr>
+            <td>병렬 처리</td>
+            <td>쉬움</td>
+            <td>어려움</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 중간 연산 -->
+    <section class="section">
+      <h2>🔄 중간 연산 (Intermediate Operations)</h2>
+      
+      <div class="method-grid">
+        <!-- filter -->
+        <div class="card">
+          <h3>filter()</h3>
+          <div class="tag">필터링</div>
+          <div class="tag">자주 사용</div>
+          
+          <div class="code-block">
+            <span class="method-name">filter</span>(<span class="parameter">Predicate<T> predicate</span>)
+          </div>
+          
+          <p>조건에 맞는 요소만 선택합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+numbers.stream()
+    .filter(n -> n > 0)
+    .collect(Collectors.toList());
+            </div>
+          </div>
+        </div>
+
+        <!-- map -->
+        <div class="card">
+          <h3>map()</h3>
+          <div class="tag">변환</div>
+          <div class="tag">자주 사용</div>
+          
+          <div class="code-block">
+            <span class="method-name">map</span>(<span class="parameter">Function<T,R> mapper</span>)
+          </div>
+          
+          <p>각 요소를 변환합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+strings.stream()
+    .map(String::toUpperCase)
+    .collect(Collectors.toList());
+            </div>
+          </div>
+        </div>
+
+        <!-- sorted -->
+        <div class="card">
+          <h3>sorted()</h3>
+          <div class="tag">정렬</div>
+          
+          <div class="code-block">
+            <span class="method-name">sorted</span>()
+          </div>
+          
+          <p>요소를 정렬합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+numbers.stream()
+    .sorted()
+    .collect(Collectors.toList());
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 최종 연산 -->
+    <section class="section">
+      <h2>🎯 최종 연산 (Terminal Operations)</h2>
+      
+      <div class="method-grid">
+        <!-- collect -->
+        <div class="card">
+          <h3>collect()</h3>
+          <div class="tag">수집</div>
+          <div class="tag">자주 사용</div>
+          
+          <div class="code-block">
+            <span class="method-name">collect</span>(<span class="parameter">Collector<T,A,R> collector</span>)
+          </div>
+          
+          <p>결과를 컬렉션으로 변환합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+stream.collect(Collectors.toList());
+stream.collect(Collectors.toSet());
+stream.collect(Collectors.toMap(k -> k, v -> v));
+            </div>
+          </div>
+        </div>
+
+        <!-- reduce -->
+        <div class="card">
+          <h3>reduce()</h3>
+          <div class="tag">집계</div>
+          
+          <div class="code-block">
+            <span class="method-name">reduce</span>(<span class="parameter">BinaryOperator<T> accumulator</span>)
+          </div>
+          
+          <p>요소들을 하나로 줄입니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+numbers.stream()
+    .reduce(0, (a, b) -> a + b);
+            </div>
+          </div>
+        </div>
+
+        <!-- forEach -->
+        <div class="card">
+          <h3>forEach()</h3>
+          <div class="tag">순회</div>
+          
+          <div class="code-block">
+            <span class="method-name">forEach</span>(<span class="parameter">Consumer<T> action</span>)
+          </div>
+          
+          <p>각 요소에 대해 작업을 수행합니다.</p>
+          
+          <div class="example-box">
+            <div class="code-block">
+stream.forEach(System.out::println);
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 실전 예제 -->
+    <section class="section">
+      <h2>💡 실전 예제</h2>
+      
+      <div class="example-box">
+        <h3>1. 데이터 필터링과 변환</h3>
+        <div class="code-block">
+List<String> result = people.stream()
+    .filter(p -> p.getAge() > 20)
+    .map(Person::getName)
+    .collect(Collectors.toList());
+        </div>
+      </div>
+
+      <div class="example-box">
+        <h3>2. 그룹화와 집계</h3>
+        <div class="code-block">
+Map<String, Double> avgAgeByDept = employees.stream()
+    .collect(Collectors.groupingBy(
+        Employee::getDepartment,
+        Collectors.averagingInt(Employee::getAge)
+    ));
+        </div>
+      </div>
+
+      <div class="example-box">
+        <h3>3. 병렬 처리</h3>
+        <div class="code-block">
+long count = numbers.parallelStream()
+    .filter(n -> n % 2 == 0)
+    .map(n -> n * 2)
+    .count();
+        </div>
+      </div>
+    </section>
+
+    <!-- 성능 최적화 팁 -->
+    <section class="section">
+      <h2>⚡ 성능 최적화 팁</h2>
+      
+      <div class="tip">
+        <h3>1. 적절한 병렬 처리</h3>
+        <p>데이터가 충분히 많을 때만 병렬 스트림을 사용하세요.</p>
+        <div class="code-block">
+// 데이터가 많을 때
+hugeList.parallelStream()...
+
+// 데이터가 적을 때
+smallList.stream()...
+        </div>
+      </div>
+
+      <div class="tip">
+        <h3>2. 효율적인 연산 순서</h3>
+        <p>필터링을 먼저하고 변환하세요.</p>
+        <div class="code-block">
+// 좋음
+stream.filter(...).map(...)
+
+// 나쁨
+stream.map(...).filter(...)
+        </div>
+      </div>
+
+      <div class="warning">
+        <h3>주의사항</h3>
+        <ul>
+          <li>스트림은 한 번만 사용 가능</li>
+          <li>상태 변경 연산 주의</li>
+          <li>무한 스트림 사용 시 주의</li>
+          <li>병렬 스트림의 부작용 고려</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
