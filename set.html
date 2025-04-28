@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set (HashSet, LinkedHashSet, TreeSet) API 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* --- 기존 hashset.html 스타일 복사 --- */
+    .section {background: var(--vscode-darker);border: 1px solid var(--vscode-highlight);border-radius: 8px;margin: 2rem auto;padding: 2rem;max-width: 1000px;}
+    .method-table {width: 100%;border-collapse: collapse;margin: 1rem 0;}
+    .method-table th,.method-table td {padding: 0.75rem;border: 1px solid var(--vscode-highlight);text-align: left;}
+    .method-table th {background: var(--vscode-bg);}
+    .example-box {background: var(--vscode-bg);border-radius: 6px;padding: 1.5rem;margin: 1rem 0;}
+    .code-block {background: #2d2d2d;padding: 1rem;border-radius: 6px;font-family: 'Consolas', monospace;overflow-x: auto;margin: 1rem 0;}
+    .note {border-left: 4px solid var(--vscode-blue);padding: 1rem;margin: 1rem 0;background: rgba(0, 122, 204, 0.1);}
+    .warning {border-left: 4px solid #f97583;padding: 1rem;margin: 1rem 0;background: rgba(249, 117, 131, 0.1);}
+    .tip {border-left: 4px solid #85e89d;padding: 1rem;margin: 1rem 0;background: rgba(133, 232, 157, 0.1);}
+    .tag {display: inline-block;padding: 0.25rem 0.5rem;border-radius: 4px;font-size: 0.8rem;margin-right: 0.5rem;background: var(--vscode-highlight);}
+    h2 {color: var(--vscode-blue);border-bottom: 1px solid var(--vscode-highlight);padding-bottom: 0.5rem;margin: 2rem 0 1rem;}
+    h3 {color: var(--vscode-text);margin: 1.5rem 0 1rem;}
+    .important {color: #f97583;font-weight: bold;background: rgba(249,117,131,0.10);border-radius: 0.2em;padding: 0.07em 0.18em;}
+    .section h2 .highlight {font-size: 1.13em;}
+    .api-nav {position: sticky;top: 0;background: #181f2a;z-index: 120;display: flex;gap: 1.2rem;justify-content: center;align-items: center;padding: 1.1rem 0 1.1rem 0;border-bottom: 2px solid #2d3748;box-shadow: 0 2px 16px 0 rgba(0,0,0,0.13);flex-wrap: wrap;}
+    .api-nav-link {background: linear-gradient(90deg, #005fa3 60%, #3af 100%);color: #fff;border-radius: 2em;font-weight: 700;font-size: 1.08em;padding: 0.45em 1.5em;margin: 0 0.2em;border: none;box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);letter-spacing: 0.01em;transition: background 0.17s, color 0.17s, box-shadow 0.18s;display: flex;align-items: center;cursor: pointer;outline: none;text-decoration: none;}
+    .api-nav-link.active, .api-nav-link:focus, .api-nav-link:hover {background: linear-gradient(90deg, #0077cc 60%, #4fd5ff 100%);color: #fff;box-shadow: 0 4px 16px 0 rgba(0,122,204,0.17);text-decoration: none;}
+    .api-nav-next {background: #fff;color: #005fa3;border: 1.5px solid #005fa3;border-radius: 2em;font-weight: 700;font-size: 1.08em;padding: 0.45em 1.5em;margin-left: 2em;transition: background 0.17s, color 0.17s, border 0.16s, box-shadow 0.18s;box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);display: flex;align-items: center;cursor: pointer;outline: none;text-decoration: none;}
+    .api-nav-next:focus, .api-nav-next:hover {background: #005fa3;color: #fff;border: 1.5px solid #fff;box-shadow: 0 4px 16px 0 rgba(0,122,204,0.18);text-decoration: none;}
+    @media (max-width: 700px) {.api-nav {flex-direction: column;gap: 0.7rem;padding: 0.6rem 0 0.6rem 0;}.api-nav-link, .api-nav-next {margin: 0.2em 0;width: 90%;justify-content: center;}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔗 Set (HashSet, LinkedHashSet, TreeSet) API 완벽 가이드</h1>
+    <nav class="api-nav">
+      <a href="index.html" class="api-nav-link">홈</a>
+      <a href="string.html" class="api-nav-link">String</a>
+      <a href="stringbuilder.html" class="api-nav-link">StringBuilder</a>
+      <a href="arraylist.html" class="api-nav-link">ArrayList</a>
+      <a href="collections.html" class="api-nav-link">Collections</a>
+      <a href="comparator.html" class="api-nav-link">Comparator</a>
+      <a href="hashset.html" class="api-nav-link">HashSet</a>
+      <a href="set.html" class="api-nav-link active">Set</a>
+      <a href="hashmap.html" class="api-nav-link">HashMap</a>
+      <a href="map.html" class="api-nav-link">Map</a>
+      <a href="stream.html" class="api-nav-link">Stream</a>
+      <a href="iterator.html" class="api-nav-link">Iterator</a>
+      <a href="lambda.html" class="api-nav-next">다음장 ➡️</a>
+    </nav>
+  </header>
+  <main>
+    <section class="section">
+      <h2><span class="highlight">🍎 Set은 왜 필요할까?</span></h2>
+      <div class="example-box">
+        <b>실생활에서 Set이 필요한 순간!</b>
+        <ul>
+          <li>중복 없는 데이터가 필요할 때(예: 회원 ID, 유일 값 집합)</li>
+          <li>빠른 검색, 집합 연산(합집합, 교집합 등)을 할 때</li>
+          <li>순서 없는 데이터, 또는 정렬/입력순 유지가 필요할 때</li>
+        </ul>
+      </div>
+      <div class="code-block">
+// HashSet 예시
+Set<String> set = new HashSet<>();
+set.add("A"); set.add("B"); set.add("A");
+System.out.println(set); // [A, B]
+      </div>
+      <div class="note">
+        <b>Set은 <span class="important">중복 불가</span> & 다양한 구현체(HashSet, LinkedHashSet, TreeSet)를 가진 집합 자료구조입니다!</b>
+      </div>
+    </section>
+    <section class="section">
+      <h2>📖 Set, HashSet, LinkedHashSet, TreeSet 개요</h2>
+      <div class="example-box">
+        <ul>
+          <li><b>Set</b>: <span class="important">중복 불가</span>, <span class="important">순서 보장 X</span> (인터페이스)</li>
+          <li><b>HashSet</b>: 가장 빠른 일반 Set, 순서 없음</li>
+          <li><b>LinkedHashSet</b>: 입력 순서 유지</li>
+          <li><b>TreeSet</b>: 자동 정렬(Comparable/Comparator)</li>
+        </ul>
+      </div>
+    </section>
+    <section class="section">
+      <h2>🔑 주요 메서드 한눈에 보기 & 실전 활용</h2>
+      <div class="example-box">
+        <h3>add()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 새로운 값을 집합에 추가할 때. 이미 있으면 추가 안 됨(중복 불가).</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+Set<String> set = new HashSet<>();
+System.out.println(set.add("A")); // true
+System.out.println(set.add("A")); // false (이미 존재)
+System.out.println(set); // [A]
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 중복 제거, for문에서 조건부 add, 집합 연산 등</li>
+          <li><b>함께 쓰면 좋은 메서드:</b> contains(), size()</li>
+          <li><b>자주 하는 실수:</b> add()가 false 반환 → 이미 들어있는 값</li>
+        </ul>
+        <div class="tip">미션: "A", "B", "A"를 add한 후 set의 크기는?</div>
+        <details><summary>정답 보기</summary><div class="note">2 (중복 불가)</div></details>
+      </div>
+      <div class="example-box">
+        <h3>remove()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 집합에서 특정 값을 삭제할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+Set<String> set = new HashSet<>();
+set.add("A"); set.add("B");
+System.out.println(set.remove("B")); // true
+System.out.println(set.remove("C")); // false
+System.out.println(set); // [A]
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 조건부 삭제, 반복문 내 안전 삭제(Iterator와 조합)</li>
+          <li><b>자주 하는 실수:</b> 없는 값 삭제 시 false 반환</li>
+        </ul>
+        <div class="tip">미션: "A", "B"를 add 후 "B"를 remove하면 set에 남은 값은?</div>
+        <details><summary>정답 보기</summary><div class="note">[A]</div></details>
+      </div>
+      <div class="example-box">
+        <h3>contains()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 값이 집합에 존재하는지 확인할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+Set<String> set = new HashSet<>();
+set.add("A");
+System.out.println(set.contains("A")); // true
+System.out.println(set.contains("B")); // false
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 중복 체크, 조건부 처리, if문과 조합</li>
+        </ul>
+        <div class="tip">미션: set에 "A"만 있을 때 set.contains("B") 결과는?</div>
+        <details><summary>정답 보기</summary><div class="note">false</div></details>
+      </div>
+      <div class="example-box">
+        <h3>size()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 집합에 저장된 값의 개수 확인</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+Set<Integer> set = new HashSet<>();
+set.add(1); set.add(2);
+System.out.println(set.size()); // 2
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 입력값 개수 제한, 집합 연산 결과 확인</li>
+        </ul>
+        <div class="tip">미션: set에 1, 2, 2를 add하면 size()는?</div>
+        <details><summary>정답 보기</summary><div class="note">2</div></details>
+      </div>
+      <div class="example-box">
+        <h3>clear()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 집합의 모든 값을 한 번에 삭제할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+Set<String> set = new HashSet<>();
+set.add("A"); set.add("B");
+set.clear();
+System.out.println(set); // []
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 상태 초기화, 재사용</li>
+        </ul>
+        <div class="tip">미션: clear() 후 set.isEmpty() 결과는?</div>
+        <details><summary>정답 보기</summary><div class="note">true</div></details>
+      </div>
+      <div class="example-box">
+        <h3>isEmpty()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 집합이 비었는지 확인할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+Set<String> set = new HashSet<>();
+System.out.println(set.isEmpty()); // true
+set.add("A");
+System.out.println(set.isEmpty()); // false
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 반복문 조건, 입력/출력 제어</li>
+        </ul>
+        <div class="tip">미션: set에 아무 값도 없으면 isEmpty()는?</div>
+        <details><summary>정답 보기</summary><div class="note">true</div></details>
+      </div>
+    </section>
+    <section class="section">
+      <h2>👶 따라해보세요! 기본 사용법</h2>
+      <div class="example-box">
+        <b>1. HashSet: 값 추가와 중복 확인</b>
+        <div class="code-block">
+Set<String> set = new HashSet<>();
+set.add("A"); set.add("B"); set.add("A");
+System.out.println(set); // [A, B]
+        </div>
+      </div>
+      <div class="example-box">
+        <b>2. LinkedHashSet: 입력 순서 유지</b>
+        <div class="code-block">
+Set<String> set = new LinkedHashSet<>();
+set.add("A"); set.add("C"); set.add("B");
+System.out.println(set); // [A, C, B]
+        </div>
+      </div>
+      <div class="example-box">
+        <b>3. TreeSet: 자동 정렬</b>
+        <div class="code-block">
+Set<Integer> set = new TreeSet<>();
+set.add(3); set.add(1); set.add(2);
+System.out.println(set); // [1, 2, 3]
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <h2>💡 실전 예제 & 미션</h2>
+      <div class="example-box">
+        <b>미션 1. 아래 코드의 출력 결과를 예측해보세요! (HashSet)</b>
+        <div class="code-block">
+Set<Integer> nums = new HashSet<>();
+nums.add(1); nums.add(2); nums.add(1);
+System.out.println(nums);
+        </div>
+        <details><summary>정답 보기</summary>
+          <div class="note">[1, 2]</div>
+        </details>
+      </div>
+      <div class="example-box">
+        <b>미션 2. 입력 순서가 보장되는 Set을 생성하는 코드를 작성해보세요!</b>
+        <div class="note">new LinkedHashSet&lt;&gt;()</div>
+      </div>
+      <div class="example-box">
+        <b>미션 3. 자동 정렬되는 Set에 3, 1, 2를 추가한 결과는?</b>
+        <div class="note">[1, 2, 3]</div>
+      </div>
+    </section>
+    <section class="section">
+      <h2>❓ 자주 하는 질문 (FAQ)</h2>
+      <div class="example-box">
+        <b>Q. HashSet, LinkedHashSet, TreeSet 차이?</b><br>
+        <span class="note">HashSet: 순서X, LinkedHashSet: 입력순, TreeSet: 자동정렬</span>
+      </div>
+      <div class="example-box">
+        <b>Q. Set에 null 저장 가능?</b><br>
+        <span class="note">HashSet/LinkedHashSet: 1회 저장 가능, TreeSet: 불가(NullPointerException)</span>
+      </div>
+      <div class="example-box">
+        <b>Q. Set에서 값 삭제/검색 속도?</b><br>
+        <span class="note">HashSet/LinkedHashSet: 매우 빠름(O(1)), TreeSet: 느림(O(logN))</span>
+      </div>
+    </section>
+    <section class="section">
+      <h2>⚡ 성능과 주의사항</h2>
+      <div class="warning">
+        <b>성능 특성</b>
+        <ul>
+          <li>HashSet/LinkedHashSet: 검색/추가/삭제 O(1), TreeSet: O(logN)</li>
+          <li>TreeSet은 정렬이 필요할 때만 사용</li>
+        </ul>
+      </div>
+      <div class="tip">
+        <b>실무 사용 팁</b>
+        <ul>
+          <li>Set 인터페이스로 선언하면 구현체 교체 쉬움</li>
+          <li>입력 순서, 정렬 필요 여부에 따라 구현체 선택</li>
+        </ul>
+      </div>
+    </section>
+    <section class="section">
+      <h2>🔑 HashSet 완전정복: 실전/심화/FAQ/면접까지</h2>
+      <div class="example-box">
+        <h3>HashSet이란?</h3>
+        <ul>
+          <li><b>특징:</b> <span class="important">중복 불가</span>, <span class="important">순서 없음</span>, <span class="important">null 1회 허용</span></li>
+          <li><b>내부구조:</b> 해시 테이블 기반 (O(1) 검색/추가/삭제)</li>
+          <li><b>실전 활용:</b> 중복 제거, 빠른 검색, 집합 연산(합집합/교집합/차집합)</li>
+        </ul>
+        <div class="code-block">
+HashSet<String> set = new HashSet<>();
+set.add("A"); set.add("B"); set.add("A");
+System.out.println(set); // [A, B]
+        </div>
+        <div class="note">HashSet은 중복을 자동으로 제거하며, 값의 순서를 보장하지 않습니다.</div>
+      </div>
+      <div class="example-box">
+        <h3>주요 메서드 실전 예시</h3>
+        <ul>
+          <li><b>add()</b>: 값 추가 (중복시 false 반환)</li>
+          <li><b>remove()</b>: 값 삭제 (없으면 false)</li>
+          <li><b>contains()</b>: 포함 여부 확인</li>
+          <li><b>size()</b>: 원소 개수</li>
+          <li><b>clear()</b>: 전체 삭제</li>
+          <li><b>isEmpty()</b>: 비어있는지 확인</li>
+        </ul>
+        <div class="code-block">
+HashSet<String> set = new HashSet<>();
+set.add("A"); set.add("B");
+set.remove("B");
+System.out.println(set.contains("A")); // true
+System.out.println(set.size()); // 1
+set.clear();
+System.out.println(set.isEmpty()); // true
+        </div>
+      </div>
+      <div class="example-box">
+        <h3>실전 미션 & 자주 하는 실수</h3>
+        <ul>
+          <li><b>미션1:</b> HashSet에 "A", "B", "A"를 add하면?</li>
+          <li><b>정답:</b> [A, B] (중복 자동 제거)</li>
+          <li><b>실수:</b> 순서가 필요하면 HashSet 대신 <span class="important">LinkedHashSet</span> 사용</li>
+          <li><b>실수:</b> null 여러 번 add시 1회만 저장</li>
+        </ul>
+      </div>
+      <div class="example-box">
+        <h3>FAQ & 면접 대비</h3>
+        <ul>
+          <li><b>Q:</b> HashSet과 ArrayList 차이?</li>
+          <li><b>A:</b> HashSet은 중복 불가/순서X, ArrayList는 중복 허용/순서O</li>
+          <li><b>Q:</b> HashSet vs. LinkedHashSet vs. TreeSet?</li>
+          <li><b>A:</b> HashSet(순서X, 빠름), LinkedHashSet(입력순), TreeSet(자동 정렬)</li>
+          <li><b>Q:</b> null 저장?</li>
+          <li><b>A:</b> HashSet/LinkedHashSet: 1회, TreeSet: 불가</li>
+        </ul>
+      </div>
+      <div class="tip">실무 팁: Set 인터페이스로 선언하면 구현체 교체가 쉽다.<br>Set<String> set = new HashSet<>();</div>
+    </section>
+  </main>
+</body>
+</html>

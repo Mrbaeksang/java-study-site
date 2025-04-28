@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wrapper API 완벽 가이드</title>
+  <title>Wrapper 클래스 완벽 가이드</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
+    /* String.html의 최신 스타일 복사 적용 */
     .section {
       background: var(--vscode-darker);
       border: 1px solid var(--vscode-highlight);
@@ -14,21 +15,32 @@
       padding: 2rem;
       max-width: 1000px;
     }
-
     .method-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
       margin: 2rem 0;
     }
-
+    .method-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    .method-table th,
+    .method-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--vscode-highlight);
+      text-align: left;
+    }
+    .method-table th {
+      background: var(--vscode-bg);
+    }
     .example-box {
       background: var(--vscode-bg);
       border-radius: 6px;
       padding: 1.5rem;
       margin: 1rem 0;
     }
-
     .code-block {
       background: #2d2d2d;
       padding: 1rem;
@@ -37,28 +49,24 @@
       overflow-x: auto;
       margin: 1rem 0;
     }
-
     .note {
       border-left: 4px solid var(--vscode-blue);
       padding: 1rem;
       margin: 1rem 0;
       background: rgba(0, 122, 204, 0.1);
     }
-
     .warning {
       border-left: 4px solid #f97583;
       padding: 1rem;
       margin: 1rem 0;
       background: rgba(249, 117, 131, 0.1);
     }
-
     .tip {
       border-left: 4px solid #85e89d;
       padding: 1rem;
       margin: 1rem 0;
       background: rgba(133, 232, 157, 0.1);
     }
-
     .tag {
       display: inline-block;
       padding: 0.25rem 0.5rem;
@@ -67,296 +75,297 @@
       margin-right: 0.5rem;
       background: var(--vscode-highlight);
     }
-
-    .comparison-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
+    h2 {
+      color: var(--vscode-blue);
+      border-bottom: 1px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin: 2rem 0 1rem;
     }
-
-    .comparison-table th,
-    .comparison-table td {
-      padding: 0.75rem;
-      border: 1px solid var(--vscode-highlight);
-      text-align: left;
+    h3 {
+      color: var(--vscode-text);
+      margin: 1.5rem 0 1rem;
     }
-
-    .comparison-table th {
-      background: var(--vscode-bg);
+    .method-name {
+      color: #569cd6;
+    }
+    .parameter {
+      color: #9cdcfe;
+    }
+    .return-type {
+      color: #4ec9b0;
+    }
+    .ascii-art {
+      font-family: inherit;
+      background: #222;
+      color: #eee;
+      padding: 0.7em 1em;
+      margin: 0.7em 0;
+      border-radius: 6px;
+      border: 1px solid #444;
+      display: block;
+      font-size: 1em;
+      line-height: 1.7;
+    }
+    /* 현대적 네비게이션 바 */
+    .api-nav {
+      position: sticky;
+      top: 0;
+      background: #181f2a;
+      z-index: 120;
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      align-items: center;
+      padding: 1.1rem 0 1.1rem 0;
+      border-bottom: 2px solid #2d3748;
+      box-shadow: 0 2px 16px 0 rgba(0,0,0,0.13);
+      flex-wrap: wrap;
+    }
+    .api-nav-link {
+      background: linear-gradient(90deg, #005fa3 60%, #3af 100%);
+      color: #fff;
+      border-radius: 2em;
+      font-weight: 700;
+      font-size: 1.08em;
+      padding: 0.45em 1.5em;
+      margin: 0 0.2em;
+      border: none;
+      box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);
+      letter-spacing: 0.01em;
+      transition: background 0.17s, color 0.17s, box-shadow 0.18s;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      outline: none;
+      text-decoration: none;
+    }
+    .api-nav-link.active, .api-nav-link:focus, .api-nav-link:hover {
+      background: linear-gradient(90deg, #0077cc 60%, #4fd5ff 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px 0 rgba(0,122,204,0.17);
+      text-decoration: none;
+    }
+    .api-nav-next {
+      background: #fff;
+      color: #005fa3;
+      border: 1.5px solid #005fa3;
+      border-radius: 2em;
+      font-weight: 700;
+      font-size: 1.08em;
+      padding: 0.45em 1.5em;
+      margin-left: 2em;
+      transition: background 0.17s, color 0.17s, border 0.16s, box-shadow 0.18s;
+      box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      outline: none;
+      text-decoration: none;
+    }
+    .api-nav-next:focus, .api-nav-next:hover {
+      background: #005fa3;
+      color: #fff;
+      border: 1.5px solid #fff;
+      box-shadow: 0 4px 16px 0 rgba(0,122,204,0.18);
+      text-decoration: none;
+    }
+    @media (max-width: 700px) {
+      .api-nav { flex-direction: column; gap: 0.7rem; padding: 0.7rem 0; }
+      .api-nav-link, .api-nav-next { width: 98vw; justify-content: center; }
+    }
+    /* 강조 스타일(덜 과한 버전) */
+    .highlight {
+      color: #ffd700;
+      font-weight: 900;
+      background: none;
+      padding: 0.08em 0.18em;
+      border-radius: 0.2em;
+      font-size: 1.08em;
+    }
+    .important {
+      color: #f97583;
+      font-weight: bold;
+      background: rgba(249,117,131,0.10);
+      border-radius: 0.2em;
+      padding: 0.07em 0.18em;
+    }
+    .section h2 .highlight {
+      font-size: 1.13em;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>📦 Wrapper API 완벽 가이드</h1>
-    <nav>
-      <a href="index.html" class="button">홈으로 돌아가기</a>
+    <h1>📚 Wrapper 클래스 완벽 가이드</h1>
+    <nav class="api-nav">
+      <a href="string.html" class="api-nav-link">String</a>
+      <a href="math.html" class="api-nav-link">Math</a>
+      <a href="arrays.html" class="api-nav-link">Arrays</a>
+      <a href="wrapper.html" class="api-nav-link active">Wrapper</a>
+      <a href="stringbuilder.html" class="api-nav-link">StringBuilder</a>
+      <a href="arraylist.html" class="api-nav-link">ArrayList</a>
+      <a href="collections.html" class="api-nav-link">Collections</a>
+      <a href="hashset.html" class="api-nav-link">HashSet</a>
+      <a href="map.html" class="api-nav-link">Map</a>
+      <a href="stream.html" class="api-nav-link">Stream</a>
+      <a href="index.html" class="api-nav-link">홈</a>
+      <a href="stringbuilder.html" class="api-nav-next">다음장 ➡️</a>
     </nav>
   </header>
-
   <main>
-    <!-- 개요 섹션 -->
+    <!-- 🍎 Wrapper 클래스는 왜 필요할까? -->
     <section class="section">
-      <h2>📚 Wrapper 클래스 개요</h2>
-      <p>Wrapper 클래스는 기본 데이터 타입(primitive type)을 객체로 감싸는 클래스입니다.</p>
-      
-      <div class="note">
-        <h3>주요 특징</h3>
+      <h2><span class="highlight">🍎 Wrapper 클래스는 왜 필요할까?</span></h2>
+      <div class="example-box">
+        <b class="highlight" style="background:none; color:#ffd700;">실생활과 개발에서 Wrapper가 필요한 순간!</b>
         <ul>
-          <li>기본 타입을 객체로 변환</li>
-          <li>컬렉션에서 사용 가능</li>
-          <li>null 값 처리 가능</li>
-          <li>유용한 메서드 제공</li>
+          <li><span class="important">컬렉션</span>에 int, double 등 기본형을 담고 싶을 때</li>
+          <li>문자열 ↔ 숫자 변환, null 처리, 비교 등 <span class="important">객체 기능</span>이 필요할 때</li>
+          <li>제네릭, Stream, Optional 등 <span class="important">객체만 지원</span>하는 API 사용 시</li>
         </ul>
       </div>
-
-      <table class="comparison-table">
-        <tr>
-          <th>기본 타입</th>
-          <th>Wrapper 클래스</th>
-          <th>크기</th>
-        </tr>
-        <tr>
-          <td>byte</td>
-          <td>Byte</td>
-          <td>8비트</td>
-        </tr>
-        <tr>
-          <td>short</td>
-          <td>Short</td>
-          <td>16비트</td>
-        </tr>
-        <tr>
-          <td>int</td>
-          <td>Integer</td>
-          <td>32비트</td>
-        </tr>
-        <tr>
-          <td>long</td>
-          <td>Long</td>
-          <td>64비트</td>
-        </tr>
-        <tr>
-          <td>float</td>
-          <td>Float</td>
-          <td>32비트</td>
-        </tr>
-        <tr>
-          <td>double</td>
-          <td>Double</td>
-          <td>64비트</td>
-        </tr>
-        <tr>
-          <td>char</td>
-          <td>Character</td>
-          <td>16비트</td>
-        </tr>
-        <tr>
-          <td>boolean</td>
-          <td>Boolean</td>
-          <td>1비트</td>
-        </tr>
-      </table>
-    </section>
-
-    <!-- 박싱과 언박싱 -->
-    <section class="section">
-      <h2>🎁 박싱과 언박싱</h2>
-      
-      <div class="method-grid">
-        <!-- 박싱 -->
-        <div class="card">
-          <h3>박싱 (Boxing)</h3>
-          <div class="tag">기본</div>
-          <div class="tag">자동 변환</div>
-          
-          <p>기본 타입을 래퍼 클래스의 객체로 변환하는 과정</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-// 수동 박싱
-Integer num = new Integer(10);<br>
-// 자동 박싱 (권장)
-Integer num = 10;
-            </div>
-          </div>
-        </div>
-
-        <!-- 언박싱 -->
-        <div class="card">
-          <h3>언박싱 (Unboxing)</h3>
-          <div class="tag">기본</div>
-          <div class="tag">자동 변환</div>
-          
-          <p>래퍼 클래스의 객체를 기본 타입으로 변환하는 과정</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-Integer num = 10;<br>
-// 수동 언박싱
-int value = num.intValue();<br>
-// 자동 언박싱 (권장)
-int value = num;
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="warning">
-        <h3>성능 고려사항</h3>
-        <p>불필요한 박싱/언박싱은 성능 저하의 원인이 될 수 있습니다. 기본 타입을 사용할 수 있는 상황에서는 기본 타입을 사용하세요.</p>
+      <div class="note">
+        <b>Wrapper 클래스는 <span style="color:#85e89d">기본 타입을 객체로 감싸</span> 컬렉션, 변환, 비교 등에 활용할 수 있게 해줍니다!</b>
       </div>
     </section>
 
-    <!-- 유용한 메서드 -->
+    <!-- Wrapper 클래스 개요/특징 -->
     <section class="section">
-      <h2>🛠 유용한 메서드</h2>
-      
-      <div class="method-grid">
-        <!-- parseInt -->
-        <div class="card">
-          <h3>parseInt()</h3>
-          <div class="tag">변환</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="method-name">Integer.parseInt</span>(<span class="parameter">String s</span>)
-          </div>
-          
-          <p>문자열을 정수로 변환합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-String str = "123";<br>
-int num = Integer.parseInt(str); // 123
-            </div>
-          </div>
-        </div>
-
-        <!-- valueOf -->
-        <div class="card">
-          <h3>valueOf()</h3>
-          <div class="tag">변환</div>
-          <div class="tag">객체 생성</div>
-          
-          <div class="code-block">
-            <span class="method-name">Integer.valueOf</span>(<span class="parameter">String s</span>)
-          </div>
-          
-          <p>문자열이나 기본 타입을 래퍼 객체로 변환합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-Integer num = Integer.valueOf("123"); // Integer 객체<br>
-Double d = Double.valueOf("3.14"); // Double 객체
-            </div>
-          </div>
-        </div>
-
-        <!-- toString -->
-        <div class="card">
-          <h3>toString()</h3>
-          <div class="tag">변환</div>
-          <div class="tag">문자열</div>
-          
-          <div class="code-block">
-            <span class="method-name">toString</span>()
-          </div>
-          
-          <p>래퍼 객체를 문자열로 변환합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-Integer num = 123;<br>
-String str = num.toString(); // "123"
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 실전 예제 -->
-    <section class="section">
-      <h2>💡 실전 예제</h2>
-      
+      <h2>📖 Wrapper 클래스 개요</h2>
       <div class="example-box">
-        <h3>1. 문자열 숫자 처리</h3>
-        <div class="code-block">
-public static int sumStringNumbers(String... numbers) {
-    int sum = 0;
-    for (String number : numbers) {
-        sum += Integer.parseInt(number.trim());
-    }
-    return sum;
-}
-
-// 사용 예
-int result = sumStringNumbers("10", "20", "30"); // 60
-        </div>
-      </div>
-
-      <div class="example-box">
-        <h3>2. null 안전 비교</h3>
-        <div class="code-block">
-public static boolean compareIntegers(Integer a, Integer b) {
-    if (a == null || b == null) {
-        return false;
-    }
-    return a.equals(b);
-}
-
-// 사용 예
-boolean result = compareIntegers(Integer.valueOf(10), Integer.valueOf(10)); // true
-        </div>
-      </div>
-
-      <div class="example-box">
-        <h3>3. 진수 변환</h3>
-        <div class="code-block">
-// 10진수를 2진수 문자열로
-String binary = Integer.toBinaryString(10); // "1010"
-
-// 16진수로 변환
-String hex = Integer.toHexString(255); // "ff"
-
-// 8진수로 변환
-String octal = Integer.toOctalString(10); // "12"
-        </div>
-      </div>
-    </section>
-
-    <!-- 성능 최적화 팁 -->
-    <section class="section">
-      <h2>⚡ 성능 최적화 팁</h2>
-      
-      <div class="tip">
-        <h3>1. 캐시 활용</h3>
-        <p>자주 사용되는 값은 캐시를 활용합니다.</p>
-        <div class="code-block">
-// 권장 (-128 ~ 127 사이의 값은 캐시됨)
-Integer num1 = Integer.valueOf(100);<br>
-// 비권장 (항상 새 객체 생성)
-Integer num2 = new Integer(100);
-        </div>
-      </div>
-
-      <div class="tip">
-        <h3>2. 적절한 메서드 선택</h3>
-        <p>상황에 맞는 메서드를 선택하세요.</p>
-        <div class="code-block">
-// 객체가 필요한 경우
-Integer num = Integer.valueOf("123");<br>
-// 기본 타입이 필요한 경우
-int value = Integer.parseInt("123");
-        </div>
-      </div>
-
-      <div class="warning">
-        <h3>주의사항</h3>
         <ul>
-          <li>== 연산자 대신 equals() 메서드 사용</li>
-          <li>불필요한 객체 생성 피하기</li>
+          <li>기본형(primitive) → 객체(Object)로 변환: <span class="important">박싱(Boxing)</span></li>
+          <li>객체(Object) → 기본형(primitive)으로 변환: <span class="important">언박싱(Unboxing)</span></li>
+          <li>모든 Wrapper는 <span class="important">불변(immutable)</span></li>
+          <li>상수, 변환, 비교 등 다양한 메서드 제공</li>
+        </ul>
+        <table class="method-table">
+          <tr><th>기본형</th><th>Wrapper</th><th>비트수</th></tr>
+          <tr><td>byte</td><td>Byte</td><td>8비트</td></tr>
+          <tr><td>short</td><td>Short</td><td>16비트</td></tr>
+          <tr><td>int</td><td>Integer</td><td>32비트</td></tr>
+          <tr><td>long</td><td>Long</td><td>64비트</td></tr>
+          <tr><td>float</td><td>Float</td><td>32비트</td></tr>
+          <tr><td>double</td><td>Double</td><td>64비트</td></tr>
+          <tr><td>char</td><td>Character</td><td>16비트</td></tr>
+          <tr><td>boolean</td><td>Boolean</td><td>1비트</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 🔑 주요 메서드 한눈에 보기 -->
+    <section class="section">
+      <h2>🔑 주요 메서드 한눈에 보기</h2>
+      <div class="example-box">
+        <table class="method-table">
+          <tr><th>메서드</th><th>설명</th><th>사용 예</th><th>실전 활용</th></tr>
+          <tr><td>parseXxx()</td><td>문자열 → 기본형</td><td>Integer.parseInt("123")</td><td>입력값 처리</td></tr>
+          <tr><td>valueOf()</td><td>문자열/기본형 → Wrapper</td><td>Integer.valueOf("123")</td><td>컬렉션 저장</td></tr>
+          <tr><td>toString()</td><td>객체 → 문자열</td><td>num.toString()</td><td>출력, 변환</td></tr>
+          <tr><td>compareTo()</td><td>값 비교</td><td>num1.compareTo(num2)</td><td>정렬, 비교</td></tr>
+          <tr><td>equals()</td><td>값 동등 비교</td><td>num1.equals(num2)</td><td>null 안전 비교</td></tr>
+          <tr><td>xxxValue()</td><td>기본값 반환</td><td>num.intValue()</td><td>계산, 연산</td></tr>
+          <tr><td>MAX_VALUE/MIN_VALUE</td><td>최대/최소 상수</td><td>Integer.MAX_VALUE</td><td>오버플로우 방지</td></tr>
+          <tr><td>toBinaryString()</td><td>2진수 변환</td><td>Integer.toBinaryString(10)</td><td>진수 변환</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- 👶 따라해보세요! 기본 사용법 -->
+    <section class="section">
+      <h2>👶 따라해보세요! 기본 사용법</h2>
+      <div class="example-box">
+        <b>1. 박싱과 언박싱</b>
+        <div class="code-block">
+Integer num = 10; // 자동 박싱
+int value = num;  // 자동 언박싱
+        </div>
+      </div>
+      <div class="example-box">
+        <b>2. 문자열 ↔ 숫자 변환</b>
+        <div class="code-block">
+String str = "123";
+int num = Integer.parseInt(str); // 123
+String s = Integer.toString(num); // "123"
+        </div>
+      </div>
+      <div class="example-box">
+        <b>3. 진수 변환</b>
+        <div class="code-block">
+int n = 10;
+String bin = Integer.toBinaryString(n); // "1010"
+String hex = Integer.toHexString(255);  // "ff"
+        </div>
+      </div>
+    </section>
+
+    <!-- 💡 실전 예제 & 미션 -->
+    <section class="section">
+      <h2>💡 실전 예제 & 미션</h2>
+      <div class="example-box">
+        <b>미션 1. 문자열 숫자 합계 구하기</b>
+        <div class="code-block">
+String[] arr = {"10", "20", "30"};
+int sum = 0;
+for (String s : arr) {
+    sum += Integer.parseInt(s);
+}
+System.out.println(sum); // ?
+        </div>
+        <details><summary>정답 보기</summary>
+          <div class="note">60</div>
+        </details>
+      </div>
+      <div class="example-box">
+        <b>미션 2. null 안전 비교 함수 작성</b>
+        <div class="note">public static boolean safeEquals(Integer a, Integer b) { <b>직접 작성</b> }</div>
+      </div>
+    </section>
+
+    <!-- ❓ FAQ / 자주 하는 질문 -->
+    <section class="section">
+      <h2>❓ 자주 하는 질문 (FAQ)</h2>
+      <div class="example-box">
+        <b>Q. Wrapper 클래스는 언제 꼭 필요할까?</b><br>
+        <span class="note">컬렉션, 제네릭, null 처리, 문자열 변환 등 객체로서 기능이 필요할 때!</span>
+      </div>
+      <div class="example-box">
+        <b>Q. ==와 equals의 차이?</b><br>
+        <span class="note">==는 참조비교, equals는 값비교!</span>
+      </div>
+      <div class="example-box">
+        <b>Q. 박싱/언박싱은 언제 자동?</b><br>
+        <span class="note">대입, 연산 등에서 컴파일러가 자동 변환해줍니다.</span>
+      </div>
+      <div class="example-box">
+        <b>Q. null과 비교할 때 주의점?</b><br>
+        <span class="note">equals() 호출 전 반드시 null 체크!</span>
+      </div>
+      <div class="example-box">
+        <b>Q. Integer.valueOf와 new Integer의 차이?</b><br>
+        <span class="note">valueOf는 캐싱(재사용), new는 무조건 새 객체 생성(비추천)</span>
+      </div>
+    </section>
+
+    <!-- ⚡ 성능과 주의사항 -->
+    <section class="section">
+      <h2>⚡ 성능과 주의사항</h2>
+      <div class="warning">
+        <b>성능 특성</b>
+        <ul>
+          <li>== 연산자 대신 equals() 사용</li>
+          <li>불필요한 객체 생성 피하기 (valueOf/parse 계열 활용)</li>
           <li>null 체크 필수</li>
+          <li>Wrapper는 불변(immutable)이라 값 변경 불가</li>
+          <li>박싱/언박싱 반복 시 성능 저하 가능</li>
+        </ul>
+      </div>
+      <div class="tip">
+        <b>실무 사용 팁</b>
+        <ul>
+          <li>상수(Integer.MAX_VALUE 등) 적극 활용</li>
+          <li>문자열 변환/파싱 시 NumberFormatException 주의</li>
+          <li>Optional<Integer> 등과 함께 null 안전하게 활용</li>
         </ul>
       </div>
     </section>

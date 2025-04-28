@@ -2,20 +2,136 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>코드테스트 연습</title>
+  <title>실전 미션 & 예제 - 코드테스트 연습</title>
   <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { background: var(--vscode-bg); }
+    .day-tabs { display: flex; justify-content: center; gap: 1.2rem; margin: 2.5rem 0 1.5rem 0; flex-wrap: wrap; }
+    .day-tab { font-size: 1.1rem; padding: 0.7rem 1.9rem; border-radius: 2em; background: var(--vscode-darker); color: var(--vscode-text); border: 1.5px solid var(--vscode-highlight); cursor: pointer; transition: background 0.18s, color 0.18s, border 0.18s; margin-bottom: 0.5em; }
+    .day-tab.active, .day-tab:focus { background: linear-gradient(90deg, #0077cc 60%, #4fd5ff 100%); color: #fff; border-color: #0077cc; }
+    .missions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2.2rem; max-width: 1200px; margin: 0 auto; }
+    .mission-card { background: var(--vscode-darker); border-radius: 15px; padding: 2.2rem 1.6rem 2.1rem 1.6rem; box-shadow: 0 2px 18px 0 rgba(0,0,0,0.09); display: flex; flex-direction: column; }
+    .mission-title { font-size: 1.23rem; font-weight: 600; margin-bottom: 0.7rem; color: #7fd1ff; }
+    .mission-desc { color: #bdbdbd; margin-bottom: 1.1rem; font-size: 1.07rem; }
+    .mission-tags { margin-bottom: 1.2rem; }
+    .mission-tag { display: inline-block; background: #222f3e; color: #4fd5ff; border-radius: 1.2em; font-size: 0.95rem; padding: 0.19em 0.9em; margin-right: 0.5em; }
+    .mission-btns { display: flex; gap: 0.7rem; }
+    .mission-btn { background: #0077cc; color: #fff; border: none; border-radius: 2em; padding: 0.7em 1.7em; font-size: 1.07rem; cursor: pointer; transition: background 0.18s; }
+    .mission-btn:hover { background: #005fa3; }
+    .mission-solution { margin-top: 1.2rem; display: none; flex-direction: column; gap: 1.1rem; }
+    .solution-title { font-weight: 600; color: #7fd1ff; margin-bottom: 0.2rem; }
+    .solution-area { width: 100%; min-height: 110px; border-radius: 8px; border: 1px solid var(--vscode-highlight); background: var(--vscode-bg); color: var(--vscode-text); font-size: 1.05rem; padding: 0.9em 1em; font-family: 'Segoe UI', 'Noto Sans KR', monospace; resize: vertical; }
+    .answer-box { background: #1a2636; border-radius: 8px; padding: 1.1em 1em; color: #bdbdbd; margin-top: 0.6em; font-size: 1.01rem; display: none; }
+    .save-msg { color: #4fd5ff; font-size: 0.98rem; margin-top: 0.3em; display: none; }
+    @media (max-width: 600px) { .missions-grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
-
   <header>
-    <h1>📝 코드테스트 연습</h1>
-    <nav>
-      <a href="index.html" class="button">홈으로 돌아가기</a>
+    <h1 style="font-size:2.2rem;text-align:center;margin:2.5rem 0 1.2rem 0;letter-spacing:-1px;">💡 실전 미션 & 예제</h1>
+    <p style="text-align:center;color:#aaa;font-size:1.13rem;margin-bottom:2.1rem;">직접 풀고, 정답·해설까지!<br>코딩테스트/면접/실무 대비 실전 연습장</p>
+    <nav style="text-align:center;margin-bottom:2.2rem;">
+      <a href="index.html" class="button" style="padding:0.7em 2.2em;">홈으로 돌아가기</a>
     </nav>
-
+  </header>
+  <div class="day-tabs">
+    <button class="day-tab active" data-day="1">Day 1</button>
+    <button class="day-tab" data-day="2">Day 2</button>
+    <button class="day-tab" data-day="3">Day 3</button>
+    <button class="day-tab" data-day="4">Day 4</button>
+    <button class="day-tab" data-day="project">Project</button>
+  </div>
   <main>
-    <p>여기에 프로그래머스, 백준 문제 풀이 정리 예정</p>
+    <div class="missions-grid" id="missionsGrid"></div>
   </main>
+  <script>
+const missions = [
+  // Day 1
+  {id:'d1_m1', day:'1', title:'문자열 출력하기', desc:'문자열을 그대로 출력하세요.', tags:['출력'], answer:'System.out.println(str);', explanation:'System.out.println()을 사용합니다.'},
+  {id:'d1_m2', day:'1', title:'a와 b 출력하기', desc:'a와 b를 한 줄에 출력하세요.', tags:['출력'], answer:'System.out.println("a b");', explanation:'띄어쓰기를 포함해 출력.'},
+  {id:'d1_m3', day:'1', title:'문자열 반복해서 출력하기', desc:'문자열을 n번 반복해 출력하세요.', tags:['출력'], answer:'for(int i=0;i<n;i++) System.out.print(str);', explanation:'for문으로 반복.'},
+  {id:'d1_m4', day:'1', title:'대소문자 바꿔서 출력하기', desc:'문자열의 대소문자를 반전해 출력하세요.', tags:['출력'], answer:'for(char c:str.toCharArray()) System.out.print(Character.isUpperCase(c)?Character.toLowerCase(c):Character.toUpperCase(c));', explanation:'Character 클래스 활용.'},
+  {id:'d1_m5', day:'1', title:'특수문자 출력하기', desc:'\n, \", \\ 등 특수문자를 출력하세요.', tags:['출력'], answer:'System.out.println("\\n \" \\" );', explanation:'이스케이프 문자 사용.'},
+  // Day 2
+  {id:'d2_m1', day:'2', title:'덧셈식 출력하기', desc:'a + b = c 형태로 출력하세요.', tags:['출력','연산'], answer:'System.out.println(a+" + "+b+" = "+(a+b));', explanation:'문자열 연결과 연산.'},
+  {id:'d2_m2', day:'2', title:'문자열 붙여서 출력하기', desc:'두 문자열을 붙여 출력하세요.', tags:['출력','연산'], answer:'System.out.println(str1+str2);', explanation:'+ 연산자로 문자열 연결.'},
+  {id:'d2_m3', day:'2', title:'문자열 돌리기', desc:'문자열을 오른쪽으로 한 칸씩 회전해 출력하세요.', tags:['출력','연산'], answer:'System.out.println(str.charAt(str.length()-1)+str.substring(0,str.length()-1));', explanation:'substring과 charAt 활용.'},
+  {id:'d2_m4', day:'2', title:'홀짝 구분하기', desc:'정수가 홀수인지 짝수인지 출력하세요.', tags:['출력','연산'], answer:'System.out.println(n%2==0?"짝수":"홀수");', explanation:'삼항연산자 사용.'},
+  {id:'d2_m5', day:'2', title:'문자열 겹쳐쓰기', desc:'기존 문자열의 특정 위치에 새 문자열을 덮어써 출력하세요.', tags:['출력','연산'], answer:'System.out.println(str.substring(0,idx)+newStr+str.substring(idx+newStr.length()));', explanation:'substring으로 부분 문자열 처리.'},
+  // Day 3
+  {id:'d3_m1', day:'3', title:'문자열 섞기', desc:'두 문자열을 번갈아가며 합쳐 출력하세요.', tags:['연산'], answer:'for(int i=0;i<str1.length();i++) System.out.print(""+str1.charAt(i)+str2.charAt(i));', explanation:'for문과 charAt.'},
+  {id:'d3_m2', day:'3', title:'문자 리스트를 문자열로 변환하기', desc:'문자 리스트를 하나의 문자열로 합치세요.', tags:['연산'], answer:'StringBuilder sb=new StringBuilder(); for(char c:list) sb.append(c); System.out.println(sb);', explanation:'StringBuilder로 합침.'},
+  {id:'d3_m3', day:'3', title:'문자열 곱하기', desc:'문자열을 n번 곱해서 출력하세요.', tags:['연산'], answer:'System.out.println(str.repeat(n));', explanation:'String.repeat() 사용(Java 11+).'},
+  {id:'d3_m4', day:'3', title:'더 크게 합치기', desc:'두 수를 문자열로 붙여 더 큰 값을 출력하세요.', tags:['연산'], answer:'System.out.println(Math.max(Integer.parseInt(a+b),Integer.parseInt(b+a)));', explanation:'문자열 결합 후 int 변환.'},
+  {id:'d3_m5', day:'3', title:'두 수의 연산값 비교하기', desc:'두 수의 덧셈과 곱셈 결과 중 더 큰 값을 출력하세요.', tags:['연산'], answer:'System.out.println(Math.max(a+b,a*b));', explanation:'Math.max 사용.'},
+  // Day 4
+  {id:'d4_m1', day:'4', title:'n의 배수', desc:'n이 x의 배수인지 판별하세요.', tags:['연산','조건문'], answer:'System.out.println(x%n==0?"Yes":"No");', explanation:'나머지 연산과 조건.'},
+  {id:'d4_m2', day:'4', title:'공배수', desc:'a와 b가 모두 n의 배수인지 판별하세요.', tags:['연산','조건문'], answer:'System.out.println(a%n==0&&b%n==0?"Yes":"No");', explanation:'&& 연산자 사용.'},
+  {id:'d4_m3', day:'4', title:'홀짝에 따라 다른 값 반환하기', desc:'n이 홀수면 A, 짝수면 B를 출력하세요.', tags:['연산','조건문'], answer:'System.out.println(n%2==0?"B":"A");', explanation:'삼항연산자.'},
+  {id:'d4_m4', day:'4', title:'조건 문자열', desc:'문자열이 "yes"면 1, 아니면 0을 출력하세요.', tags:['조건문'], answer:'System.out.println(str.equals("yes")?1:0);', explanation:'equals와 삼항연산자.'},
+  {id:'d4_m5', day:'4', title:'flag에 따라 다른 값 반환하기', desc:'flag가 true면 "ON", false면 "OFF"를 출력하세요.', tags:['조건문'], answer:'System.out.println(flag?"ON":"OFF");', explanation:'불리언과 삼항연산자.'},
+  // Project
+  {id:'pj_m1', day:'project', title:'은행 계좌 클래스 구현', desc:'입금, 출금, 잔액 조회 기능이 있는 BankAccount 클래스를 구현하세요.', tags:['클래스','OOP','실전'], answer:'class BankAccount {\n  int balance;\n  void deposit(int amount) { balance+=amount; }\n  void withdraw(int amount) { balance-=amount; }\n  int getBalance() { return balance; }\n}', explanation:'클래스와 메서드, 필드 활용.'}
+];
 
+const grid = document.getElementById('missionsGrid');
+const tabs = document.querySelectorAll('.day-tab');
+
+function renderMissions(day) {
+  grid.innerHTML = '';
+  missions.filter(m => m.day === day).forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'mission-card';
+    card.innerHTML = `
+      <div class="mission-title">${m.title}</div>
+      <div class="mission-desc">${m.desc}</div>
+      <div class="mission-tags">${m.tags.map(t => `<span class='mission-tag'>${t}</span>`).join('')}</div>
+      <div class="mission-btns">
+        <button class="mission-btn" onclick="showSolution('${m.id}')">풀기</button>
+        <button class="mission-btn" onclick="showAnswer('${m.id}')">정답/해설</button>
+      </div>
+      <div class="mission-solution" id="sol_${m.id}">
+        <div class="solution-title">내 풀이</div>
+        <textarea class="solution-area" id="area_${m.id}" placeholder="여기에 Java 코드를 작성해보세요!"></textarea>
+        <button class="mission-btn" onclick="saveSolution('${m.id}')">내 풀이 저장</button>
+        <div class="save-msg" id="save_${m.id}">내 풀이가 저장되었습니다!</div>
+      </div>
+      <div class="answer-box" id="ans_${m.id}">
+        <b>정답 예시:</b><br><pre style='margin:0 0 0.5em 0;'>${m.answer}</pre>
+        <div style='margin-bottom:0.5em;'>해설: ${m.explanation}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+window.showSolution = function(id) {
+  document.getElementById('sol_' + id).style.display = 'flex';
+  document.getElementById('ans_' + id).style.display = 'none';
+  // 불러오기
+  const saved = localStorage.getItem('sol_' + id);
+  if(saved) document.getElementById('area_' + id).value = saved;
+}
+window.saveSolution = function(id) {
+  const val = document.getElementById('area_' + id).value;
+  localStorage.setItem('sol_' + id, val);
+  const msg = document.getElementById('save_' + id);
+  msg.style.display = 'block';
+  setTimeout(()=>{msg.style.display='none';}, 1600);
+}
+window.showAnswer = function(id) {
+  document.getElementById('ans_' + id).style.display = 'block';
+  document.getElementById('sol_' + id).style.display = 'none';
+}
+tabs.forEach(tab => {
+  tab.onclick = function() {
+    tabs.forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    renderMissions(this.dataset.day);
+  };
+});
+renderMissions('1');
+  </script>
 </body>
 </html>

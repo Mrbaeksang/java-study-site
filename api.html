@@ -6,241 +6,401 @@
     <title>Java API 학습 로드맵</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .api-section {
-            background: var(--vscode-darker);
-            border: 1px solid var(--vscode-highlight);
-            border-radius: 8px;
-            margin: 2rem auto;
-            padding: 2rem;
-            max-width: 1200px;
+        :root {
+            --vscode-bg: #1e1e1e;
+            --vscode-darker: #181818;
+            --vscode-highlight: #3a3d41;
+            --vscode-blue: #007acc;
+            --vscode-text: #d4d4d4;
+            --vscode-text-dim: #8c8c8c;
         }
 
+        body {
+            background: var(--vscode-bg);
+            color: var(--vscode-text);
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .roadmap-nav {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: var(--vscode-darker);
+            border-bottom: 1.5px solid var(--vscode-highlight);
+            z-index: 100;
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.17);
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 0.9rem 0 0.9rem 0;
+        }
+        .roadmap-step-link {
+            color: #fff;
+            background: linear-gradient(90deg, #005fa3 60%, #3af 100%);
+            border: none;
+            font-size: 1.1em;
+            font-weight: 700;
+            margin: 0 0.7em;
+            padding: 0.38em 1.4em;
+            border-radius: 2em;
+            transition: background 0.17s, color 0.17s, box-shadow 0.18s;
+            cursor: pointer;
+            box-shadow: 0 2px 10px 0 rgba(0,122,204,0.10);
+            letter-spacing: 0.01em;
+            outline: none;
+            display: flex;
+            align-items: center;
+        }
+        .roadmap-step-link:focus, .roadmap-step-link:hover {
+            background: linear-gradient(90deg, #0077cc 60%, #4fd5ff 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px 0 rgba(0,122,204,0.17);
+        }
+        .roadmap-home-link {
+            color: #005fa3;
+            background: #fff;
+            border: 1.6px solid #005fa3;
+            font-size: 1.05em;
+            font-weight: 700;
+            margin-left: 2.2em;
+            padding: 0.38em 1.4em;
+            border-radius: 2em;
+            transition: background 0.17s, color 0.17s, border 0.15s, box-shadow 0.18s;
+            cursor: pointer;
+            box-shadow: 0 2px 10px 0 rgba(0,122,204,0.07);
+            letter-spacing: 0.01em;
+            outline: none;
+            display: flex;
+            align-items: center;
+        }
+        .roadmap-home-link:focus, .roadmap-home-link:hover {
+            background: #005fa3;
+            color: #fff;
+            border: 1.6px solid #fff;
+            box-shadow: 0 4px 16px 0 rgba(0,122,204,0.18);
+        }
+        .progress-bar {
+            width: 100%;
+            max-width: 700px;
+            margin: 0.7rem auto 1.2rem auto;
+            height: 16px;
+            background: var(--vscode-highlight);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px 0 rgba(0,0,0,0.13);
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--vscode-blue) 60%, #3af 100%);
+            border-radius: 10px;
+            font-size: 0.97em;
+            color: #fff;
+            text-align: right;
+            padding-right: 0.7em;
+            box-shadow: 0 1px 6px 0 rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+        .progress-label {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 0.97em;
+            font-weight: 600;
+            pointer-events: none;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.12);
+        }
         .api-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin: 1rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2.2rem;
+            margin: 1.5rem 0 0 0;
         }
-
+        .api-cards.two-cols {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(260px, 1fr));
+            gap: 2.2rem;
+            margin: 1.5rem 0 0 0;
+        }
+        @media (max-width: 900px) {
+            .api-cards.two-cols {
+                grid-template-columns: 1fr;
+                gap: 0.7rem;
+            }
+        }
         .api-card {
             background: var(--vscode-bg);
-            border-radius: 6px;
-            padding: 1.5rem;
-            transition: transform 0.2s;
-        }
-
-        .api-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .difficulty {
-            margin-top: 1rem;
-            font-size: 0.9em;
-        }
-
-        .beginner { color: #85e89d; }
-        .medium { color: #ffab70; }
-        .advanced { color: #f97583; }
-
-        .tags {
-            margin-top: 1rem;
+            border-radius: 12px;
+            padding: 1.3rem 1.1rem 1.1rem 1.1rem;
+            transition: box-shadow 0.18s, transform 0.16s;
+            border: 1.5px solid var(--vscode-highlight);
+            color: var(--vscode-text);
+            box-shadow: 0 4px 24px 0 rgba(0,0,0,0.16);
+            position: relative;
+            min-width: 0;
             display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: flex-start;
         }
-
-        .tag {
-            background: var(--vscode-highlight);
-            padding: 0.2rem 0.5rem;
+        .api-card:hover {
+            box-shadow: 0 12px 40px 0 rgba(0,122,204,0.22), 0 2px 16px 0 rgba(0,0,0,0.20);
+            transform: translateY(-6px) scale(1.035);
+            border-color: var(--vscode-blue);
+        }
+        .api-card h3 {
+            font-size: 1.23em;
+            color: var(--vscode-blue);
+            margin-bottom: 0.2em;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+        .api-card .tags {
+            margin-bottom: 0.3em;
+            display: flex;
+            gap: 0.4em;
+        }
+        .api-card .tag {
+            background: #232d3b;
+            color: #7fd6ff;
             border-radius: 4px;
-            font-size: 0.8em;
+            padding: 0.15em 0.7em;
+            font-size: 0.88em;
+            font-weight: 500;
+            letter-spacing: 0.01em;
         }
-
-        .learning-path {
-            border-left: 4px solid var(--vscode-blue);
-            padding: 1rem;
-            margin: 1rem 0;
-            background: rgba(0, 122, 204, 0.1);
+        .api-card .tag.필수 {
+            background: #005fa3;
+            color: #fff;
         }
-
-        .prerequisites {
-            font-size: 0.9em;
-            color: #888;
-            margin-top: 0.5rem;
+        .api-card .tag.성능 {
+            background: #3aaf6c;
+            color: #fff;
+        }
+        .api-card .difficulty {
+            margin-top: 0.2em;
+            font-size: 0.98em;
+            font-weight: 600;
+        }
+        .api-card .difficulty .beginner {
+            color: #85e89d;
+            font-weight: bold;
+        }
+        .api-card .difficulty .medium {
+            color: #ffb870;
+            font-weight: bold;
+        }
+        .api-card .difficulty .advanced {
+            color: #f97583;
+            font-weight: bold;
+        }
+        .api-card .usage {
+            color: #7fd6ff;
+            font-size: 0.97em;
+            margin-top: 0.1em;
+            margin-bottom: 0.1em;
+        }
+        .api-card .importance {
+            font-size: 1.15em;
+            color: #ffd700;
+            margin: 0.1em 0 0.7em 0;
+            font-weight: 600;
+        }
+        .api-card .button {
+            margin-top: 1.1em;
+            align-self: stretch;
+            font-size: 1.07em;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            background: linear-gradient(90deg, #005fa3 60%, #3af 100%);
+            box-shadow: 0 2px 8px 0 rgba(0,122,204,0.13);
+        }
+        .api-card .button:hover {
+            background: #0077cc;
+        }
+        /* 모바일 대응 */
+        @media (max-width: 900px) {
+            .container, .section, .api-section { max-width: 100vw; }
+            .container { padding: 0.6rem 0.1rem; }
+            .api-section { padding: 1.1rem 0.3rem; }
+            .progress-bar { width: 99vw; }
+        }
+        @media (max-width: 600px) {
+            .container { padding: 0.02rem 0.01rem; }
+            .roadmap-nav { flex-direction: column; gap: 0.5rem; padding: 0.5rem 0; }
+            .progress-bar { width: 99vw; }
+            .section, .api-section { padding-left: 0.1rem; padding-right: 0.1rem; }
+            .api-cards { grid-template-columns: 1fr; gap: 0.7rem; }
+            .api-card { padding: 0.8rem 0.5rem 0.7rem 0.5rem; }
+            h1 { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>📚 Java API 학습 로드맵</h1>
-        <nav>
-            <a href="index.html" class="button">홈으로 돌아가기</a>
-        </nav>
-    </header>
-
-    <main>
-        <!-- 1단계: 기본 데이터 처리 -->
-        <section class="api-section">
-            <h2>1️⃣ 기본 데이터 처리</h2>
-            <p>문자열 처리와 기본 데이터 타입 관리의 기초를 다지는 단계입니다.</p>
-            
-            <div class="api-cards">
-                <div class="api-card">
-                    <h3>String API</h3>
-                    <a href="string.html" class="button">학습하기</a>
-                    <div class="tags">
-                        <span class="tag">필수</span>
-                        <span class="tag">문자열</span>
-                    </div>
-                    <div class="difficulty">난이도: <span class="beginner">입문</span></div>
-                    <div class="prerequisites">선수 지식: Java 기초 문법</div>
+    <div class="container">
+        <header>
+            <h1>📚 Java API 학습 로드맵</h1>
+            <nav class="roadmap-nav">
+                <a href="#step1" class="roadmap-step-link">1️⃣ 기본 데이터 처리</a>
+                <a href="#step2" class="roadmap-step-link">2️⃣ 컬렉션 프레임워크</a>
+                <a href="#step3" class="roadmap-step-link">3️⃣ 고급/실전 활용</a>
+                <a href="index.html" class="roadmap-home-link">홈</a>
+            </nav>
+        </header>
+        <main>
+            <!-- 1단계: 기본 데이터 처리 -->
+            <section class="api-section" id="step1">
+                <h2>1️⃣ 기본 데이터 처리</h2>
+                <div class="note">
+                    <b>주요 내용:</b> 문자열/수치/기본타입 다루기<br>
+                    <b>선수 지식:</b> Java 기초<br>
+                    <b>난이도:</b> 입문~초급
                 </div>
-
-                <div class="api-card">
-                    <h3>StringBuilder API</h3>
-                    <a href="stringbuilder.html" class="button">학습하기</a>
-                    <div class="tags">
-                        <span class="tag">성능</span>
-                        <span class="tag">문자열</span>
+                <div class="api-cards two-cols">
+                    <div class="api-card">
+                        <h3>String API</h3>
+                        <div class="tags"><span class="tag">필수</span><span class="tag">문자열</span></div>
+                        <div class="difficulty">난이도: <span class="beginner">입문</span></div>
+                        <div class="usage">사용처: 텍스트 처리, 데이터 파싱</div>
+                        <div class="importance">중요도: ★★★★★</div>
+                        <a href="string.html" class="button">학습하기</a>
                     </div>
-                    <div class="difficulty">난이도: <span class="beginner">입문</span></div>
-                    <div class="prerequisites">선수 지식: String API</div>
-                </div>
-
-                <div class="api-card">
-                    <h3>Wrapper 클래스</h3>
-                    <a href="wrapper.html" class="button">학습하기</a>
-                    <div class="tags">
-                        <span class="tag">필수</span>
-                        <span class="tag">기본타입</span>
+                    <div class="api-card">
+                        <h3>Math API</h3>
+                        <div class="tags"><span class="tag">필수</span><span class="tag">수치연산</span></div>
+                        <div class="difficulty">난이도: <span class="beginner">입문</span></div>
+                        <div class="usage">사용처: 수학 계산, 알고리즘</div>
+                        <div class="importance">중요도: ★★★★☆</div>
+                        <a href="math.html" class="button">학습하기</a>
                     </div>
-                    <div class="difficulty">난이도: <span class="beginner">입문</span></div>
-                    <div class="prerequisites">선수 지식: Java 기본 타입</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2단계: 컬렉션 프레임워크 -->
-        <section class="api-section">
-            <h2>2️⃣ 컬렉션 프레임워크</h2>
-            <p>데이터를 효율적으로 저장하고 관리하는 방법을 배우는 단계입니다.</p>
-            
-            <div class="learning-path">
-                <h4>💡 학습 순서 가이드</h4>
-                <ol>
-                    <li>Collections 유틸리티 (전체 개요)</li>
-                    <li>List 계열 (ArrayList → LinkedList)</li>
-                    <li>Set 계열 (HashSet → TreeSet)</li>
-                    <li>Map 계열 (HashMap → TreeMap)</li>
-                </ol>
-            </div>
-
-            <div class="api-cards">
-                <div class="api-card">
-                    <h3>Collections API</h3>
-                    <a href="collections.html" class="button">학습하기</a>
-                    <div class="tags">
-                        <span class="tag">필수</span>
-                        <span class="tag">유틸리티</span>
+                    <div class="api-card">
+                        <h3>Arrays API</h3>
+                        <div class="tags"><span class="tag">필수</span><span class="tag">배열</span></div>
+                        <div class="difficulty">난이도: <span class="beginner">입문</span></div>
+                        <div class="usage">사용처: 배열 정렬/검색</div>
+                        <div class="importance">중요도: ★★★★☆</div>
+                        <a href="arrays.html" class="button">학습하기</a>
                     </div>
-                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
-                    <div class="prerequisites">선수 지식: Java 기초</div>
-                </div>
-
-                <div class="api-card">
-                    <h3>ArrayList API</h3>
-                    <a href="arraylist.html" class="button">학습하기</a>
-                    <div class="tags">
-                        <span class="tag">필수</span>
-                        <span class="tag">List</span>
+                    <div class="api-card">
+                        <h3>Wrapper 클래스</h3>
+                        <div class="tags"><span class="tag">기본타입</span></div>
+                        <div class="difficulty">난이도: <span class="beginner">입문</span></div>
+                        <div class="usage">사용처: 컬렉션, 변환</div>
+                        <div class="importance">중요도: ★★★★☆</div>
+                        <a href="wrapper.html" class="button">학습하기</a>
                     </div>
-                    <div class="difficulty">난이도: <span class="beginner">입문</span></div>
-                    <div class="prerequisites">선수 지식: Collections API</div>
-                </div>
-
-                <div class="api-card">
-                    <h3>HashSet API</h3>
-                    <a href="hashset.html" class="button">학습하기</a>
-                    <div class="tags">
-                        <span class="tag">필수</span>
-                        <span class="tag">Set</span>
+                    <div class="api-card">
+                        <h3>StringBuilder API</h3>
+                        <div class="tags"><span class="tag">성능</span><span class="tag">문자열</span></div>
+                        <div class="difficulty">난이도: <span class="beginner">입문</span></div>
+                        <div class="usage">사용처: 대량 문자열 조작</div>
+                        <div class="importance">중요도: ★★★★☆</div>
+                        <a href="stringbuilder.html" class="button">학습하기</a>
                     </div>
-                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
-                    <div class="prerequisites">선수 지식: ArrayList</div>
                 </div>
-
-                <div class="api-card">
-                    <h3>HashMap API</h3>
-                    <a href="hashmap.html" class="button">학습하기</a>
-                    <div class="tags">
-                        <span class="tag">필수</span>
-                        <span class="tag">Map</span>
+            </section>
+            <!-- 2단계: 컬렉션 프레임워크 -->
+            <section class="api-section" id="step2">
+                <h2>2️⃣ 컬렉션 프레임워크</h2>
+                <div class="note">
+                    <b>주요 내용:</b> 자료구조, List/Set/Map, 탐색/정렬/비교<br>
+                    <b>선수 지식:</b> 1단계 API<br>
+                    <b>난이도:</b> 초급~중급
+                </div>
+                <div class="api-cards two-cols">
+                    <div class="api-card">
+                        <h3>ArrayList API</h3>
+                        <div class="tags"><span class="tag">List</span></div>
+                        <div class="difficulty">난이도: <span class="beginner">입문</span></div>
+                        <div class="usage">사용처: 동적 배열, 순차 자료</div>
+                        <div class="importance">중요도: ★★★★★</div>
+                        <a href="arraylist.html" class="button">학습하기</a>
                     </div>
-                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
-                    <div class="prerequisites">선수 지식: HashSet</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 3단계: 고급 데이터 처리 -->
-        <section class="api-section">
-            <h2>3️⃣ 고급 데이터 처리</h2>
-            <p>현대적인 Java 프로그래밍에 필수적인 스트림 처리와 함수형 프로그래밍을 배우는 단계입니다.</p>
-
-            <div class="api-cards">
-                <div class="api-card">
-                    <h3>Stream API</h3>
-                    <a href="stream.html" class="button">학습하기</a>
-                    <div class="tags">
-                        <span class="tag">필수</span>
-                        <span class="tag">함수형</span>
+                    <div class="api-card">
+                        <h3>Collections API</h3>
+                        <div class="tags"><span class="tag">유틸리티</span></div>
+                        <div class="difficulty">난이도: <span class="medium">중급</span></div>
+                        <div class="usage">사용처: 컬렉션 정렬/검색/변환</div>
+                        <div class="importance">중요도: ★★★★☆</div>
+                        <a href="collections.html" class="button">학습하기</a>
                     </div>
-                    <div class="difficulty">난이도: <span class="advanced">고급</span></div>
-                    <div class="prerequisites">선수 지식: 컬렉션 프레임워크</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4단계: 실무 필수 API -->
-        <section class="api-section">
-            <h2>4️⃣ 실무 필수 API</h2>
-            <p>실제 애플리케이션 개발에 필수적인 예외 처리, 파일 처리, JSON 처리를 배우는 단계입니다.</p>
-
-            <div class="api-cards">
-                <div class="api-card">
-                    <h3>Exception API</h3>
-                    <a href="exception.html" class="button">학습하기</a>
-                    <div class="tags">
-                        <span class="tag">필수</span>
-                        <span class="tag">에러처리</span>
+                    <div class="api-card">
+                        <h3>Comparator API</h3>
+                        <div class="tags"><span class="tag">정렬</span></div>
+                        <div class="difficulty">난이도: <span class="medium">중급</span></div>
+                        <div class="usage">사용처: 사용자 정의 정렬</div>
+                        <div class="importance">중요도: ★★★☆☆</div>
+                        <a href="comparator.html" class="button">학습하기</a>
                     </div>
-                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
-                    <div class="prerequisites">선수 지식: Java 기초</div>
-                </div>
-
-                <div class="api-card">
-                    <h3>File I/O API</h3>
-                    <a href="file.html" class="button">학습하기</a>
-                    <div class="tags">
-                        <span class="tag">필수</span>
-                        <span class="tag">파일처리</span>
+                    <div class="api-card">
+                        <h3>Map (HashMap, TreeMap)</h3>
+                        <div class="tags"><span class="tag">Map</span></div>
+                        <div class="difficulty">난이도: <span class="medium">중급</span></div>
+                        <div class="usage">사용처: 키-값 저장, 검색</div>
+                        <div class="importance">중요도: ★★★★★</div>
+                        <a href="map.html" class="button">학습하기</a>
                     </div>
-                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
-                    <div class="prerequisites">선수 지식: Exception API</div>
                 </div>
-
-                <div class="api-card">
-                    <h3>JSON API</h3>
-                    <a href="json.html" class="button">학습하기</a>
-                    <div class="tags">
-                        <span class="tag">웹개발</span>
-                        <span class="tag">데이터</span>
+            </section>
+            <!-- 3단계: 고급/실전 활용 -->
+            <section class="api-section" id="step3">
+                <h2>3️⃣ 고급/실전 활용</h2>
+                <div class="note">
+                    <b>주요 내용:</b> 반복자, 람다, 스트림, 실전 문제풀이<br>
+                    <b>선수 지식:</b> 컬렉션 프레임워크<br>
+                    <b>난이도:</b> 중급~고급
+                </div>
+                <div class="api-cards two-cols">
+                    <div class="api-card">
+                        <h3>Iterator (고급)</h3>
+                        <div class="tags"><span class="tag">반복</span></div>
+                        <div class="difficulty">난이도: <span class="advanced">고급</span></div>
+                        <div class="usage">사용처: 컬렉션 반복</div>
+                        <div class="importance">중요도: ★★★☆☆</div>
+                        <a href="iterator.html" class="button">학습하기</a>
                     </div>
-                    <div class="difficulty">난이도: <span class="medium">중간</span></div>
-                    <div class="prerequisites">선수 지식: File I/O, Collections</div>
+                    <div class="api-card">
+                        <h3>Lambda (고급)</h3>
+                        <div class="tags"><span class="tag">람다</span></div>
+                        <div class="difficulty">난이도: <span class="advanced">고급</span></div>
+                        <div class="usage">사용처: 함수형 프로그래밍</div>
+                        <div class="importance">중요도: ★★★★☆</div>
+                        <a href="lambda.html" class="button">학습하기</a>
+                    </div>
+                    <div class="api-card">
+                        <h3>Stream API</h3>
+                        <div class="tags"><span class="tag">함수형</span></div>
+                        <div class="difficulty">난이도: <span class="advanced">고급</span></div>
+                        <div class="usage">사용처: 대량 데이터 처리</div>
+                        <div class="importance">중요도: ★★★★★</div>
+                        <a href="stream.html" class="button">학습하기</a>
+                    </div>
+                    <div class="api-card">
+                        <h3>실전 문제풀이</h3>
+                        <div class="tags"><span class="tag">실전</span></div>
+                        <div class="difficulty">난이도: <span class="advanced">고급</span></div>
+                        <div class="usage">사용처: 종합 문제 해결</div>
+                        <div class="importance">중요도: ★★★★☆</div>
+                        <a href="practice.html" class="button">학습하기</a>
+                    </div>
                 </div>
-            </div>
-        </section>
-    </main>
+            </section>
+        </main>
+    </div>
 </body>
 </html>

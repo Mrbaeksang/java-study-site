@@ -14,21 +14,32 @@
       padding: 2rem;
       max-width: 1000px;
     }
-
     .method-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
       margin: 2rem 0;
     }
-
+    .method-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    .method-table th,
+    .method-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--vscode-highlight);
+      text-align: left;
+    }
+    .method-table th {
+      background: var(--vscode-bg);
+    }
     .example-box {
       background: var(--vscode-bg);
       border-radius: 6px;
       padding: 1.5rem;
       margin: 1rem 0;
     }
-
     .code-block {
       background: #2d2d2d;
       padding: 1rem;
@@ -37,28 +48,24 @@
       overflow-x: auto;
       margin: 1rem 0;
     }
-
     .note {
       border-left: 4px solid var(--vscode-blue);
       padding: 1rem;
       margin: 1rem 0;
       background: rgba(0, 122, 204, 0.1);
     }
-
     .warning {
       border-left: 4px solid #f97583;
       padding: 1rem;
       margin: 1rem 0;
       background: rgba(249, 117, 131, 0.1);
     }
-
     .tip {
       border-left: 4px solid #85e89d;
       padding: 1rem;
       margin: 1rem 0;
       background: rgba(133, 232, 157, 0.1);
     }
-
     .tag {
       display: inline-block;
       padding: 0.25rem 0.5rem;
@@ -67,385 +74,367 @@
       margin-right: 0.5rem;
       background: var(--vscode-highlight);
     }
-
     h2 {
       color: var(--vscode-blue);
       border-bottom: 1px solid var(--vscode-highlight);
       padding-bottom: 0.5rem;
       margin: 2rem 0 1rem;
     }
-
     h3 {
       color: var(--vscode-text);
       margin: 1.5rem 0 1rem;
     }
-
     .method-name {
       color: #569cd6;
     }
-
     .parameter {
       color: #9cdcfe;
     }
-
     .return-type {
       color: #4ec9b0;
+    }
+    .ascii-art {
+      font-family: inherit;
+      background: #222;
+      color: #eee;
+      padding: 0.7em 1em;
+      margin: 0.7em 0;
+      border-radius: 6px;
+      border: 1px solid #444;
+      display: block;
+      font-size: 1em;
+      line-height: 1.7;
+    }
+    /* 현대적 네비게이션 바 */
+    .api-nav {
+      position: sticky;
+      top: 0;
+      background: #181f2a;
+      z-index: 120;
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      align-items: center;
+      padding: 1.1rem 0 1.1rem 0;
+      border-bottom: 2px solid #2d3748;
+      box-shadow: 0 2px 16px 0 rgba(0,0,0,0.13);
+      flex-wrap: wrap;
+    }
+    .api-nav-link {
+      background: linear-gradient(90deg, #005fa3 60%, #3af 100%);
+      color: #fff;
+      border-radius: 2em;
+      font-weight: 700;
+      font-size: 1.08em;
+      padding: 0.45em 1.5em;
+      margin: 0 0.2em;
+      border: none;
+      box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);
+      letter-spacing: 0.01em;
+      transition: background 0.17s, color 0.17s, box-shadow 0.18s;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      outline: none;
+      text-decoration: none;
+    }
+    .api-nav-link.active, .api-nav-link:focus, .api-nav-link:hover {
+      background: linear-gradient(90deg, #0077cc 60%, #4fd5ff 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px 0 rgba(0,122,204,0.17);
+      text-decoration: none;
+    }
+    .api-nav-next {
+      background: #fff;
+      color: #005fa3;
+      border: 1.5px solid #005fa3;
+      border-radius: 2em;
+      font-weight: 700;
+      font-size: 1.08em;
+      padding: 0.45em 1.5em;
+      margin-left: 2em;
+      transition: background 0.17s, color 0.17s, border 0.16s, box-shadow 0.18s;
+      box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      outline: none;
+      text-decoration: none;
+    }
+    .api-nav-next:focus, .api-nav-next:hover {
+      background: #005fa3;
+      color: #fff;
+      border: 1.5px solid #fff;
+      box-shadow: 0 4px 16px 0 rgba(0,122,204,0.18);
+      text-decoration: none;
+    }
+    @media (max-width: 700px) {
+      .api-nav { flex-direction: column; gap: 0.7rem; padding: 0.7rem 0; }
+      .api-nav-link, .api-nav-next { width: 98vw; justify-content: center; }
+    }
+    /* 강조 스타일 */
+    .highlight {
+      color: #ffd700;
+      font-weight: 900;
+      background: none;
+      padding: 0.08em 0.18em;
+      border-radius: 0.2em;
+      font-size: 1.08em;
+    }
+    .important {
+      color: #f97583;
+      font-weight: bold;
+      background: rgba(249,117,131,0.10);
+      border-radius: 0.2em;
+      padding: 0.07em 0.18em;
+    }
+    .section h2 .highlight {
+      font-size: 1.13em;
     }
   </style>
 </head>
 <body>
   <header>
     <h1>💫 String API 완벽 가이드</h1>
-    <nav>
-      <a href="index.html" class="button">홈으로 돌아가기</a>
+    <nav class="api-nav">
+      <a href="string.html" class="api-nav-link active">String</a>
+      <a href="math.html" class="api-nav-link">Math</a>
+      <a href="arrays.html" class="api-nav-link">Arrays</a>
+      <a href="wrapper.html" class="api-nav-link">Wrapper</a>
+      <a href="stringbuilder.html" class="api-nav-link">StringBuilder</a>
+      <a href="arraylist.html" class="api-nav-link">ArrayList</a>
+      <a href="collections.html" class="api-nav-link">Collections</a>
+      <a href="hashset.html" class="api-nav-link">HashSet</a>
+      <a href="map.html" class="api-nav-link">Map</a>
+      <a href="stream.html" class="api-nav-link">Stream</a>
+      <a href="index.html" class="api-nav-link">홈</a>
+      <a href="math.html" class="api-nav-next">다음장 ➡️</a>
     </nav>
   </header>
 
   <main>
-    <!-- 개요 섹션 -->
+    <!-- 🍎 String 클래스는 왜 필요할까? -->
     <section class="section">
-      <h2>📚 String 클래스 개요</h2>
-      <p>Java에서 가장 많이 사용되는 클래스 중 하나인 String은 문자열을 다루는 불변(immutable) 클래스입니다.</p>
-      
-      <div class="note">
-        <h3>주요 특징</h3>
+      <h2><span class="highlight">🍎 String 클래스는 왜 필요할까?</span></h2>
+      <div class="example-box">
+        <b class="highlight" style="background:none; color:#ffd700;">실생활과 개발에서 String이 중요한 순간!</b>
         <ul>
-          <li>불변성 (Immutability)</li>
-          <li>String Pool을 통한 메모리 최적화</li>
-          <li>Thread-safe</li>
-          <li>Unicode 문자열 지원</li>
+          <li><span class="important">문자열 데이터</span>를 저장, 조작, 비교해야 할 때</li>
+          <li>입력값 처리, 로그 출력, 파일 읽기 등 <span class="important">모든 프로그램의 기본</span></li>
+          <li>문자열 결합, 분리, 검색 등 다양한 <span class="important">문자열 연산</span>이 필요할 때</li>
+        </ul>
+      </div>
+      <div class="note">
+        <b>String 클래스는 <span style="color:#85e89d">문자열을 효율적으로 다루고</span> 다양한 연산을 지원합니다!</b>
+      </div>
+    </section>
+
+    <!-- String 클래스 개요/특징 -->
+    <section class="section">
+      <h2>📖 String 클래스 개요</h2>
+      <div class="example-box">
+        <ul>
+          <li>문자열(문자들의 집합)을 <span class="important">객체</span>로 다룸</li>
+          <li><span class="important">불변(immutable)</span> 특성: 한 번 생성하면 변경 불가</li>
+          <li>다양한 메서드로 문자열 조작 지원</li>
+          <li>+ 연산자, concat, format 등 결합 지원</li>
         </ul>
       </div>
     </section>
 
-    <!-- 기본 메서드 섹션 -->
+    <!-- 🔑 주요 메서드 한눈에 보기 & 실전 활용 -->
     <section class="section">
-      <h2>🔍 기본 메서드</h2>
-      
-      <div class="method-grid">
-        <!-- length() -->
-        <div class="card">
-          <h3>length()</h3>
-          <div class="tag">기본</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="return-type">int</span> <span class="method-name">length</span>()
-          </div>
-          
-          <p>문자열의 길이를 반환합니다.</p>
-          
-          <div class="example-box">
+      <h2>🔑 주요 메서드 한눈에 보기 & 실전 활용</h2>
+      <div class="example-box">
+        <h3>charAt()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 문자열에서 특정 위치의 문자 1개를 추출할 때</li>
+          <li><b>코드 예시:</b>
             <div class="code-block">
-String str = "Hello";<br>
-int len = str.length(); // 5
+String s = "hello";
+System.out.println(s.charAt(1)); // 'e'
             </div>
-          </div>
-        </div>
+          </li>
+          <li><b>실전 활용:</b> 문자 검사, for문과 조합, 조건문 분기</li>
+          <li><b>자주 하는 실수:</b> 인덱스 범위 벗어나면 예외 발생</li>
+        </ul>
+        <div class="tip">미션: "hello"의 0번째 문자는?</div>
+        <details><summary>정답 보기</summary><div class="note">'h'</div></details>
+      </div>
+      <div class="example-box">
+        <h3>substring()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 문자열의 일부(부분 문자열)를 추출할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "hello";
+System.out.println(s.substring(1, 4)); // "ell"
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 구분자 분리, 슬라이싱, for문과 조합</li>
+          <li><b>자주 하는 실수:</b> 인덱스 범위 벗어나면 예외 발생</li>
+        </ul>
+        <div class="tip">미션: "hello"에서 substring(2, 4)의 결과는?</div>
+        <details><summary>정답 보기</summary><div class="note">"ll"</div></details>
+      </div>
+      <div class="example-box">
+        <h3>indexOf()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 특정 문자가 문자열에서 처음 등장하는 위치를 찾을 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "banana";
+System.out.println(s.indexOf('a')); // 1
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 검색, 조건 분기, 반복문과 조합</li>
+          <li><b>자주 하는 실수:</b> 없는 문자 검색 시 -1 반환</li>
+        </ul>
+        <div class="tip">미션: "banana"에서 'n'의 첫 위치는?</div>
+        <details><summary>정답 보기</summary><div class="note">2</div></details>
+      </div>
+      <div class="example-box">
+        <h3>replace()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 문자열 내 특정 문자/문자열을 다른 값으로 바꿀 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "java";
+System.out.println(s.replace("a", "o")); // "jovo"
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 데이터 정제, 치환, 조건부 변환</li>
+        </ul>
+        <div class="tip">미션: "apple"에서 'p'를 'b'로 바꾸면?</div>
+        <details><summary>정답 보기</summary><div class="note">"abble"</div></details>
+      </div>
+      <div class="example-box">
+        <h3>split()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 구분자를 기준으로 문자열을 여러 조각으로 나눌 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "a,b,c";
+String[] arr = s.split(",");
+System.out.println(Arrays.toString(arr)); // [a, b, c]
+            </div>
+          </li>
+          <li><b>실전 활용:</b> CSV 파싱, 데이터 분해, 반복문과 조합</li>
+        </ul>
+        <div class="tip">미션: "a:b:c"를 ':'로 split하면?</div>
+        <details><summary>정답 보기</summary><div class="note">[a, b, c]</div></details>
+      </div>
+      <div class="example-box">
+        <h3>trim()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 문자열 양 끝의 공백을 제거할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "  hi  ";
+System.out.println(s.trim()); // "hi"
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 입력값 정제, 데이터 전처리</li>
+        </ul>
+        <div class="tip">미션: "  java  "에 trim()을 적용하면?</div>
+        <details><summary>정답 보기</summary><div class="note">"java"</div></details>
+      </div>
+    </section>
 
-        <!-- charAt() -->
-        <div class="card">
-          <h3>charAt()</h3>
-          <div class="tag">기본</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="return-type">char</span> <span class="method-name">charAt</span>(<span class="parameter">int index</span>)
-          </div>
-          
-          <p>지정된 인덱스의 문자를 반환합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-String str = "Hello";<br>
-char ch = str.charAt(0); // 'H'
-            </div>
-          </div>
+    <!-- 👶 따라해보세요! 기본 사용법 -->
+    <section class="section">
+      <h2>👶 따라해보세요! 기본 사용법</h2>
+      <div class="example-box">
+        <b>1. 문자열 결합과 분리</b>
+        <div class="code-block">
+String s = "Hello" + " World"; // 결합
+String[] arr = s.split(" "); // 분리
         </div>
-
-        <!-- substring() -->
-        <div class="card">
-          <h3>substring()</h3>
-          <div class="tag">기본</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="return-type">String</span> <span class="method-name">substring</span>(<span class="parameter">int beginIndex</span>)<br>
-            <span class="return-type">String</span> <span class="method-name">substring</span>(<span class="parameter">int beginIndex, int endIndex</span>)
-          </div>
-          
-          <p>문자열의 일부를 추출합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-String str = "Hello World";<br>
-String sub1 = str.substring(6);    // "World"<br>
-String sub2 = str.substring(0, 5); // "Hello"
-            </div>
-          </div>
+      </div>
+      <div class="example-box">
+        <b>2. 부분 문자열 추출</b>
+        <div class="code-block">
+String s = "abcdef";
+String sub = s.substring(2, 5); // "cde"
+        </div>
+      </div>
+      <div class="example-box">
+        <b>3. 문자열 비교</b>
+        <div class="code-block">
+String a = "abc";
+String b = "abc";
+boolean same = a.equals(b); // true
         </div>
       </div>
     </section>
 
-    <!-- 문자열 검색 섹션 -->
+    <!-- 💡 실전 예제 & 미션 -->
     <section class="section">
-      <h2>🔎 문자열 검색</h2>
-      
-      <div class="method-grid">
-        <!-- indexOf() -->
-        <div class="card">
-          <h3>indexOf()</h3>
-          <div class="tag">검색</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="return-type">int</span> <span class="method-name">indexOf</span>(<span class="parameter">String str</span>)<br>
-            <span class="return-type">int</span> <span class="method-name">indexOf</span>(<span class="parameter">String str, int fromIndex</span>)
-          </div>
-          
-          <p>문자열이나 문자를 앞에서부터 검색하여 위치를 반환합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-String str = "Hello World";<br>
-int index = str.indexOf("World"); // 6
-            </div>
-          </div>
+      <h2>💡 실전 예제 & 미션</h2>
+      <div class="example-box">
+        <b>미션 1. 단어 개수 세기</b>
+        <div class="code-block">
+String sentence = "I love Java";
+String[] words = sentence.split(" ");
+System.out.println(words.length); // ?
         </div>
-
-        <!-- lastIndexOf() -->
-        <div class="card">
-          <h3>lastIndexOf()</h3>
-          <div class="tag">검색</div>
-          
-          <div class="code-block">
-            <span class="return-type">int</span> <span class="method-name">lastIndexOf</span>(<span class="parameter">String str</span>)
-          </div>
-          
-          <p>문자열이나 문자를 뒤에서부터 검색하여 위치를 반환합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-String str = "Hello Hello World";<br>
-int index = str.lastIndexOf("Hello"); // 6
-            </div>
-          </div>
+        <details><summary>정답 보기</summary>
+          <div class="note">3</div>
+        </details>
+      </div>
+      <div class="example-box">
+        <b>미션 2. 이메일 아이디 추출</b>
+        <div class="code-block">
+String email = "user@example.com";
+String id = email.substring(0, email.indexOf("@"));
+System.out.println(id); // ?
         </div>
+        <details><summary>정답 보기</summary>
+          <div class="note">user</div>
+        </details>
       </div>
     </section>
 
-    <!-- 문자열 변환 섹션 -->
+    <!-- ❓ FAQ / 자주 하는 질문 -->
     <section class="section">
-      <h2>🔄 문자열 변환</h2>
-      
-      <div class="method-grid">
-        <!-- toUpperCase() / toLowerCase() -->
-        <div class="card">
-          <h3>대소문자 변환</h3>
-          <div class="tag">변환</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="return-type">String</span> <span class="method-name">toUpperCase</span>()<br>
-            <span class="return-type">String</span> <span class="method-name">toLowerCase</span>()
-          </div>
-          
-          <div class="example-box">
-            <div class="code-block">
-String str = "Hello";<br>
-String upper = str.toUpperCase(); // "HELLO"<br>
-String lower = str.toLowerCase(); // "hello"
-            </div>
-          </div>
-        </div>
-
-        <!-- trim() -->
-        <div class="card">
-          <h3>trim()</h3>
-          <div class="tag">변환</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="return-type">String</span> <span class="method-name">trim</span>()
-          </div>
-          
-          <p>문자열 앞뒤의 공백을 제거합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-String str = "  Hello  ";<br>
-String trimmed = str.trim(); // "Hello"
-            </div>
-          </div>
-        </div>
+      <h2>❓ 자주 하는 질문 (FAQ)</h2>
+      <div class="example-box">
+        <b>Q. String은 왜 불변인가요?</b><br>
+        <span class="note">보안, 성능, 공유 목적. 변경이 필요하면 StringBuilder 사용!</span>
+      </div>
+      <div class="example-box">
+        <b>Q. ==와 equals의 차이?</b><br>
+        <span class="note">==는 참조비교, equals는 값비교!</span>
+      </div>
+      <div class="example-box">
+        <b>Q. 문자열 결합 시 주의점?</b><br>
+        <span class="note">+ 연산 반복 시 StringBuilder 사용이 효율적!</span>
+      </div>
+      <div class="example-box">
+        <b>Q. null과 비교할 때 주의점?</b><br>
+        <span class="note">equals() 호출 전 반드시 null 체크!</span>
       </div>
     </section>
 
-    <!-- 문자열 비교 섹션 -->
+    <!-- ⚡ 성능과 주의사항 -->
     <section class="section">
-      <h2>⚖️ 문자열 비교</h2>
-      
-      <div class="method-grid">
-        <!-- equals() -->
-        <div class="card">
-          <h3>equals()</h3>
-          <div class="tag">비교</div>
-          <div class="tag">매우 중요</div>
-          
-          <div class="code-block">
-            <span class="return-type">boolean</span> <span class="method-name">equals</span>(<span class="parameter">Object obj</span>)
-          </div>
-          
-          <p>두 문자열의 내용이 같은지 비교합니다.</p>
-          
-          <div class="warning">
-            <p>== 연산자 대신 equals()를 사용하세요!</p>
-          </div>
-          
-          <div class="example-box">
-            <div class="code-block">
-String str1 = "Hello";<br>
-String str2 = new String("Hello");<br>
-boolean isEqual = str1.equals(str2); // true<br>
-boolean isRef = (str1 == str2);      // false
-            </div>
-          </div>
-        </div>
-
-        <!-- compareTo() -->
-        <div class="card">
-          <h3>compareTo()</h3>
-          <div class="tag">비교</div>
-          
-          <div class="code-block">
-            <span class="return-type">int</span> <span class="method-name">compareTo</span>(<span class="parameter">String anotherString</span>)
-          </div>
-          
-          <p>두 문자열을 사전순으로 비교합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-String str1 = "apple";<br>
-String str2 = "banana";<br>
-int result = str1.compareTo(str2); // 음수 (apple이 banana보다 앞)
-            </div>
-          </div>
-        </div>
+      <h2>⚡ 성능과 주의사항</h2>
+      <div class="warning">
+        <b>성능 특성</b>
+        <ul>
+          <li>+ 연산 반복 시 성능 저하 (StringBuilder 추천)</li>
+          <li>불필요한 객체 생성 피하기 (리터럴 사용)</li>
+          <li>null 체크 필수</li>
+          <li>문자열 비교는 equals() 사용</li>
+        </ul>
       </div>
-    </section>
-
-    <!-- 정규표현식 섹션 -->
-    <section class="section">
-      <h2>📝 정규표현식</h2>
-      
-      <div class="method-grid">
-        <!-- matches() -->
-        <div class="card">
-          <h3>matches()</h3>
-          <div class="tag">정규식</div>
-          
-          <div class="code-block">
-            <span class="return-type">boolean</span> <span class="method-name">matches</span>(<span class="parameter">String regex</span>)
-          </div>
-          
-          <p>문자열이 정규표현식과 일치하는지 검사합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-String email = "user@example.com";<br>
-boolean isValid = email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
-            </div>
-          </div>
-        </div>
-
-        <!-- split() -->
-        <div class="card">
-          <h3>split()</h3>
-          <div class="tag">정규식</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="return-type">String[]</span> <span class="method-name">split</span>(<span class="parameter">String regex</span>)
-          </div>
-          
-          <p>정규표현식을 기준으로 문자열을 분할합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-String str = "apple,banana,orange";<br>
-String[] fruits = str.split(","); // ["apple", "banana", "orange"]
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 성능 최적화 팁 -->
-    <section class="section">
-      <h2>⚡ 성능 최적화 팁</h2>
-      
       <div class="tip">
-        <h3>1. String 연결 연산</h3>
-        <p>반복문에서 String 연결이 필요한 경우 StringBuilder를 사용하세요.</p>
-        <div class="code-block">
-// Bad
-String result = "";<br>
-for (int i = 0; i < 1000; i++) {
-    result += i;
-}<br>
-// Good
-StringBuilder sb = new StringBuilder();<br>
-for (int i = 0; i < 1000; i++) {
-    sb.append(i);
-}<br>
-String result = sb.toString();
-        </div>
-      </div>
-
-      <div class="tip">
-        <h3>2. String Pool 활용</h3>
-        <p>리터럴로 생성된 문자열은 String Pool에 저장되어 재사용됩니다.</p>
-        <div class="code-block">
-// String Pool 사용
-String str1 = "Hello";<br>
-// 새로운 객체 생성
-String str2 = new String("Hello");
-        </div>
-      </div>
-    </section>
-
-    <!-- 실전 예제 -->
-    <section class="section">
-      <h2>💡 실전 예제</h2>
-      
-      <div class="example-box">
-        <h3>1. 이메일 유효성 검사</h3>
-        <div class="code-block">
-public static boolean isValidEmail(String email) {
-    String regex = "^[A-Za-z0-9+_.-]+@(.+)$";
-    return email != null && email.matches(regex);
-}
-        </div>
-      </div>
-
-      <div class="example-box">
-        <h3>2. 문자열 토큰화</h3>
-        <div class="code-block">
-String text = "Java,Python,JavaScript";<br>
-String[] languages = text.split(",");<br>
-for (String lang : languages) {
-    System.out.println(lang.trim());
-}
-        </div>
-      </div>
-
-      <div class="example-box">
-        <h3>3. 문자열 포맷팅</h3>
-        <div class="code-block">
-String name = "John";<br>
-int age = 25;<br>
-String format = String.format("Name: %s, Age: %d", name, age);
-        </div>
+        <b>실무 사용 팁</b>
+        <ul>
+          <li>정규표현식(regex)과 함께 활용</li>
+          <li>toCharArray(), getBytes() 등 변환 메서드도 유용</li>
+          <li>문자열 포맷(format) 적극 활용</li>
+        </ul>
       </div>
     </section>
   </main>

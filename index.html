@@ -158,176 +158,49 @@
         .button:hover .sub-buttons {
             display: block;
         }
+        
+        .main-card {
+            background: var(--vscode-darker);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 24px 0 rgba(0,0,0,0.09);
+        }
+        
+        .flow-step {
+            background: var(--vscode-lighter);
+            border-radius: 8px;
+            padding: 1.2rem 1.7rem;
+            min-width: 170px;
+        }
+        
+        .flow-arrow {
+            align-self: center;
+            font-size: 1.5rem;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>💻 백상의 Java 공부 홈페이지</h1>
-        
-        <!-- 검색 기능 -->
-        <div class="search-box">
-            <input type="text" class="search-input" placeholder="API, 개념, 예제 검색...">
-        </div>
-
-        <!-- 메인 네비게이션 -->
-        <nav class="nav-grid">
-            <a href="api.html" class="button">
-                <span class="button-text">Java API 공부</span>
-                <span class="button-description">Java의 핵심 API와 라이브러리 학습</span>
-                <div class="sub-buttons">
-                    <a href="collections.html" class="sub-button">Collections API</a>
-                    <a href="arraylist.html" class="sub-button">ArrayList API</a>
-                    <a href="hashset.html" class="sub-button">HashSet API</a>
-                    <a href="hashmap.html" class="sub-button">HashMap API</a>
-                </div>
-            </a>
-            <a href="codetest.html" class="button">
-                <span class="button-text">코드테스트 연습</span>
-                <span class="button-description">알고리즘과 코딩 테스트 준비</span>
-            </a>
-            <a href="concept.html" class="button">
-                <span class="button-text">Java 개념 정리</span>
-                <span class="button-description">Java의 기본 개념과 심화 학습</span>
-            </a>
-            <a href="review.html" class="button">
-                <span class="button-text">복습/오답노트</span>
-                <span class="button-description">학습 내용 복습과 오답 정리</span>
-            </a>
-        </nav>
+        <h1 style="font-size:2.6rem;text-align:center;margin:2.5rem 0 1.5rem 0;letter-spacing:-1px;">☕ 백상의 Java Study</h1>
+        <p style="text-align:center;color:#aaa;font-size:1.15rem;margin-bottom:2.5rem;">기초부터 실전, 면접까지 한눈에 배우는 Java 학습 허브</p>
     </header>
-
-    <!-- 대시보드 섹션 -->
-    <div class="dashboard">
-        <!-- 진도 현황 -->
-        <div class="card">
-            <h2>📊 학습 진도</h2>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
+    <main style="max-width:1100px;margin:0 auto;">
+        <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:3.5rem;margin-top:4.5rem;">
+            <div class="main-card" style="background:var(--vscode-darker);border-radius:22px;padding:4rem 2.5rem;text-align:center;box-shadow:0 6px 32px 0 rgba(0,0,0,0.13);">
+                <h2 style="font-size:2.7rem;margin-bottom:2.1rem;">📚 Java API 한눈에 보기</h2>
+                <p style="color:#bdbdbd;margin-bottom:2.7rem;font-size:1.22rem;">핵심 API별로 실전 예제, 심화, FAQ, 면접 대비까지<br>한 번에 정리!</p>
+                <a href="api.html" class="button" style="font-size:1.45rem;padding:1.5rem 3.2rem;">API 학습 시작하기</a>
             </div>
-            <p>전체 진도율: 65%</p>
-            <div class="tags">
-                <span class="tag">API 학습: 8/11</span>
-                <span class="tag">개념 정리: 12/20</span>
-                <span class="tag">예제 작성: 15/25</span>
+            <div class="main-card" style="background:var(--vscode-darker);border-radius:22px;padding:4rem 2.5rem;text-align:center;box-shadow:0 6px 32px 0 rgba(0,0,0,0.13);">
+                <h2 style="font-size:2.7rem;margin-bottom:2.1rem;">💡 실전 미션 & 예제</h2>
+                <p style="color:#bdbdbd;margin-bottom:2.7rem;font-size:1.22rem;">코딩 미션, 실전 예제, 자주 틀리는 문제<br>직접 풀고 바로 정답 확인!</p>
+                <a href="codetest.html" class="button" style="font-size:1.45rem;padding:1.5rem 3.2rem;">문제 풀러 가기</a>
             </div>
-        </div>
-
-        <!-- 최근 학습 -->
-        <div class="card">
-            <h2>🕒 최근 학습</h2>
-            <div class="recent-activity">
-                <div class="activity-item">Stream API 학습 완료</div>
-                <div class="activity-item">File API 예제 작성</div>
-                <div class="activity-item">JSON 처리 실습</div>
-                <div class="activity-item">Exception handling 복습</div>
-            </div>
-        </div>
-
-        <!-- 학습 로드맵 -->
-        <div class="card">
-            <h2>🗺️ 학습 로드맵</h2>
-            <ul class="roadmap">
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="기본 API 마스터">
-                    <span>기본 API 마스터</span>
-                </li>
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="컬렉션 프레임워크 기초">
-                    <span>컬렉션 프레임워크 기초 (List, Set, Map)</span>
-                </li>
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="컬렉션 API 활용">
-                    <span>컬렉션 API 활용 (sort, filter, map)</span>
-                </li>
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="람다식 기초">
-                    <span>람다식 기초 (함수형 인터페이스)</span>
-                </li>
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="람다식 활용">
-                    <span>람다식 활용 (Comparator, 정렬)</span>
-                </li>
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="파일 처리와 IO">
-                    <span>파일 처리와 IO</span>
-                </li>
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="스트림 API">
-                    <span>스트림 API</span>
-                </li>
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="스프링 부트 준비">
-                    <span>스프링 부트 준비</span>
-                </li>
-            </ul>
-        </div>
-
-        <!-- 스프링 부트 준비 -->
-        <div class="card">
-            <h2>🌱 스프링 부트 준비</h2>
-            <ul class="roadmap">
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="의존성 주입 이해">
-                    <span>의존성 주입 이해</span>
-                </li>
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="MVC 패턴 학습">
-                    <span>MVC 패턴 학습</span>
-                </li>
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="REST API 설계">
-                    <span>REST API 설계</span>
-                </li>
-                <li class="roadmap-item">
-                    <input type="checkbox" class="progress-checkbox" data-item="JPA/Hibernate 기초">
-                    <span>JPA/Hibernate 기초</span>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- 다크 모드 토글 -->
-    <button class="theme-toggle">🌓</button>
-
-    <script>
-        // 진도 체크 관련 JavaScript
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkboxes = document.querySelectorAll('.progress-checkbox');
-            const progressFill = document.querySelector('.progress-fill');
-            const progressText = document.querySelector('.card p');
-            
-            // 저장된 진도 불러오기
-            function loadProgress() {
-                checkboxes.forEach(checkbox => {
-                    const item = checkbox.dataset.item;
-                    const isChecked = localStorage.getItem(item) === 'true';
-                    checkbox.checked = isChecked;
-                });
-                updateProgress();
-            }
-
-            // 진도 업데이트
-            function updateProgress() {
-                const totalItems = checkboxes.length;
-                const checkedItems = Array.from(checkboxes).filter(cb => cb.checked).length;
-                const percentage = Math.round((checkedItems / totalItems) * 100);
-                
-                progressFill.style.width = `${percentage}%`;
-                progressText.textContent = `전체 진도율: ${percentage}%`;
-            }
-
-            // 체크박스 이벤트 리스너
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const item = this.dataset.item;
-                    localStorage.setItem(item, this.checked);
-                    updateProgress();
-                });
-            });
-
-            // 초기 로드
-            loadProgress();
-        });
-    </script>
+        </section>
+    </main>
+    <footer style="margin-top:6rem;text-align:center;color:#666;font-size:0.97rem;">
+        &copy; 2025 백상(Java Study) | Made with ☕ & 💻
+    </footer>
 </body>
 </html>

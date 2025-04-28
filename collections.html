@@ -1,292 +1,403 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collections API 완벽 가이드</title>
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .section {
-            background: var(--vscode-darker);
-            border: 1px solid var(--vscode-highlight);
-            border-radius: 8px;
-            margin: 2rem auto;
-            padding: 2rem;
-            max-width: 1000px;
-        }
-
-        .method-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .example-box {
-            background: var(--vscode-bg);
-            border-radius: 6px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-        }
-
-        .code-block {
-            background: #2d2d2d;
-            padding: 1rem;
-            border-radius: 6px;
-            font-family: 'Consolas', monospace;
-            overflow-x: auto;
-            margin: 1rem 0;
-            white-space: pre;
-            line-height: 1.5;
-        }
-
-        .note {
-            border-left: 4px solid var(--vscode-blue);
-            padding: 1rem;
-            margin: 1rem 0;
-            background: rgba(0, 122, 204, 0.1);
-        }
-
-        .warning {
-            border-left: 4px solid #f97583;
-            padding: 1rem;
-            margin: 1rem 0;
-            background: rgba(249, 117, 131, 0.1);
-        }
-
-        .tip {
-            border-left: 4px solid #85e89d;
-            padding: 1rem;
-            margin: 1rem 0;
-            background: rgba(133, 232, 157, 0.1);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collections API 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    .method-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    .method-table th,
+    .method-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--vscode-highlight);
+      text-align: left;
+    }
+    .method-table th {
+      background: var(--vscode-bg);
+    }
+    .example-box {
+      background: var(--vscode-bg);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 0.5rem;
+      background: var(--vscode-highlight);
+    }
+    h2 {
+      color: var(--vscode-blue);
+      border-bottom: 1px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin: 2rem 0 1rem;
+    }
+    h3 {
+      color: var(--vscode-text);
+      margin: 1.5rem 0 1rem;
+    }
+    .method-name {
+      color: #569cd6;
+    }
+    .parameter {
+      color: #9cdcfe;
+    }
+    .return-type {
+      color: #4ec9b0;
+    }
+    .ascii-art {
+      font-family: inherit;
+      background: #222;
+      color: #eee;
+      padding: 0.7em 1em;
+      margin: 0.7em 0;
+      border-radius: 6px;
+      border: 1px solid #444;
+      display: block;
+      font-size: 1em;
+      line-height: 1.7;
+    }
+    /* 현대적 네비게이션 바 */
+    .api-nav {
+      position: sticky;
+      top: 0;
+      background: #181f2a;
+      z-index: 120;
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      align-items: center;
+      padding: 1.1rem 0 1.1rem 0;
+      border-bottom: 2px solid #2d3748;
+      box-shadow: 0 2px 16px 0 rgba(0,0,0,0.13);
+      flex-wrap: wrap;
+    }
+    .api-nav-link {
+      background: linear-gradient(90deg, #005fa3 60%, #3af 100%);
+      color: #fff;
+      border-radius: 2em;
+      font-weight: 700;
+      font-size: 1.08em;
+      padding: 0.45em 1.5em;
+      margin: 0 0.2em;
+      border: none;
+      box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);
+      letter-spacing: 0.01em;
+      transition: background 0.17s, color 0.17s, box-shadow 0.18s;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      outline: none;
+      text-decoration: none;
+    }
+    .api-nav-link.active, .api-nav-link:focus, .api-nav-link:hover {
+      background: linear-gradient(90deg, #0077cc 60%, #4fd5ff 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px 0 rgba(0,122,204,0.17);
+      text-decoration: none;
+    }
+    .api-nav-next {
+      background: #fff;
+      color: #005fa3;
+      border: 1.5px solid #005fa3;
+      border-radius: 2em;
+      font-weight: 700;
+      font-size: 1.08em;
+      padding: 0.45em 1.5em;
+      margin-left: 2em;
+      transition: background 0.17s, color 0.17s, border 0.16s, box-shadow 0.18s;
+      box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      outline: none;
+      text-decoration: none;
+    }
+    .api-nav-next:focus, .api-nav-next:hover {
+      background: #005fa3;
+      color: #fff;
+      border: 1.5px solid #fff;
+      box-shadow: 0 4px 16px 0 rgba(0,122,204,0.18);
+      text-decoration: none;
+    }
+    @media (max-width: 700px) {
+      .api-nav {
+        flex-direction: column;
+        gap: 0.7rem;
+        padding: 0.6rem 0 0.6rem 0;
+      }
+      .api-nav-link, .api-nav-next {
+        margin: 0.2em 0;
+        width: 90%;
+        justify-content: center;
+      }
+    }
+    .important {
+      color: #f97583;
+      font-weight: bold;
+      background: rgba(249,117,131,0.10);
+      border-radius: 0.2em;
+      padding: 0.07em 0.18em;
+    }
+    .section h2 .highlight {
+      font-size: 1.13em;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>🔄 Collections API 완벽 가이드</h1>
-        <nav>
-            <a href="index.html" class="button">홈으로 돌아가기</a>
-        </nav>
-    </header>
+  <header>
+    <h1>🛠️ Collections API 완벽 가이드</h1>
+    <nav class="api-nav">
+      <a href="index.html" class="api-nav-link">홈</a>
+      <a href="string.html" class="api-nav-link">String</a>
+      <a href="stringbuilder.html" class="api-nav-link">StringBuilder</a>
+      <a href="arraylist.html" class="api-nav-link">ArrayList</a>
+      <a href="collections.html" class="api-nav-link active">Collections</a>
+      <a href="comparator.html" class="api-nav-link">Comparator</a>
+      <a href="hashset.html" class="api-nav-link">HashSet</a>
+      <a href="hashmap.html" class="api-nav-link">HashMap</a>
+      <a href="stream.html" class="api-nav-link">Stream</a>
+      <a href="comparator.html" class="api-nav-next">다음장 ➡️</a>
+    </nav>
+  </header>
+  <main>
+    <!-- 🍎 Collections는 왜 필요할까? -->
+    <section class="section">
+      <h2><span class="highlight">🍎 Collections는 왜 필요할까?</span></h2>
+      <div class="example-box">
+        <b>실생활에서 Collections가 필요한 순간!</b>
+        <ul>
+          <li>리스트, 집합, 맵 등 다양한 자료구조를 <span class="important">효율적으로 관리</span>하고 싶을 때</li>
+          <li>정렬, 검색, 최소/최대 찾기 등 <span class="important">공통 작업</span>을 쉽게 처리하고 싶을 때</li>
+        </ul>
+      </div>
+      <div class="code-block">
+// 리스트 정렬
+ArrayList<Integer> list = new ArrayList<>();
+list.add(3); list.add(1); list.add(2);
+Collections.sort(list); // [1, 2, 3]
+      </div>
+      <div class="note">
+        <b>Collections는 <span style="color:#85e89d">컬렉션(자료구조) 유틸리티 메서드</span>를 모아둔 <span class="important">도구상자</span>입니다!</b>
+      </div>
+    </section>
 
-    <main>
-        <!-- 개요 섹션 -->
-        <section class="section">
-            <h2>📚 Collections API 개요</h2>
-            <p>Collections 클래스는 컬렉션을 다루는 유용한 정적 메서드들을 제공합니다.</p>
+    <!-- 📖 Collections 클래스 개요 -->
+    <section class="section">
+      <h2>📖 Collections 클래스 개요</h2>
+      <div class="example-box">
+        <ul>
+          <li><span class="important">정적(static) 메서드만</span> 제공 (인스턴스 생성 불가)</li>
+          <li>List, Set, Map 등 <span class="important">모든 컬렉션</span>에 적용 가능</li>
+          <li>정렬, 검색, 변환, 동기화 등 <span class="important">다양한 기능</span> 지원</li>
+        </ul>
+      </div>
+    </section>
 
-            <div class="note">
-                <h3>주요 기능</h3>
-                <ul>
-                    <li>정렬 (sort)</li>
-                    <li>검색 (binarySearch)</li>
-                    <li>섞기 (shuffle)</li>
-                    <li>최대/최소값 찾기 (max/min)</li>
-                    <li>컬렉션 변경 (reverse, swap)</li>
-                    <li>동기화 (synchronizedList/Set/Map)</li>
-                    <li>불변 컬렉션 생성 (unmodifiableList/Set/Map)</li>
-                </ul>
+    <!-- 🔑 주요 메서드/정적 메서드 한눈에 보기 & 실전 활용 -->
+    <section class="section">
+      <h2>🔑 주요 메서드/정적 메서드 한눈에 보기 & 실전 활용</h2>
+      <div class="example-box">
+        <h3>sort()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트를 오름차순/내림차순 정렬할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+List<Integer> list = Arrays.asList(3, 1, 2);
+Collections.sort(list);
+System.out.println(list); // [1, 2, 3]
             </div>
-        </section>
-
-        <!-- 정렬 메서드 -->
-        <section class="section">
-            <h2>🔄 정렬 메서드</h2>
-
-            <div class="example-box">
-                <h3>기본 정렬</h3>
-                <div class="code-block">
-// 리스트 정렬 (오름차순)
-List<String> fruits = new ArrayList<>(Arrays.asList("banana", "apple", "orange"));
-Collections.sort(fruits);
-System.out.println(fruits);  // [apple, banana, orange]
-
-// 역순 정렬
-Collections.reverse(fruits);
-System.out.println(fruits);  // [orange, banana, apple]
-
-// 커스텀 Comparator를 사용한 정렬
-List<Person> people = new ArrayList<>();
-people.add(new Person("Kim", 25));
-people.add(new Person("Lee", 30));
-people.add(new Person("Park", 20));
-
-// 나이순 정렬
-Collections.sort(people, (p1, p2) -> p1.age - p2.age);
-
-// 이름 길이순 정렬
-Collections.sort(people, (p1, p2) -> p1.name.length() - p2.name.length());</div>
+          </li>
+          <li><b>실전 활용:</b> 데이터 정렬, Comparator와 조합</li>
+        </ul>
+        <div class="tip">미션: [3,1,2]를 sort하면?</div>
+        <details><summary>정답 보기</summary><div class="note">[1, 2, 3]</div></details>
+      </div>
+      <div class="example-box">
+        <h3>reverse()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트의 순서를 뒤집을 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+List<Integer> list = Arrays.asList(1, 2, 3);
+Collections.reverse(list);
+System.out.println(list); // [3, 2, 1]
             </div>
-
-            <div class="example-box">
-                <h3>이진 검색</h3>
-                <div class="code-block">
-// 정렬된 리스트에서 요소 찾기
-List<Integer> numbers = Arrays.asList(1, 3, 5, 7, 9);
-int index = Collections.binarySearch(numbers, 5);
-System.out.println("5의 위치: " + index);  // 2
-
-// 커스텀 Comparator를 사용한 이진 검색
-List<Person> people = new ArrayList<>();
-people.add(new Person("Kim", 25));
-people.add(new Person("Lee", 30));
-people.add(new Person("Park", 20));
-
-// 먼저 정렬
-Collections.sort(people, (p1, p2) -> p1.age - p2.age);
-
-// 나이로 검색
-Person searchKey = new Person("", 25);
-int personIndex = Collections.binarySearch(
-    people,
-    searchKey,
-    (p1, p2) -> p1.age - p2.age
-);</div>
+          </li>
+          <li><b>실전 활용:</b> 내림차순, 순서 변경</li>
+        </ul>
+        <div class="tip">미션: [1,2,3]을 reverse하면?</div>
+        <details><summary>정답 보기</summary><div class="note">[3, 2, 1]</div></details>
+      </div>
+      <div class="example-box">
+        <h3>shuffle()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트의 요소 순서를 무작위로 섞을 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+List<Integer> list = Arrays.asList(1, 2, 3);
+Collections.shuffle(list);
+System.out.println(list); // 예: [2, 3, 1]
             </div>
-        </section>
-
-        <!-- 유틸리티 메서드 -->
-        <section class="section">
-            <h2>🛠 유틸리티 메서드</h2>
-
-            <div class="example-box">
-                <h3>컬렉션 조작</h3>
-                <div class="code-block">
-// 최대/최소값 찾기
-List<Integer> numbers = Arrays.asList(3, 1, 4, 1, 5, 9, 2, 6, 5);
-int max = Collections.max(numbers);  // 9
-int min = Collections.min(numbers);  // 1
-
-// 특정 값으로 채우기
-List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c"));
-Collections.fill(list, "X");  // [X, X, X]
-
-// 빈도수 계산
-int frequency = Collections.frequency(numbers, 5);  // 2
-
-// 두 요소의 위치 교환
-Collections.swap(list, 0, 2);  // 첫 번째와 마지막 요소 교환</div>
+          </li>
+          <li><b>실전 활용:</b> 랜덤 추출, 게임, 샘플링</li>
+        </ul>
+        <div class="tip">미션: [1,2,3]을 shuffle하면?</div>
+        <details><summary>정답 보기</summary><div class="note">결과는 매번 다름 (예: [2,3,1])</div></details>
+      </div>
+      <div class="example-box">
+        <h3>max()/min()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트에서 최댓값/최솟값을 찾을 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+List<Integer> list = Arrays.asList(1, 5, 3);
+System.out.println(Collections.max(list)); // 5
+System.out.println(Collections.min(list)); // 1
             </div>
-
-            <div class="example-box">
-                <h3>불변/동기화 컬렉션</h3>
-                <div class="code-block">
-// 불변 리스트 생성
-List<String> mutableList = new ArrayList<>(Arrays.asList("a", "b", "c"));
-List<String> immutableList = Collections.unmodifiableList(mutableList);
-
-// 동기화된 리스트 생성
-List<String> syncList = Collections.synchronizedList(new ArrayList<>());
-
-// 싱글톤 컬렉션 생성
-Set<Integer> singleton = Collections.singleton(42);
-List<String> singletonList = Collections.singletonList("only one");
-Map<String, Integer> singletonMap = Collections.singletonMap("key", 1);</div>
+          </li>
+          <li><b>실전 활용:</b> 통계, 점수 계산, 랭킹</li>
+        </ul>
+        <div class="tip">미션: [1,5,3]의 max와 min은?</div>
+        <details><summary>정답 보기</summary><div class="note">max: 5, min: 1</div></details>
+      </div>
+      <div class="example-box">
+        <h3>frequency()</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트에서 특정 값의 등장 횟수를 셀 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+List<String> list = Arrays.asList("a", "b", "a");
+System.out.println(Collections.frequency(list, "a")); // 2
             </div>
-        </section>
+          </li>
+          <li><b>실전 활용:</b> 빈도수 세기, 데이터 분석</li>
+        </ul>
+        <div class="tip">미션: ["a","b","a"]에서 "a"의 빈도는?</div>
+        <details><summary>정답 보기</summary><div class="note">2</div></details>
+      </div>
+    </section>
 
-        <!-- 실무 활용 예제 -->
-        <section class="section">
-            <h2>💡 실무 활용 예제</h2>
+    <!-- 👶 따라해보세요! 기본 사용법 -->
+    <section class="section">
+      <h2>👶 따라해보세요! 기본 사용법</h2>
+      <div class="example-box">
+        <b>1. 정렬과 역순</b>
+        <div class="code-block">
+ArrayList<Integer> list = new ArrayList<>();
+list.add(10); list.add(5); list.add(7);
+Collections.sort(list); // [5,7,10]
+Collections.reverse(list); // [10,7,5]
+        </div>
+      </div>
+      <div class="example-box">
+        <b>2. 무작위 섞기와 최대/최소</b>
+        <div class="code-block">
+Collections.shuffle(list); // 예: [7,10,5]
+int max = Collections.max(list); // 10
+int min = Collections.min(list); // 5
+        </div>
+      </div>
+    </section>
 
-            <div class="example-box">
-                <h3>1. 안전한 컬렉션 공유</h3>
-                <div class="code-block">
-// 데이터 클래스
-class DataService {
-    private List<String> data = new ArrayList<>();
-    
-    public DataService() {
-        data.add("중요한 데이터 1");
-        data.add("중요한 데이터 2");
-    }
-    
-    // 외부에 데이터를 공유할 때는 불변 리스트로 제공
-    public List<String> getData() {
-        return Collections.unmodifiableList(data);
-    }
-    
-    // 내부에서만 데이터 수정 가능
-    public void addData(String item) {
-        data.add(item);
-    }
-}</div>
-            </div>
+    <!-- 💡 실전 예제 & 미션 -->
+    <section class="section">
+      <h2>💡 실전 예제 & 미션</h2>
+      <div class="example-box">
+        <b>미션 1. 아래 코드의 출력 결과를 예측해보세요!</b>
+        <div class="code-block">
+ArrayList<String> words = new ArrayList<>();
+words.add("banana"); words.add("apple"); words.add("carrot");
+Collections.sort(words);
+System.out.println(words);
+        </div>
+        <details><summary>정답 보기</summary>
+          <div class="note">[apple, banana, carrot]</div>
+        </details>
+      </div>
+      <div class="example-box">
+        <b>미션 2. 리스트를 무작위로 섞는 코드를 작성해보세요!</b>
+        <div class="note">Collections.shuffle(list)</div>
+      </div>
+    </section>
 
-            <div class="example-box">
-                <h3>2. 멀티스레드 환경에서의 안전한 컬렉션 사용</h3>
-                <div class="code-block">
-class ThreadSafeService {
-    private List<Task> tasks;
-    
-    public ThreadSafeService() {
-        // ArrayList를 동기화된 리스트로 래핑
-        tasks = Collections.synchronizedList(new ArrayList<>());
-    }
-    
-    public void addTask(Task task) {
-        tasks.add(task);
-    }
-    
-    public void processTasks() {
-        // 동기화된 리스트를 순회할 때는 synchronized 블록 사용
-        synchronized (tasks) {
-            for (Task task : tasks) {
-                task.process();
-            }
-        }
-    }
-}</div>
-            </div>
+    <!-- ❓ 자주 하는 질문 (FAQ) -->
+    <section class="section">
+      <h2>❓ 자주 하는 질문 (FAQ)</h2>
+      <div class="example-box">
+        <b>Q. Collections와 Collection의 차이?</b><br>
+        <span class="note">Collections는 <b>유틸리티 클래스</b>, Collection은 <b>인터페이스</b>입니다.</span>
+      </div>
+      <div class="example-box">
+        <b>Q. 정렬 기준을 바꿀 수 있나요?</b><br>
+        <span class="note">Comparator를 활용해 다양한 기준으로 정렬 가능!</span>
+      </div>
+      <div class="example-box">
+        <b>Q. 리스트를 불변(수정불가)으로 만들 수 있나요?</b><br>
+        <span class="note">Collections.unmodifiableList(list) 사용!</span>
+      </div>
+    </section>
 
-            <div class="example-box">
-                <h3>3. 복잡한 정렬 조건 처리</h3>
-                <div class="code-block">
-// 여러 필드를 가진 클래스
-class Product {
-    String name;
-    double price;
-    int stock;
-    
-    // 생성자, getter, setter 생략
-}
-
-// 제품 목록 정렬
-List<Product> products = new ArrayList<>();
-// ... 제품 추가
-
-// 가격 오름차순, 재고 내림차순으로 정렬
-Collections.sort(products, (p1, p2) -> {
-    int priceCompare = Double.compare(p1.price, p2.price);
-    if (priceCompare != 0) {
-        return priceCompare;
-    }
-    return Integer.compare(p2.stock, p1.stock);
-});
-
-// Comparator 체이닝을 사용한 방법
-Collections.sort(products, 
-    Comparator.comparingDouble((Product p) -> p.price)
-              .thenComparingInt((Product p) -> -p.stock)
-);</div>
-            </div>
-        </section>
-
-        <!-- 성능 고려사항 -->
-        <section class="section">
-            <h2>⚡ 성능 고려사항</h2>
-            
-            <div class="warning">
-                <h3>주의사항</h3>
-                <ul>
-                    <li>binarySearch는 반드시 정렬된 리스트에서만 사용</li>
-                    <li>동기화된 컬렉션은 성능 오버헤드 발생</li>
-                    <li>불변 컬렉션은 수정 시도 시 UnsupportedOperationException 발생</li>
-                    <li>빈 컬렉션은 new 대신 Collections.empty___() 메서드 사용 권장</li>
-                </ul>
-            </div>
-        </section>
-    </main>
+    <!-- ⚡ 성능과 주의사항 -->
+    <section class="section">
+      <h2>⚡ 성능과 주의사항</h2>
+      <div class="warning">
+        <b>성능 특성</b>
+        <ul>
+          <li>sort, reverse, shuffle 등은 내부적으로 효율적인 알고리즘 사용</li>
+          <li>불변 컬렉션을 만들 때는 원본 변경 불가</li>
+        </ul>
+      </div>
+      <div class="tip">
+        <b>실무 사용 팁</b>
+        <ul>
+          <li>정렬 기준이 필요하면 Comparator를 직접 구현</li>
+          <li>동기화가 필요한 경우 Collections.synchronizedList() 활용</li>
+        </ul>
+      </div>
+    </section>
+  </main>
 </body>
 </html>

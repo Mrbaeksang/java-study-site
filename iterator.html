@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stream API 완벽 가이드</title>
+  <title>Iterator API 완벽 가이드</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
     .section {background: var(--vscode-darker);border: 1px solid var(--vscode-highlight);border-radius: 8px;margin: 2rem auto;padding: 2rem;max-width: 1000px;}
@@ -30,7 +30,7 @@
 </head>
 <body>
   <header>
-    <h1>🌊 Stream API 완벽 가이드</h1>
+    <h1>🔄 Iterator API 완벽 가이드</h1>
     <nav class="api-nav">
       <a href="index.html" class="api-nav-link">홈</a>
       <a href="string.html" class="api-nav-link">String</a>
@@ -40,163 +40,154 @@
       <a href="comparator.html" class="api-nav-link">Comparator</a>
       <a href="hashset.html" class="api-nav-link">HashSet</a>
       <a href="hashmap.html" class="api-nav-link">HashMap</a>
-      <a href="stream.html" class="api-nav-link active">Stream</a>
-      <a href="string.html" class="api-nav-next">다음장 ➡️</a>
+      <a href="stream.html" class="api-nav-link">Stream</a>
+      <a href="iterator.html" class="api-nav-link active">Iterator</a>
+      <a href="lambda.html" class="api-nav-next">다음장 ➡️</a>
     </nav>
   </header>
   <main>
     <section class="section">
-      <h2><span class="highlight">🍎 Stream은 왜 필요할까?</span></h2>
+      <h2><span class="highlight">🍎 Iterator는 왜 필요할까?</span></h2>
       <div class="example-box">
-        <b>실생활에서 Stream이 필요한 순간!</b>
+        <b>실생활에서 Iterator가 필요한 순간!</b>
         <ul>
-          <li>리스트, 배열 등 <span class="important">모든 컬렉션</span>을 <span class="important">한 줄로</span> 가공하고 싶을 때</li>
-          <li>필터, 정렬, 집계 등 <span class="important">데이터 처리</span>를 쉽고 간결하게 하고 싶을 때</li>
+          <li>리스트, Set 등 <span class="important">모든 컬렉션</span>을 <span class="important">반복문 없이</span> 순회하고 싶을 때</li>
+          <li>for-each문으로 처리할 수 없는 <span class="important">삭제/수정</span>이 필요할 때</li>
         </ul>
       </div>
       <div class="code-block">
-// 짝수만 골라 합계 구하기
-int sum = list.stream().filter(x -> x%2==0).mapToInt(x->x).sum();
+// Iterator로 요소 출력
+Iterator<String> it = list.iterator();
+while(it.hasNext()) {
+  System.out.println(it.next());
+}
       </div>
       <div class="note">
-        <b>Stream은 <span style="color:#85e89d">함수형 스타일</span>로 <span class="important">데이터 처리</span>를 쉽게 해줍니다!</b>
+        <b>Iterator는 <span style="color:#85e89d">컬렉션 순회</span>를 표준화한 <span class="important">반복자</span>입니다!</b>
       </div>
     </section>
     <section class="section">
-      <h2>📖 Stream 클래스 개요</h2>
+      <h2>📖 Iterator 클래스 개요</h2>
       <div class="example-box">
         <ul>
-          <li>컬렉션, 배열 등에서 <span class="important">스트림 생성</span></li>
-          <li>중간 연산(필터, 맵, 정렬 등)과 최종 연산(집계, forEach 등) 지원</li>
-          <li>지연 평가, 병렬 처리 지원</li>
+          <li>모든 컬렉션에서 <span class="important">iterator()</span>로 획득</li>
+          <li>hasNext(), next(), remove() 등 메서드 제공</li>
+          <li>for-each문 내부적으로도 Iterator 사용</li>
         </ul>
       </div>
     </section>
     <section class="section">
-      <h2>🔑 주요 메서드 한눈에 보기 & 실전 활용</h2>
+      <h2>🔑 주요 메서드 한눈에 보기 &amp; 실전 활용</h2>
       <div class="example-box">
-        <h3>forEach()</h3>
+        <h3>hasNext()</h3>
         <ul>
-          <li><b>언제/왜?</b> 컬렉션의 모든 요소를 반복 처리할 때</li>
+          <li><b>언제/왜?</b> 다음 요소가 남아있는지 확인할 때</li>
           <li><b>코드 예시:</b>
             <div class="code-block">
-List<String> list = Arrays.asList("a", "b", "c");
-list.stream().forEach(s -> System.out.println(s));
+Iterator<String> it = list.iterator();
+while(it.hasNext()) {
+  System.out.println(it.next());
+}
             </div>
           </li>
-          <li><b>실전 활용:</b> 출력, 누적, 람다와 조합</li>
+          <li><b>실전 활용:</b> 반복문 종료 조건, 안전한 순회</li>
         </ul>
-        <div class="tip">미션: "a", "b", "c"를 forEach로 출력하면?</div>
-        <details><summary>정답 보기</summary><div class="note">a<br>b<br>c</div></details>
+        <div class="tip">미션: hasNext()가 false면 반복문은?</div>
+        <details><summary>정답 보기</summary><div class="note">종료</div></details>
       </div>
       <div class="example-box">
-        <h3>filter()</h3>
+        <h3>next()</h3>
         <ul>
-          <li><b>언제/왜?</b> 조건에 맞는 요소만 걸러낼 때</li>
+          <li><b>언제/왜?</b> 다음 요소를 꺼낼 때</li>
           <li><b>코드 예시:</b>
             <div class="code-block">
-List<Integer> nums = Arrays.asList(1, 2, 3, 4);
-nums.stream().filter(n -> n % 2 == 0).forEach(System.out::println); // 2, 4
+Iterator<String> it = list.iterator();
+if(it.hasNext()) {
+  String s = it.next();
+  System.out.println(s);
+}
             </div>
           </li>
-          <li><b>실전 활용:</b> 조건부 추출, 데이터 정제</li>
+          <li><b>실전 활용:</b> 요소 접근, 순회, 조건부 처리</li>
+          <li><b>자주 하는 실수:</b> hasNext() 없이 next() 호출 시 예외</li>
         </ul>
-        <div class="tip">미션: 1~4 중 짝수만 filter하면?</div>
-        <details><summary>정답 보기</summary><div class="note">2<br>4</div></details>
+        <div class="tip">미션: hasNext()가 false인데 next() 호출하면?</div>
+        <details><summary>정답 보기</summary><div class="note">예외 발생(NoSuchElementException)</div></details>
       </div>
       <div class="example-box">
-        <h3>map()</h3>
+        <h3>remove()</h3>
         <ul>
-          <li><b>언제/왜?</b> 각 요소를 변환(매핑)할 때</li>
+          <li><b>언제/왜?</b> 현재 가리키는 요소를 안전하게 삭제할 때</li>
           <li><b>코드 예시:</b>
             <div class="code-block">
-List<String> list = Arrays.asList("a", "b");
-list.stream().map(s -> s.toUpperCase()).forEach(System.out::println); // A, B
+Iterator<String> it = list.iterator();
+while(it.hasNext()) {
+  String s = it.next();
+  if(s.equals("A")) it.remove();
+}
             </div>
           </li>
-          <li><b>실전 활용:</b> 데이터 변환, 타입 변환, 정제</li>
+          <li><b>실전 활용:</b> 반복문 내 안전 삭제, ConcurrentModificationException 방지</li>
+          <li><b>자주 하는 실수:</b> next() 없이 remove() 호출 시 예외</li>
         </ul>
-        <div class="tip">미션: ["a", "b"]를 대문자로 map하면?</div>
-        <details><summary>정답 보기</summary><div class="note">A<br>B</div></details>
-      </div>
-      <div class="example-box">
-        <h3>collect()</h3>
-        <ul>
-          <li><b>언제/왜?</b> 스트림 결과를 리스트/셋 등으로 모을 때</li>
-          <li><b>코드 예시:</b>
-            <div class="code-block">
-List<String> list = Arrays.asList("a", "b");
-List<String> result = list.stream().collect(Collectors.toList());
-System.out.println(result); // [a, b]
-            </div>
-          </li>
-          <li><b>실전 활용:</b> 최종 결과 수집, 타입 변환</li>
-        </ul>
-        <div class="tip">미션: ["a", "b"]를 collect하면?</div>
-        <details><summary>정답 보기</summary><div class="note">[a, b]</div></details>
-      </div>
-      <div class="example-box">
-        <h3>sorted()</h3>
-        <ul>
-          <li><b>언제/왜?</b> 스트림의 요소를 정렬할 때</li>
-          <li><b>코드 예시:</b>
-            <div class="code-block">
-List<Integer> nums = Arrays.asList(3, 1, 2);
-nums.stream().sorted().forEach(System.out::println); // 1, 2, 3
-            </div>
-          </li>
-          <li><b>실전 활용:</b> 오름차순/내림차순 정렬, Comparator와 조합</li>
-        </ul>
-        <div class="tip">미션: [3,1,2]를 sorted하면?</div>
-        <details><summary>정답 보기</summary><div class="note">1<br>2<br>3</div></details>
+        <div class="tip">미션: next() 없이 remove() 호출하면?</div>
+        <details><summary>정답 보기</summary><div class="note">예외 발생(IllegalStateException)</div></details>
       </div>
     </section>
     <section class="section">
       <h2>👶 따라해보세요! 기본 사용법</h2>
       <div class="example-box">
-        <b>1. 필터와 맵 활용</b>
+        <b>1. Iterator로 순회</b>
         <div class="code-block">
-List<Integer> list = Arrays.asList(1,2,3,4);
-List<Integer> even = list.stream().filter(x -> x%2==0).collect(Collectors.toList());
+List<String> list = Arrays.asList("A", "B", "C");
+Iterator<String> it = list.iterator();
+while(it.hasNext()) {
+  System.out.println(it.next());
+}
         </div>
       </div>
       <div class="example-box">
-        <b>2. 합계 구하기</b>
+        <b>2. Iterator로 안전하게 삭제</b>
         <div class="code-block">
-int sum = list.stream().mapToInt(x->x).sum();
+Iterator<String> it = list.iterator();
+while(it.hasNext()) {
+  String s = it.next();
+  if(s.equals("B")) it.remove();
+}
         </div>
       </div>
     </section>
     <section class="section">
-      <h2>💡 실전 예제 & 미션</h2>
+      <h2>💡 실전 예제 &amp; 미션</h2>
       <div class="example-box">
         <b>미션 1. 아래 코드의 출력 결과를 예측해보세요!</b>
         <div class="code-block">
-List<String> names = Arrays.asList("Kim", "Lee", "Park");
-names.stream().map(String::toUpperCase).forEach(System.out::println);
+List<Integer> nums = Arrays.asList(1,2,3);
+Iterator<Integer> it = nums.iterator();
+while(it.hasNext()) System.out.print(it.next());
         </div>
         <details><summary>정답 보기</summary>
-          <div class="note">KIM<br>LEE<br>PARK</div>
+          <div class="note">123</div>
         </details>
       </div>
       <div class="example-box">
-        <b>미션 2. 3보다 큰 값만 리스트로 만드는 코드를 작성해보세요!</b>
-        <div class="note">list.stream().filter(x -> x &gt; 3).collect(Collectors.toList())</div>
+        <b>미션 2. "B"만 삭제하고 남은 리스트를 출력하는 코드를 작성해보세요!</b>
+        <div class="note">while(it.hasNext()) { if(it.next().equals("B")) it.remove(); }</div>
       </div>
     </section>
     <section class="section">
       <h2>❓ 자주 하는 질문 (FAQ)</h2>
       <div class="example-box">
-        <b>Q. Stream과 Collection의 차이?</b><br>
-        <span class="note">Collection은 데이터 저장, Stream은 데이터 처리!</span>
+        <b>Q. for-each와 Iterator 차이?</b><br>
+        <span class="note">for-each는 내부적으로 Iterator 사용, 삭제는 Iterator만 가능!</span>
       </div>
       <div class="example-box">
-        <b>Q. Stream은 재사용 가능한가요?</b><br>
-        <span class="note">아니요! 한 번만 사용 가능</span>
+        <b>Q. remove()는 언제 사용하나요?</b><br>
+        <span class="note">반복 중 안전하게 삭제할 때 사용</span>
       </div>
       <div class="example-box">
-        <b>Q. 병렬 처리도 가능한가요?</b><br>
-        <span class="note">parallelStream() 사용!</span>
+        <b>Q. 여러 컬렉션에서 공통 사용 가능한가요?</b><br>
+        <span class="note">네! List, Set, Map 등 모든 컬렉션에서 사용</span>
       </div>
     </section>
     <section class="section">
@@ -204,15 +195,15 @@ names.stream().map(String::toUpperCase).forEach(System.out::println);
       <div class="warning">
         <b>성능 특성</b>
         <ul>
-          <li>지연 평가로 불필요한 연산 최소화</li>
-          <li>병렬 처리로 대용량 데이터도 빠르게 처리</li>
+          <li>for문보다 느릴 수 있으나, 안전한 삭제/수정에 필수</li>
+          <li>remove()는 next() 호출 후 1회만 가능</li>
         </ul>
       </div>
       <div class="tip">
         <b>실무 사용 팁</b>
         <ul>
-          <li>forEach, filter, map, collect 등 조합 활용</li>
-          <li>Stream은 한 번만 사용 가능, 재사용 시 새로 생성</li>
+          <li>for-each로 순회하다가 삭제 필요하면 Iterator로 변경</li>
+          <li>ConcurrentModificationException 주의(반복 중 컬렉션 직접 수정 X)</li>
         </ul>
       </div>
     </section>

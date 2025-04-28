@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map (HashMap, TreeMap) API 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* --- 기존 hashmap.html 스타일 복사 --- */
+    .section {background: var(--vscode-darker);border: 1px solid var(--vscode-highlight);border-radius: 8px;margin: 2rem auto;padding: 2rem;max-width: 1000px;}
+    .method-table {width: 100%;border-collapse: collapse;margin: 1rem 0;}
+    .method-table th,.method-table td {padding: 0.75rem;border: 1px solid var(--vscode-highlight);text-align: left;}
+    .method-table th {background: var(--vscode-bg);}
+    .example-box {background: var(--vscode-bg);border-radius: 6px;padding: 1.5rem;margin: 1rem 0;}
+    .code-block {background: #2d2d2d;padding: 1rem;border-radius: 6px;font-family: 'Consolas', monospace;overflow-x: auto;margin: 1rem 0;}
+    .note {border-left: 4px solid var(--vscode-blue);padding: 1rem;margin: 1rem 0;background: rgba(0, 122, 204, 0.1);}
+    .warning {border-left: 4px solid #f97583;padding: 1rem;margin: 1rem 0;background: rgba(249, 117, 131, 0.1);}
+    .tip {border-left: 4px solid #85e89d;padding: 1rem;margin: 1rem 0;background: rgba(133, 232, 157, 0.1);}
+    .tag {display: inline-block;padding: 0.25rem 0.5rem;border-radius: 4px;font-size: 0.8rem;margin-right: 0.5rem;background: var(--vscode-highlight);}
+    h2 {color: var(--vscode-blue);border-bottom: 1px solid var(--vscode-highlight);padding-bottom: 0.5rem;margin: 2rem 0 1rem;}
+    h3 {color: var(--vscode-text);margin: 1.5rem 0 1rem;}
+    .important {color: #f97583;font-weight: bold;background: rgba(249,117,131,0.10);border-radius: 0.2em;padding: 0.07em 0.18em;}
+    .section h2 .highlight {font-size: 1.13em;}
+    .api-nav {position: sticky;top: 0;background: #181f2a;z-index: 120;display: flex;gap: 1.2rem;justify-content: center;align-items: center;padding: 1.1rem 0 1.1rem 0;border-bottom: 2px solid #2d3748;box-shadow: 0 2px 16px 0 rgba(0,0,0,0.13);flex-wrap: wrap;}
+    .api-nav-link {background: linear-gradient(90deg, #005fa3 60%, #3af 100%);color: #fff;border-radius: 2em;font-weight: 700;font-size: 1.08em;padding: 0.45em 1.5em;margin: 0 0.2em;border: none;box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);letter-spacing: 0.01em;transition: background 0.17s, color 0.17s, box-shadow 0.18s;display: flex;align-items: center;cursor: pointer;outline: none;text-decoration: none;}
+    .api-nav-link.active, .api-nav-link:focus, .api-nav-link:hover {background: linear-gradient(90deg, #0077cc 60%, #4fd5ff 100%);color: #fff;box-shadow: 0 4px 16px 0 rgba(0,122,204,0.17);text-decoration: none;}
+    .api-nav-next {background: #fff;color: #005fa3;border: 1.5px solid #005fa3;border-radius: 2em;font-weight: 700;font-size: 1.08em;padding: 0.45em 1.5em;margin-left: 2em;transition: background 0.17s, color 0.17s, border 0.16s, box-shadow 0.18s;box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);display: flex;align-items: center;cursor: pointer;outline: none;text-decoration: none;}
+    .api-nav-next:focus, .api-nav-next:hover {background: #005fa3;color: #fff;border: 1.5px solid #fff;box-shadow: 0 4px 16px 0 rgba(0,122,204,0.18);text-decoration: none;}
+    @media (max-width: 700px) {.api-nav {flex-direction: column;gap: 0.7rem;padding: 0.6rem 0 0.6rem 0;}.api-nav-link, .api-nav-next {margin: 0.2em 0;width: 90%;justify-content: center;}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🗺️ Map (HashMap, TreeMap) API 완벽 가이드</h1>
+    <nav class="api-nav">
+      <a href="index.html" class="api-nav-link">홈</a>
+      <a href="string.html" class="api-nav-link">String</a>
+      <a href="stringbuilder.html" class="api-nav-link">StringBuilder</a>
+      <a href="arraylist.html" class="api-nav-link">ArrayList</a>
+      <a href="collections.html" class="api-nav-link">Collections</a>
+      <a href="comparator.html" class="api-nav-link">Comparator</a>
+      <a href="hashmap.html" class="api-nav-link">HashMap</a>
+      <a href="map.html" class="api-nav-link active">Map</a>
+      <a href="hashset.html" class="api-nav-link">HashSet</a>
+      <a href="set.html" class="api-nav-link">Set</a>
+      <a href="stream.html" class="api-nav-link">Stream</a>
+      <a href="iterator.html" class="api-nav-link">Iterator</a>
+      <a href="lambda.html" class="api-nav-next">다음장 ➡️</a>
+    </nav>
+  </header>
+  <main>
+    <section class="section">
+      <h2><span class="highlight">🍎 Map은 왜 필요할까?</span></h2>
+      <div class="example-box">
+        <b>실생활에서 Map이 필요한 순간!</b>
+        <ul>
+          <li>키-값 쌍으로 데이터를 저장/검색할 때 (예: 회원ID→이름)</li>
+          <li>빠른 검색, 값의 중복 허용, 키의 중복 불가</li>
+          <li>정렬된 맵(TreeMap), 입력순 유지(LinkedHashMap)가 필요할 때</li>
+        </ul>
+      </div>
+      <div class="code-block">
+// HashMap 예시
+Map<String, Integer> map = new HashMap<>();
+map.put("A", 10); map.put("B", 20);
+System.out.println(map.get("A")); // 10
+      </div>
+      <div class="note">
+        <b>Map은 <span class="important">키-값 쌍 저장</span> & 다양한 구현체(HashMap, TreeMap, LinkedHashMap)를 가진 자료구조입니다!</b>
+      </div>
+    </section>
+    <section class="section">
+      <h2>📖 Map, HashMap, TreeMap, LinkedHashMap 개요</h2>
+      <div class="example-box">
+        <ul>
+          <li><b>Map</b>: <span class="important">키-값 쌍</span> 저장, <span class="important">키 중복 불가</span> (인터페이스)</li>
+          <li><b>HashMap</b>: 가장 일반적인 Map, 순서 없음</li>
+          <li><b>LinkedHashMap</b>: 입력 순서 유지</li>
+          <li><b>TreeMap</b>: 자동 정렬(Comparable/Comparator)</li>
+        </ul>
+      </div>
+    </section>
+    <section class="section">
+      <h2>🔑 주요 메서드 한눈에 보기</h2>
+      <div class="example-box">
+        <table class="method-table">
+          <tr><th>메서드</th><th>설명</th><th>사용 예</th><th>실전 활용</th></tr>
+          <tr><td>put()</td><td>값 추가/수정</td><td>map.put("a", 1)</td><td>키-값 저장</td></tr>
+          <tr><td>get()</td><td>값 조회</td><td>map.get("a")</td><td>검색</td></tr>
+          <tr><td>remove()</td><td>값 삭제</td><td>map.remove("a")</td><td>삭제</td></tr>
+          <tr><td>containsKey()</td><td>키 존재?</td><td>map.containsKey("a")</td><td>검색</td></tr>
+          <tr><td>containsValue()</td><td>값 존재?</td><td>map.containsValue(1)</td><td>검색</td></tr>
+          <tr><td>size()</td><td>크기 확인</td><td>map.size()</td><td>개수 파악</td></tr>
+          <tr><td>clear()</td><td>전체 삭제</td><td>map.clear()</td><td>초기화</td></tr>
+          <tr><td>isEmpty()</td><td>비었는지 확인</td><td>map.isEmpty()</td><td>초기 상태 판별</td></tr>
+        </table>
+      </div>
+    </section>
+    <section class="section">
+      <h2>👶 따라해보세요! 기본 사용법</h2>
+      <div class="example-box">
+        <b>1. HashMap: 값 추가와 조회</b>
+        <div class="code-block">
+Map<String, Integer> map = new HashMap<>();
+map.put("A", 10); map.put("B", 20);
+System.out.println(map.get("A")); // 10
+        </div>
+      </div>
+      <div class="example-box">
+        <b>2. LinkedHashMap: 입력 순서 유지</b>
+        <div class="code-block">
+Map<String, Integer> map = new LinkedHashMap<>();
+map.put("A", 1); map.put("C", 3); map.put("B", 2);
+System.out.println(map.keySet()); // [A, C, B]
+        </div>
+      </div>
+      <div class="example-box">
+        <b>3. TreeMap: 자동 정렬</b>
+        <div class="code-block">
+Map<Integer, String> map = new TreeMap<>();
+map.put(3, "C"); map.put(1, "A"); map.put(2, "B");
+System.out.println(map.keySet()); // [1, 2, 3]
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <h2>💡 실전 예제 & 미션</h2>
+      <div class="example-box">
+        <b>미션 1. 아래 코드의 출력 결과를 예측해보세요! (HashMap)</b>
+        <div class="code-block">
+Map<String, Integer> map = new HashMap<>();
+map.put("A", 1); map.put("B", 2); map.put("A", 3);
+System.out.println(map);
+        </div>
+        <details><summary>정답 보기</summary>
+          <div class="note">{A=3, B=2}</div>
+        </details>
+      </div>
+      <div class="example-box">
+        <b>미션 2. 입력 순서가 보장되는 Map을 생성하는 코드를 작성해보세요!</b>
+        <div class="note">new LinkedHashMap&lt;&gt;()</div>
+      </div>
+      <div class="example-box">
+        <b>미션 3. 자동 정렬되는 Map에 3, 1, 2를 추가한 결과는?</b>
+        <div class="note">[1, 2, 3]</div>
+      </div>
+    </section>
+    <section class="section">
+      <h2>❓ 자주 하는 질문 (FAQ)</h2>
+      <div class="example-box">
+        <b>Q. HashMap, LinkedHashMap, TreeMap 차이?</b><br>
+        <span class="note">HashMap: 순서X, LinkedHashMap: 입력순, TreeMap: 자동정렬</span>
+      </div>
+      <div class="example-box">
+        <b>Q. Map에 null 저장 가능?</b><br>
+        <span class="note">HashMap/LinkedHashMap: 키/값 모두 가능, TreeMap: 키는 불가</span>
+      </div>
+      <div class="example-box">
+        <b>Q. Map에서 값 삭제/검색 속도?</b><br>
+        <span class="note">HashMap/LinkedHashMap: 매우 빠름(O(1)), TreeMap: 느림(O(logN))</span>
+      </div>
+    </section>
+    <section class="section">
+      <h2>⚡ 성능과 주의사항</h2>
+      <div class="warning">
+        <b>성능 특성</b>
+        <ul>
+          <li>HashMap/LinkedHashMap: 검색/추가/삭제 O(1), TreeMap: O(logN)</li>
+          <li>TreeMap은 정렬이 필요할 때만 사용</li>
+        </ul>
+      </div>
+      <div class="tip">
+        <b>실무 사용 팁</b>
+        <ul>
+          <li>Map 인터페이스로 선언하면 구현체 교체 쉬움</li>
+          <li>입력 순서, 정렬 필요 여부에 따라 구현체 선택</li>
+        </ul>
+      </div>
+    </section>
+    <section class="section">
+      <h2>🔑 HashMap 완전정복: 실전/심화/FAQ/면접까지</h2>
+      <div class="example-box">
+        <h3>HashMap이란?</h3>
+        <ul>
+          <li><b>특징:</b> <span class="important">Key-Value 쌍</span> 저장, <span class="important">중복 Key 불가</span>, <span class="important">순서 없음</span></li>
+          <li><b>내부구조:</b> 해시 테이블 기반 (O(1) 검색/추가/삭제)</li>
+          <li><b>실전 활용:</b> 빠른 검색, 데이터 매핑, 빈도수 세기, 캐시</li>
+        </ul>
+        <div class="code-block">
+HashMap<String, Integer> map = new HashMap<>();
+map.put("A", 10); map.put("B", 20); map.put("A", 30);
+System.out.println(map); // {A=30, B=20}
+        </div>
+        <div class="note">HashMap은 Key 중복 시 마지막 값으로 덮어씁니다. 순서가 필요하면 LinkedHashMap 사용!</div>
+      </div>
+      <div class="example-box">
+        <h3>주요 메서드 실전 예시</h3>
+        <ul>
+          <li><b>put()</b>: 값 추가/수정</li>
+          <li><b>get()</b>: 값 조회 (없으면 null)</li>
+          <li><b>remove()</b>: 값 삭제</li>
+          <li><b>containsKey()</b>: Key 존재 여부</li>
+          <li><b>containsValue()</b>: Value 존재 여부</li>
+          <li><b>size()</b>: 엔트리 개수</li>
+          <li><b>clear()</b>: 전체 삭제</li>
+          <li><b>isEmpty()</b>: 비어있는지 확인</li>
+        </ul>
+        <div class="code-block">
+HashMap<String, Integer> map = new HashMap<>();
+map.put("A", 10); map.put("B", 20);
+System.out.println(map.get("A")); // 10
+map.remove("B");
+System.out.println(map.containsKey("B")); // false
+System.out.println(map.size()); // 1
+map.clear();
+System.out.println(map.isEmpty()); // true
+        </div>
+      </div>
+      <div class="example-box">
+        <h3>실전 미션 & 자주 하는 실수</h3>
+        <ul>
+          <li><b>미션1:</b> HashMap에 "A"=10, "A"=20을 put하면?</li>
+          <li><b>정답:</b> {A=20} (마지막 값으로 덮어씀)</li>
+          <li><b>실수:</b> get()은 없는 Key에 대해 null 반환</li>
+          <li><b>실수:</b> 순서가 필요하면 HashMap 대신 <span class="important">LinkedHashMap</span> 사용</li>
+        </ul>
+      </div>
+      <div class="example-box">
+        <h3>FAQ & 면접 대비</h3>
+        <ul>
+          <li><b>Q:</b> HashMap과 Hashtable 차이?</li>
+          <li><b>A:</b> HashMap(동기화X, 빠름), Hashtable(동기화O, 느림, 거의 안 씀)</li>
+          <li><b>Q:</b> HashMap vs. LinkedHashMap vs. TreeMap?</li>
+          <li><b>A:</b> HashMap(순서X), LinkedHashMap(입력순), TreeMap(자동 정렬)</li>
+          <li><b>Q:</b> null 저장?</li>
+          <li><b>A:</b> Key 1회, Value 여러 번 가능</li>
+        </ul>
+      </div>
+      <div class="tip">실무 팁: Map 인터페이스로 선언하면 구현체 교체가 쉽다.<br>Map<String, Integer> map = new HashMap<>();</div>
+    </section>
+  </main>
+</body>
+</html>

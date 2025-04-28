@@ -6,6 +6,7 @@
   <title>Arrays API 완벽 가이드</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
+    /* String.html의 최신 스타일 복사 적용 */
     .section {
       background: var(--vscode-darker);
       border: 1px solid var(--vscode-highlight);
@@ -14,21 +15,32 @@
       padding: 2rem;
       max-width: 1000px;
     }
-
     .method-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
       margin: 2rem 0;
     }
-
+    .method-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    .method-table th,
+    .method-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--vscode-highlight);
+      text-align: left;
+    }
+    .method-table th {
+      background: var(--vscode-bg);
+    }
     .example-box {
       background: var(--vscode-bg);
       border-radius: 6px;
       padding: 1.5rem;
       margin: 1rem 0;
     }
-
     .code-block {
       background: #2d2d2d;
       padding: 1rem;
@@ -37,28 +49,24 @@
       overflow-x: auto;
       margin: 1rem 0;
     }
-
     .note {
       border-left: 4px solid var(--vscode-blue);
       padding: 1rem;
       margin: 1rem 0;
       background: rgba(0, 122, 204, 0.1);
     }
-
     .warning {
       border-left: 4px solid #f97583;
       padding: 1rem;
       margin: 1rem 0;
       background: rgba(249, 117, 131, 0.1);
     }
-
     .tip {
       border-left: 4px solid #85e89d;
       padding: 1rem;
       margin: 1rem 0;
       background: rgba(133, 232, 157, 0.1);
     }
-
     .tag {
       display: inline-block;
       padding: 0.25rem 0.5rem;
@@ -67,332 +75,314 @@
       margin-right: 0.5rem;
       background: var(--vscode-highlight);
     }
+    h2 {
+      color: var(--vscode-blue);
+      border-bottom: 1px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin: 2rem 0 1rem;
+    }
+    h3 {
+      color: var(--vscode-text);
+      margin: 1.5rem 0 1rem;
+    }
+    .method-name {
+      color: #569cd6;
+    }
+    .parameter {
+      color: #9cdcfe;
+    }
+    .return-type {
+      color: #4ec9b0;
+    }
+    .ascii-art {
+      font-family: inherit;
+      background: #222;
+      color: #eee;
+      padding: 0.7em 1em;
+      margin: 0.7em 0;
+      border-radius: 6px;
+      border: 1px solid #444;
+      display: block;
+      font-size: 1em;
+      line-height: 1.7;
+    }
+    /* 현대적 네비게이션 바 */
+    .api-nav {
+      position: sticky;
+      top: 0;
+      background: #181f2a;
+      z-index: 120;
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      align-items: center;
+      padding: 1.1rem 0 1.1rem 0;
+      border-bottom: 2px solid #2d3748;
+      box-shadow: 0 2px 16px 0 rgba(0,0,0,0.13);
+      flex-wrap: wrap;
+    }
+    .api-nav-link {
+      background: linear-gradient(90deg, #005fa3 60%, #3af 100%);
+      color: #fff;
+      border-radius: 2em;
+      font-weight: 700;
+      font-size: 1.08em;
+      padding: 0.45em 1.5em;
+      margin: 0 0.2em;
+      border: none;
+      box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);
+      letter-spacing: 0.01em;
+      transition: background 0.17s, color 0.17s, box-shadow 0.18s;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      outline: none;
+      text-decoration: none;
+    }
+    .api-nav-link.active, .api-nav-link:focus, .api-nav-link:hover {
+      background: linear-gradient(90deg, #0077cc 60%, #4fd5ff 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px 0 rgba(0,122,204,0.17);
+      text-decoration: none;
+    }
+    .api-nav-next {
+      background: #fff;
+      color: #005fa3;
+      border: 1.5px solid #005fa3;
+      border-radius: 2em;
+      font-weight: 700;
+      font-size: 1.08em;
+      padding: 0.45em 1.5em;
+      margin-left: 2em;
+      transition: background 0.17s, color 0.17s, border 0.16s, box-shadow 0.18s;
+      box-shadow: 0 2px 10px 0 rgba(0,122,204,0.08);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      outline: none;
+      text-decoration: none;
+    }
+    .api-nav-next:focus, .api-nav-next:hover {
+      background: #005fa3;
+      color: #fff;
+      border: 1.5px solid #fff;
+      box-shadow: 0 4px 16px 0 rgba(0,122,204,0.18);
+      text-decoration: none;
+    }
+    @media (max-width: 700px) {
+      .api-nav { flex-direction: column; gap: 0.7rem; padding: 0.7rem 0; }
+      .api-nav-link, .api-nav-next { width: 98vw; justify-content: center; }
+    }
+    /* 강조 스타일(덜 과한 버전) */
+    .highlight {
+      color: #ffd700;
+      font-weight: 900;
+      background: none;
+      padding: 0.08em 0.18em;
+      border-radius: 0.2em;
+      font-size: 1.08em;
+    }
+    .important {
+      color: #f97583;
+      font-weight: bold;
+      background: rgba(249,117,131,0.10);
+      border-radius: 0.2em;
+      padding: 0.07em 0.18em;
+    }
+    .section h2 .highlight {
+      font-size: 1.13em;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>🔄 Arrays API 완벽 가이드</h1>
-    <nav>
-      <a href="index.html" class="button">홈으로 돌아가기</a>
+    <h1>📚 Arrays API 완벽 가이드</h1>
+    <nav class="api-nav">
+      <a href="string.html" class="api-nav-link">String</a>
+      <a href="math.html" class="api-nav-link">Math</a>
+      <a href="arrays.html" class="api-nav-link active">Arrays</a>
+      <a href="wrapper.html" class="api-nav-link">Wrapper</a>
+      <a href="stringbuilder.html" class="api-nav-link">StringBuilder</a>
+      <a href="arraylist.html" class="api-nav-link">ArrayList</a>
+      <a href="collections.html" class="api-nav-link">Collections</a>
+      <a href="hashset.html" class="api-nav-link">HashSet</a>
+      <a href="map.html" class="api-nav-link">Map</a>
+      <a href="stream.html" class="api-nav-link">Stream</a>
+      <a href="index.html" class="api-nav-link">홈</a>
+      <a href="wrapper.html" class="api-nav-next">다음장 ➡️</a>
     </nav>
   </header>
-
   <main>
-    <!-- 개요 섹션 -->
+    <!-- 🍎 Arrays는 왜 필요할까? -->
     <section class="section">
-      <h2>📚 Arrays 클래스 개요</h2>
-      <p>java.util.Arrays는 배열을 다루는 데 필요한 다양한 메서드를 제공하는 유틸리티 클래스입니다.</p>
-      
-      <div class="note">
-        <h3>주요 특징</h3>
+      <h2><span class="highlight">🍎 Arrays는 왜 필요할까?</span></h2>
+      <div class="example-box">
+        <b class="highlight" style="background:none; color:#ffd700;">실생활과 개발에서 배열이 필요한 순간!</b>
         <ul>
-          <li>정렬 알고리즘 제공</li>
-          <li>검색 기능</li>
-          <li>배열 조작 유틸리티</li>
-          <li>병렬 처리 지원</li>
+          <li>여러 개의 데이터를 <span class="important">한 번에 저장</span>하고, 반복적으로 처리할 때</li>
+          <li>성적, 점수, 이름 목록 등 <span class="important">동일한 타입의 집합</span>을 다룰 때</li>
+          <li>정렬, 검색, 통계 등 <span class="important">대량 데이터</span>를 빠르게 처리할 때</li>
+        </ul>
+      </div>
+      <div class="note">
+        <b>배열(Array)은 <span class="important">동일 타입의 값</span>을 <span class="important">연속된 공간</span>에 저장하는 자료구조입니다.<br>
+        <span class="highlight">인덱스(0부터 시작)</span>로 빠르게 접근 가능!</b>
+      </div>
+    </section>
+
+    <!-- Arrays 클래스 개요/특징 -->
+    <section class="section">
+      <h2>📖 Arrays 클래스 개요</h2>
+      <div class="example-box">
+        <ul>
+          <li><span class="important">java.util.Arrays</span>는 배열을 쉽게 다루는 <span class="important">유틸리티 메서드</span> 모음</li>
+          <li>정렬, 검색, 복사, 채우기, 변환 등 <span class="important">다양한 기능</span> 제공</li>
+          <li>모든 메서드는 <span class="important">static</span> (객체 생성 없이 사용)</li>
+          <li>기본형/참조형 모두 지원</li>
         </ul>
       </div>
     </section>
 
-    <!-- 배열 정렬 섹션 -->
+    <!-- 주요 메서드 한눈에 보기 -->
     <section class="section">
-      <h2>🔍 배열 정렬</h2>
-      
-      <div class="method-grid">
-        <!-- sort() -->
-        <div class="card">
-          <h3>sort()</h3>
-          <div class="tag">정렬</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="method-name">sort</span>(<span class="parameter">T[] array</span>)<br>
-            <span class="method-name">sort</span>(<span class="parameter">T[] array, Comparator&lt;? super T&gt; c</span>)
-          </div>
-          
-          <p>배열을 정렬합니다. 기본형은 오름차순, 객체는 Comparable 구현 필요</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-// 기본형 배열 정렬
-int[] numbers = {5, 2, 8, 1, 9};<br>
-Arrays.sort(numbers); // [1, 2, 5, 8, 9]<br>
-// 객체 배열 정렬
-String[] words = {"banana", "apple", "cherry"};<br>
-Arrays.sort(words); // ["apple", "banana", "cherry"]
-            </div>
-          </div>
-        </div>
+      <h2>🔑 주요 메서드 한눈에 보기</h2>
+      <div class="example-box">
+        <table class="method-table">
+          <tr>
+            <th>메서드</th>
+            <th>설명</th>
+            <th>사용 예</th>
+            <th>실전 활용</th>
+          </tr>
+          <tr>
+            <td>sort()</td>
+            <td>배열 정렬(오름차순)</td>
+            <td>Arrays.sort(arr)</td>
+            <td>성적, 순위, 이름 정렬</td>
+          </tr>
+          <tr>
+            <td>binarySearch()</td>
+            <td>이진 탐색(정렬 필요)</td>
+            <td>Arrays.binarySearch(arr, 5)</td>
+            <td>검색, 위치 찾기</td>
+          </tr>
+          <tr>
+            <td>copyOf()</td>
+            <td>배열 복사</td>
+            <td>Arrays.copyOf(arr, 3)</td>
+            <td>배열 크기 변경</td>
+          </tr>
+          <tr>
+            <td>fill()</td>
+            <td>모든 요소 채우기</td>
+            <td>Arrays.fill(arr, 0)</td>
+            <td>초기화, 리셋</td>
+          </tr>
+          <tr>
+            <td>equals()</td>
+            <td>배열 비교</td>
+            <td>Arrays.equals(a, b)</td>
+            <td>정답/오답 비교</td>
+          </tr>
+          <tr>
+            <td>toString()</td>
+            <td>문자열 변환</td>
+            <td>Arrays.toString(arr)</td>
+            <td>출력, 디버깅</td>
+          </tr>
+          <tr>
+            <td>asList()</td>
+            <td>배열 → 리스트 변환</td>
+            <td>Arrays.asList(arr)</td>
+            <td>컬렉션 변환</td>
+          </tr>
+          <tr>
+            <td>stream()</td>
+            <td>배열 → 스트림 변환</td>
+            <td>Arrays.stream(arr)</td>
+            <td>함수형 처리</td>
+          </tr>
+          <tr>
+            <td>deepEquals()</td>
+            <td>다차원 배열 비교</td>
+            <td>Arrays.deepEquals(a, b)</td>
+            <td>2차원 이상 배열 비교</td>
+          </tr>
+        </table>
+      </div>
+    </section>
 
-        <!-- parallelSort() -->
-        <div class="card">
-          <h3>parallelSort()</h3>
-          <div class="tag">정렬</div>
-          <div class="tag">병렬처리</div>
-          
-          <div class="code-block">
-            <span class="method-name">parallelSort</span>(<span class="parameter">T[] array</span>)
-          </div>
-          
-          <p>멀티스레드를 사용하여 배열을 병렬로 정렬합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-int[] bigArray = new int[1000000];<br>
-// 큰 배열의 경우 병렬 정렬이 더 빠를 수 있음
-Arrays.parallelSort(bigArray);
-            </div>
-          </div>
+    <!-- 실전 예제/미션 -->
+    <section class="section">
+      <h2>💡 실전 예제 & 미션</h2>
+      <div class="example-box">
+        <b>1. 성적 내림차순 정렬</b>
+        <div class="code-block">
+int[] scores = {90, 70, 80, 100};
+Arrays.sort(scores);
+// 오름차순: [70, 80, 90, 100]
+// 내림차순은 Arrays.sort(scores, Collections.reverseOrder()) (참조형만 지원)
+        </div>
+      </div>
+      <div class="example-box">
+        <b>2. 이름 검색(이진 탐색)</b>
+        <div class="code-block">
+String[] names = {"Alice", "Bob", "Charlie"};
+Arrays.sort(names);
+int idx = Arrays.binarySearch(names, "Bob"); // 1
+        </div>
+      </div>
+      <div class="example-box">
+        <b>3. 2차원 배열 깊은 비교</b>
+        <div class="code-block">
+int[][] arr1 = {{1,2},{3,4}};
+int[][] arr2 = {{1,2},{3,4}};
+boolean eq = Arrays.deepEquals(arr1, arr2); // true
+        </div>
+      </div>
+      <div class="example-box">
+        <b>4. 배열을 리스트로 변환</b>
+        <div class="code-block">
+String[] arr = {"a", "b", "c"};
+List<String> list = Arrays.asList(arr);
         </div>
       </div>
     </section>
 
-    <!-- 배열 검색 섹션 -->
+    <!-- FAQ / 자주 하는 질문 -->
     <section class="section">
-      <h2>🔎 배열 검색</h2>
-      
-      <div class="method-grid">
-        <!-- binarySearch() -->
-        <div class="card">
-          <h3>binarySearch()</h3>
-          <div class="tag">검색</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="method-name">binarySearch</span>(<span class="parameter">T[] array, T key</span>)
-          </div>
-          
-          <div class="warning">
-            <p>배열은 반드시 정렬되어 있어야 합니다!</p>
-          </div>
-          
-          <div class="example-box">
-            <div class="code-block">
-int[] numbers = {1, 2, 5, 8, 9};<br>
-int index = Arrays.binarySearch(numbers, 5); // 2
-            </div>
-          </div>
-        </div>
+      <h2>❓ 자주 하는 질문 (FAQ)</h2>
+      <div class="example-box">
+        <b>Q. 배열과 ArrayList의 차이?</b><br>
+        <span class="note">배열: 크기 고정, ArrayList: 크기 가변</span>
+      </div>
+      <div class="example-box">
+        <b>Q. deepEquals와 equals의 차이?</b><br>
+        <span class="note">deepEquals: 다차원 배열 비교, equals: 1차원 배열 비교</span>
+      </div>
+      <div class="example-box">
+        <b>Q. stream()은 언제 쓰나요?</b><br>
+        <span class="note">함수형 프로그래밍(필터, map 등)에 사용</span>
       </div>
     </section>
 
-    <!-- 배열 복사 섹션 -->
+    <!-- 성능/주의사항/실무 팁 -->
     <section class="section">
-      <h2>📋 배열 복사</h2>
-      
-      <div class="method-grid">
-        <!-- copyOf() -->
-        <div class="card">
-          <h3>copyOf()</h3>
-          <div class="tag">복사</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="method-name">copyOf</span>(<span class="parameter">T[] original, int newLength</span>)
-          </div>
-          
-          <p>배열을 새로운 길이로 복사합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-int[] original = {1, 2, 3};<br>
-int[] copy = Arrays.copyOf(original, 5); // [1, 2, 3, 0, 0]
-            </div>
-          </div>
-        </div>
-
-        <!-- copyOfRange() -->
-        <div class="card">
-          <h3>copyOfRange()</h3>
-          <div class="tag">복사</div>
-          
-          <div class="code-block">
-            <span class="method-name">copyOfRange</span>(<span class="parameter">T[] original, int from, int to</span>)
-          </div>
-          
-          <p>배열의 특정 범위를 복사합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-int[] original = {1, 2, 3, 4, 5};<br>
-int[] copy = Arrays.copyOfRange(original, 1, 4); // [2, 3, 4]
-            </div>
-          </div>
-        </div>
+      <h2>⚡ 성능과 주의사항</h2>
+      <div class="warning">
+        <b>초보자 주의!</b><br>
+        <ul>
+          <li>binarySearch는 <b>반드시 정렬된 배열</b>에서만 사용</li>
+          <li>기본형 배열만 내림차순 정렬 불가(직접 구현 필요)</li>
+          <li>asList()로 만든 리스트는 크기 변경 불가</li>
+        </ul>
       </div>
-    </section>
-
-    <!-- 배열 비교 섹션 -->
-    <section class="section">
-      <h2>⚖️ 배열 비교</h2>
-      
-      <div class="method-grid">
-        <!-- equals() -->
-        <div class="card">
-          <h3>equals()</h3>
-          <div class="tag">비교</div>
-          <div class="tag">자주 사용</div>
-          
-          <div class="code-block">
-            <span class="method-name">equals</span>(<span class="parameter">Object[] a, Object[] b</span>)
-          </div>
-          
-          <p>두 배열의 내용이 같은지 비교합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-int[] arr1 = {1, 2, 3};<br>
-int[] arr2 = {1, 2, 3};<br>
-boolean isEqual = Arrays.equals(arr1, arr2); // true
-            </div>
-          </div>
-        </div>
-
-        <!-- deepEquals() -->
-        <div class="card">
-          <h3>deepEquals()</h3>
-          <div class="tag">비교</div>
-          
-          <div class="code-block">
-            <span class="method-name">deepEquals</span>(<span class="parameter">Object[] a1, Object[] a2</span>)
-          </div>
-          
-          <p>다차원 배열의 내용을 재귀적으로 비교합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-int[][] arr1 = {{1, 2}, {3, 4}};<br>
-int[][] arr2 = {{1, 2}, {3, 4}};<br>
-boolean isEqual = Arrays.deepEquals(arr1, arr2); // true
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 배열 채우기 섹션 -->
-    <section class="section">
-      <h2>🎨 배열 채우기</h2>
-      
-      <div class="method-grid">
-        <!-- fill() -->
-        <div class="card">
-          <h3>fill()</h3>
-          <div class="tag">채우기</div>
-          
-          <div class="code-block">
-            <span class="method-name">fill</span>(<span class="parameter">T[] array, T value</span>)
-          </div>
-          
-          <p>배열의 모든 요소를 지정된 값으로 채웁니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-int[] array = new int[5];<br>
-Arrays.fill(array, 10); // [10, 10, 10, 10, 10]
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 스트림 변환 섹션 -->
-    <section class="section">
-      <h2>🌊 스트림 변환</h2>
-      
-      <div class="method-grid">
-        <!-- stream() -->
-        <div class="card">
-          <h3>stream()</h3>
-          <div class="tag">스트림</div>
-          <div class="tag">Java 8+</div>
-          
-          <div class="code-block">
-            <span class="method-name">stream</span>(<span class="parameter">T[] array</span>)
-          </div>
-          
-          <p>배열을 스트림으로 변환합니다.</p>
-          
-          <div class="example-box">
-            <div class="code-block">
-String[] words = {"hello", "world"};<br>
-Arrays.stream(words)
-      .map(String::toUpperCase)
-      .forEach(System.out::println);
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 성능 최적화 팁 -->
-    <section class="section">
-      <h2>⚡ 성능 최적화 팁</h2>
-      
       <div class="tip">
-        <h3>1. 정렬 알고리즘 선택</h3>
-        <p>대용량 데이터의 경우 parallelSort()를 사용하면 성능이 향상될 수 있습니다.</p>
-        <div class="code-block">
-// 작은 배열
-Arrays.sort(smallArray);<br>
-// 큰 배열
-Arrays.parallelSort(bigArray);
-        </div>
-      </div>
-
-      <div class="tip">
-        <h3>2. 검색 최적화</h3>
-        <p>binarySearch()는 정렬된 배열에서만 사용하세요.</p>
-        <div class="code-block">
-// 정렬되지 않은 배열에서 검색 - 선형 시간
-for (int i = 0; i < arr.length; i++) {
-    if (arr[i] == target) return i;
-}<br>
-// 정렬된 배열에서 검색 - 로그 시간
-Arrays.sort(arr);
-int index = Arrays.binarySearch(arr, target);
-        </div>
-      </div>
-    </section>
-
-    <!-- 실전 예제 -->
-    <section class="section">
-      <h2>💡 실전 예제</h2>
-      
-      <div class="example-box">
-        <h3>1. 커스텀 객체 정렬</h3>
-        <div class="code-block">
-class Person {
-    String name;
-    int age;
-    // 생성자, getter, setter
-}<br>
-Person[] people = {new Person("John", 25), new Person("Alice", 20)};<br>
-// 나이순 정렬
-Arrays.sort(people, (p1, p2) -> p1.age - p2.age);
-        </div>
-      </div>
-
-      <div class="example-box">
-        <h3>2. 2차원 배열 처리</h3>
-        <div class="code-block">
-int[][] matrix = {{1, 2}, {3, 4}};<br>
-// 깊은 복사
-int[][] copy = new int[matrix.length][];<br>
-for (int i = 0; i < matrix.length; i++) {
-    copy[i] = Arrays.copyOf(matrix[i], matrix[i].length);
-}
-        </div>
-      </div>
-
-      <div class="example-box">
-        <h3>3. 배열을 리스트로 변환</h3>
-        <div class="code-block">
-String[] array = {"apple", "banana", "cherry"};<br>
-List<String> list = Arrays.asList(array);<br>
-// 또는 Java 8+
-List<String> list2 = Arrays.stream(array).collect(Collectors.toList());
-        </div>
+        <b>실무 사용 팁</b>
+        <ul>
+          <li>배열 복사는 System.arraycopy()도 활용 가능</li>
+          <li>배열-리스트 변환 후 stream()으로 함수형 처리</li>
+        </ul>
       </div>
     </section>
   </main>
