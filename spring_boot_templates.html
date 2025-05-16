@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎨 템플릿 엔진 (Thymeleaf) - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    .thymeleaf-example {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 768px) {
+      .thymeleaf-example {
+        grid-template-columns: 1fr;
+      }
+    }
+    .code-column {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .code-column h4 {
+      margin-top: 0;
+      color: #9cdcfe;
+      border-bottom: 1px solid #444;
+      padding-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎨 템플릿 엔진 (Thymeleaf)</h1>
+      <p class="intro-text">스프링 부트에서 Thymeleaf를 사용하여 동적 웹 페이지를 생성하는 방법을 배웁니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. Thymeleaf 소개</h2>
+        <p>Thymeleaf는 자바 기반의 서버 사이드 템플릿 엔진으로, HTML5/XML/XHTML 문서를 생성하는 데 사용됩니다.</p>
+        
+        <h3>주요 특징</h3>
+        <ul>
+          <li>자연스러운 템플릿: 브라우저에서 직접 열어도 정적 콘텐츠로 표시됨</li>
+          <li>스프링 통합: 스프링 MVC와 완벽하게 통합</li>
+          <li>표준 표현식 언어: OGNL, SpringEL 표현식 지원</li>
+          <li>레이아웃 관리: 레이아웃 템플릿을 통한 재사용성</li>
+        </ul>
+        
+        <h3>의존성 추가 (Maven)</h3>
+        <div class="code-block">
+          <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+        </div>
+        
+        <div class="tip">
+          💡 <strong>팁</strong>: 스프링 부트는 기본적으로 <code>classpath:/templates/</code>에서 Thymeleaf 템플릿을 찾습니다.
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>2. 기본적인 Thymeleaf 사용법</h2>
+        
+        <h3>2.1 간단한 예제</h3>
+        <div class="thymeleaf-example">
+          <div class="code-column">
+            <h4>컨트롤러 (GreetingController.java)</h4>
+            <pre><code>@Controller
+public class GreetingController {
+    
+    @GetMapping("/greeting")
+    public String greeting(
+            @RequestParam(name="name", 
+                        required=false, 
+                        defaultValue="World") String name,
+            Model model) {
+        model.addAttribute("name", name);
+        model.addAttribute("currentDate", LocalDateTime.now());
+        return "greeting";
+    }
+}</code></pre>
+          </div>
+          
+          <div class="code-column">
+            <h4>템플릿 (greeting.html)</h4>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;인사말 페이지&lt;/title&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/style.css}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1 th:text="'안녕하세요, ' + ${name} + '님!'"&gt;
+        안녕하세요, World님!
+    &lt;/h1&gt;
+    
+    &lt;p&gt;
+        현재 시각은 
+        &lt;span th:text="${#temporals.format(currentDate, 'yyyy-MM-dd HH:mm:ss')}"&gt;
+            2025-05-14 15:30:00
+        &lt;/span&gt;
+        입니다.
+    &lt;/p&gt;
+    
+    &lt;div th:if="${name.length() > 5}"&gt;
+        긴 이름이시네요!
+    &lt;/div&gt;
+    
+    &lt;ul&gt;
+        &lt;li th:each="item : ${#numbers.sequence(1, 3)}"&gt;
+            항목 &lt;span th:text="${item}"&gt;1&lt;/span&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+          </div>
+        </div>
+        
+        <h3>2.2 속성(Attributes) 사용법</h3>
+        <div class="thymeleaf-example">
+          <div class="code-column">
+            <h4>HTML/Thymeleaf</h4>
+            <pre><code>&lt;!-- 텍스트 설정 --&gt;
+&lt;h1 th:text="${title}"&gt;기본 제목&lt;/h1&gt;
+
+<!-- HTML 콘텐츠 설정 (이스케이프 없음) -->
+&lt;div th:utext="${htmlContent}"&gt;기본 HTML&lt;/div&gt;
+
+<!-- 속성 설정 -->
+&lt;input type="text" th:value="${inputValue}" 
+       th:placeholder="${placeholderText}"&gt;
+
+<!-- 클래스 설정 -->
+&lt;div th:class="${isActive} ? 'active' : 'inactive'"&gt;
+    상태에 따른 스타일
+&lt;/div&gt;
+
+<!-- 조건부 렌더링 -->
+&lt;div th:if="${user != null}"&gt;로그인 중&lt;/div&gt;
+&lt;div th:unless="${user != null}"&gt;로그인 필요&lt;/div&gt;
+
+<!-- 반복문 -->
+&lt;ul&gt;
+    &lt;li th:each="item : ${items}" 
+        th:text="${item.name}"&gt;항목&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+          </div>
+          
+          <div class="code-column">
+            <h4>표현식 유형</h4>
+            <pre><code>/* ${...} : 변수 표현식 */
+&lt;span th:text="${user.name}"&gt;이름&lt;/span&gt;
+
+/* *{...} : 선택 변수 표현식 */
+&lt;div th:object="${user}"&gt;
+    &lt;span th:text="*{name}"&gt;이름&lt;/span&gt;
+    &lt;span th:text="*{email}"&gt;이메일&lt;/span&gt;
+&lt;/div&gt;
+
+/* @{...} : URL 링크 표현식 */
+&lt;a th:href="@{/users/{id}(id=${user.id})}"&gt;프로필 보기&lt;/a&gt;
+
+/* #{...} : 메시지 소스 (i18n) */
+&lt;h1 th:text="#{welcome.message}"&gt;환영합니다&lt;/h1&gt;
+
+/* ~{...} : 템플릿 조각 */
+&lt;div th:insert="~{fragments/header :: header}"&gt;
+    헤더 내용이 여기에 삽입됩니다.
+&lt;/div&gt;
+
+/* __${...}__ : 인라인 표현식 */
+&lt;p&gt;안녕하세요, [[${user.name}]]님!&lt;/p&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>3. 레이아웃 관리</h2>
+        
+        <h3>3.1 공통 레이아웃 템플릿</h3>
+        <p><code>templates/layout/base.html</code> - 기본 레이아웃 템플릿</p>
+        <div class="code-block">
+          <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}"&gt;
+&lt;head&gt;
+    &lt;title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE"&gt;
+        기본 제목
+    &lt;/title&gt;
+    
+    &lt;!-- 공통 CSS --&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/style.css}"&gt;
+    
+    &lt;!-- 페이지별 CSS --&gt;
+    &lt;th:block layout:fragment="styles"&gt;&lt;/th:block&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- 헤더 --&gt;
+    &lt;header th:replace="~{fragments/header :: header}"&gt;
+        헤더 내용
+    &lt;/header&gt;
+    
+    &lt;!-- 네비게이션 --&gt;
+    &lt;nav th:replace="~{fragments/navigation :: navigation}"&gt;
+        네비게이션 메뉴
+    &lt;/nav&gt;
+    
+    &lt;!-- 메인 콘텐츠 --&gt;
+    &lt;main class="container"&gt;
+        &lt;div layout:fragment="content"&gt;
+            &lt;p&gt;기본 콘텐츠가 여기에 표시됩니다.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/main&gt;
+    
+    &lt;!-- 푸터 --&gt;
+    &lt;footer th:replace="~{fragments/footer :: footer}"&gt;
+        &amp;copy; 2025 내 애플리케이션
+    &lt;/footer&gt;
+    
+    &lt;!-- 공통 JavaScript --&gt;
+    &lt;script th:src="@{/js/common.js}"&gt;&lt;/script&gt;
+    
+    &lt;!-- 페이지별 JavaScript --&gt;
+    &lt;th:block layout:fragment="scripts"&gt;&lt;/th:block&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        
+        <h3>3.2 페이지 템플릿 사용</h3>
+        <p><code>templates/home.html</code> - 홈 페이지</p>
+        <div class="code-block">
+          <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}"&gt;
+
+&lt;head&gt;
+    &lt;title&gt;홈&lt;/title&gt;
+    
+    &lt;!-- 페이지별 CSS --&gt;
+    &lt;th:block layout:fragment="styles"&gt;
+        &lt;link rel="stylesheet" th:href="@{/css/home.css}"&gt;
+    &lt;/th:block&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;!-- 메인 콘텐츠 --&gt;
+    &lt;div layout:fragment="content"&gt;
+        &lt;div class="jumbotron"&gt;
+            &lt;h1 th:text="${message}"&gt;환영합니다!&lt;/h1&gt;
+            &lt;p class="lead"&gt;이것은 홈 페이지입니다.&lt;/p&gt;
+        &lt;/div&gt;
+        
+        &lt;div class="row"&gt;
+            &lt;div class="col-md-4" th:each="item : ${items}"&gt;
+                &lt;h2 th:text="${item.title}"&gt;제목&lt;/h2&gt;
+                &lt;p th:text="${item.description}"&gt;설명&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;!-- 페이지별 JavaScript --&gt;
+    &lt;th:block layout:fragment="scripts"&gt;
+        &lt;script th:src="@{/js/home.js}"&gt;&lt;/script&gt;
+    &lt;/th:block&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        
+        <div class="note">
+          📌 <strong>참고</strong>: 레이아웃 관리를 위해 <code>thymeleaf-layout-dialect</code> 의존성이 필요합니다. 스프링 부트를 사용하면 자동으로 구성됩니다.
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>4. 폼 처리와 유효성 검사</h2>
+        
+        <h3>4.1 폼 바인딩</h3>
+        <div class="thymeleaf-example">
+          <div class="code-column">
+            <h4>컨트롤러 (UserController.java)</h4>
+            <pre><code>@Controller
+@RequestMapping("/users")
+public class UserController {
+    
+    @GetMapping("/new")
+    public String showUserForm(Model model) {
+        model.addAttribute("user", new User());
+        return "users/form";
+    }
+    
+    @PostMapping
+    public String saveUser(
+            @Valid @ModelAttribute("user") User user,
+            BindingResult result,
+            RedirectAttributes redirectAttributes) {
+            
+        if (result.hasErrors()) {
+            return "users/form";
+        }
+        
+        // 사용자 저장 로직
+        userService.save(user);
+        
+        redirectAttributes.addFlashAttribute("message", 
+            "사용자가 성공적으로 등록되었습니다.");
+            
+        return "redirect:/users";
+    }
+    
+    @GetMapping
+    public String listUsers(Model model) {
+        model.addAttribute("users", userService.findAll());
+        return "users/list";
+    }
+}</code></pre>
+          </div>
+          
+          <div class="code-column">
+            <h4>폼 템플릿 (form.html)</h4>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;사용자 등록&lt;/title&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/form.css}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;사용자 등록&lt;/h1&gt;
+        
+        &lt;form th:action="@{/users}" 
+              th:object="${user}" 
+              method="post"
+              class="needs-validation" 
+              novalidate&gt;
+            
+            &lt;!-- 이름 필드 --&gt;
+            &lt;div class="form-group"&gt;
+                &lt;label for="name"&gt;이름&lt;/label&gt;
+                &lt;input type="text" 
+                       class="form-control" 
+                       th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'"
+                       id="name" 
+                       th:field="*{name}" 
+                       required&gt;
+                &lt;div class="invalid-feedback" 
+                     th:if="${#fields.hasErrors('name')}" 
+                     th:errors="*{name}"&gt;
+                    이름을 입력해주세요.
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;!-- 이메일 필드 --&gt;
+            &lt;div class="form-group"&gt;
+                &lt;label for="email"&gt;이메일&lt;/label&gt;
+                &lt;input type="email" 
+                       class="form-control" 
+                       th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
+                       id="email" 
+                       th:field="*{email}" 
+                       required&gt;
+                &lt;div class="invalid-feedback" 
+                     th:if="${#fields.hasErrors('email')}" 
+                     th:errors="*{email}"&gt;
+                    유효한 이메일을 입력해주세요.
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;!-- 비밀번호 필드 --&gt;
+            &lt;div class="form-group"&gt;
+                &lt;label for="password"&gt;비밀번호&lt;/label&gt;
+                &lt;input type="password" 
+                       class="form-control" 
+                       th:class="${#fields.hasErrors('password')} ? 'form-control is-invalid' : 'form-control'"
+                       id="password" 
+                       th:field="*{password}" 
+                       required
+                       minlength="8"&gt;
+                &lt;div class="invalid-feedback" 
+                     th:if="${#fields.hasErrors('password')}" 
+                     th:errors="*{password}"&gt;
+                    비밀번호는 최소 8자 이상이어야 합니다.
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;!-- 제출 버튼 --&gt;
+            &lt;button type="submit" class="btn btn-primary"&gt;등록&lt;/button&gt;
+            
+            &lt;!-- 취소 버튼 --&gt;
+            &lt;a th:href="@{/users}" class="btn btn-secondary"&gt;취소&lt;/a&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+    
+    &lt;!-- 클라이언트 측 유효성 검사 --&gt;
+    &lt;script&gt;
+    // 클라이언트 측 유효성 검사
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+          </div>
+        </div>
+        
+        <h3>4.2 커스텀 유효성 검사</h3>
+        <div class="code-block">
+          <pre><code>// 커스텀 유효성 검사 어노테이션
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = UsernameValidator.class)
+public @interface ValidUsername {
+    String message() default "이미 사용 중인 사용자 이름입니다.";
+    Class&lt;?&gt;[] groups() default {};
+    Class&lt;? extends Payload&gt;[] payload() default {};
+}
+
+// 유효성 검사기 구현
+public class UsernameValidator implements ConstraintValidator&lt;ValidUsername, String&gt; {
+    
+    private final UserRepository userRepository;
+    
+    public UsernameValidator(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+    
+    @Override
+    public boolean isValid(String username, ConstraintValidatorContext context) {
+        if (username == null) {
+            return true; // @NotBlank 등 다른 어노테이션에서 처리
+        }
+        return !userRepository.existsByUsername(username);
+    }
+}
+
+// 도메인 모델에 적용
+public class User {
+    // 다른 필드들...
+    
+    @NotBlank(message = "사용자 이름은 필수 항목입니다.")
+    @Size(min = 3, max = 20, message = "사용자 이름은 3자 이상 20자 이하로 입력해주세요.")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", 
+             message = "사용자 이름은 영문, 숫자, 밑줄(_)만 사용할 수 있습니다.")
+    @ValidUsername
+    private String username;
+    
+    // getter, setter...
+}</code></pre>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>5. 고급 기능</h2>
+        
+        <h3>5.1 국제화(i18n) 지원</h3>
+        <p>메시지 소스를 사용하여 다국어 지원을 구현할 수 있습니다.</p>
+        
+        <div class="thymeleaf-example">
+          <div class="code-column">
+            <h4>메시지 파일 (messages.properties)</h4>
+            <pre><code># 공통 메시지
+app.name=나의 애플리케이션
+welcome.message=환영합니다, {0}님!
+
+# 유효성 검사 메시지
+NotBlank.user.name=이름은 필수 항목입니다.
+Size.user.name=이름은 {2}자 이상 {1}자 이하여야 합니다.
+Email.user.email=유효한 이메일 주소를 입력해주세요.
+
+# 버튼 레이블
+button.save=저장
+button.cancel=취소
+button.delete=삭제</code></pre>
+          </div>
+          
+          <div class="code-column">
+            <h4>영어 메시지 (messages_en.properties)</h4>
+            <pre><code># Common messages
+app.name=My Application
+welcome.message=Welcome, {0}!
+
+# Validation messages
+NotBlank.user.name=Name is required.
+Size.user.name=Name must be between {2} and {1} characters.
+Email.user.email=Please provide a valid email address.
+
+# Button labels
+button.save=Save
+button.cancel=Cancel
+button.delete=Delete</code></pre>
+          </div>
+        </div>
+        
+        <h3>5.2 메시지 소스 사용 예제</h3>
+        <div class="code-block">
+          <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title th:text="#{app.name}"&gt;애플리케이션&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1 th:text="#{welcome.message(${user.name})}"&gt;환영합니다!&lt;/h1&gt;
+    
+    &lt;!-- 언어 선택기 --&gt;
+    &lt;div class="language-selector"&gt;
+        &lt;span th:each="lang : ${#arrays.asList('ko', 'en')"&gt;
+            &lt;a th:href="@{/(lang=${lang})}" 
+               th:class="${#locale.language == lang} ? 'active' : ''"
+               th:text="${lang}"&gt;KO&lt;/a&gt;
+        &lt;/span&gt;
+    &lt;/div&gt;
+    
+    &lt;!-- 폼 필드 --&gt;
+    &lt;form&gt;
+        &lt;div class="form-group"&gt;
+            &lt;label th:text="#{user.name}"&gt;이름&lt;/label&gt;
+            &lt;input type="text" class="form-control" 
+                   th:placeholder="#{user.name.placeholder}"&gt;
+        &lt;/div&gt;
+        
+        &lt;!-- 버튼 --&gt;
+        &lt;button type="submit" class="btn btn-primary" 
+                th:text="#{button.save}"&gt;저장&lt;/button&gt;
+        &lt;button type="button" class="btn btn-secondary" 
+                th:text="#{button.cancel}"&gt;취소&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        
+        <h3>5.3 스프링 시큐리티와 통합</h3>
+        <p>Thymeleaf Extras Security를 사용하여 인증 및 권한 정보에 쉽게 접근할 수 있습니다.</p>
+        
+        <div class="code-block">
+          <pre><code>&lt;!-- 의존성 추가 (Maven) --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.thymeleaf.extras&lt;/groupId&gt;
+    &lt;artifactId&gt;thymeleaf-extras-springsecurity5&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+<!-- 사용 예시 -->
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"&gt;
+&lt;head&gt;
+    &lt;title&gt;보안 페이지&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- 인증 여부 확인 --&gt;
+    &lt;div th:if="${#authorization.expression('isAuthenticated()')}"&gt;
+        &lt;p&gt;환영합니다, 
+            &lt;span sec:authentication="name"&gt;사용자&lt;/span&gt;님!&lt;/p&gt;
+        
+        &lt;!-- 권한 확인 --&gt;
+        &lt;div sec:authorize="hasRole('ADMIN')"&gt;
+            &lt;a th:href="@{/admin}"&gt;관리자 대시보드&lt;/a&gt;
+        &lt;/div&gt;
+        
+        &lt;!-- 로그아웃 링크 --&gt;
+        &lt;form th:action="@{/logout}" method="post"&gt;
+            &lt;button type="submit" class="btn btn-link"&gt;로그아웃&lt;/button&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+    
+    &lt;!-- 미인증 사용자 --&gt;
+    &lt;div th:unless="${#authorization.expression('isAuthenticated()')}"&gt;
+        &lt;a th:href="@{/login}"&gt;로그인&lt;/a&gt; 또는 
+        &lt;a th:href="@{/register}"&gt;회원가입&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>© 2025 스프링 부트 완전 정복. 모든 권리 보유.</p>
+    </footer>
+  </div>
+</body>
+</html>

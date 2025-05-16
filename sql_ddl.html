@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 SQL DDL (Data Definition Language) - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .toc-card {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: transform 0.2s;
+    }
+    .toc-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    .toc-card h3 {
+      color: #4ec9b0;
+      margin-top: 0;
+      border-bottom: 1px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toc-card ul {
+      padding-left: 1.2rem;
+      margin: 1rem 0 0 0;
+    }
+    .toc-card li {
+      margin: 0.8rem 0;
+      line-height: 1.6;
+      list-style-type: none;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+    .toc-card li:before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #4ec9b0;
+    }
+    .toc-card a {
+      color: var(--vscode-text);
+      text-decoration: none;
+      transition: color 0.2s;
+      display: block;
+    }
+    .toc-card a:hover {
+      color: #4ec9b0;
+      text-decoration: none;
+    }
+    .difficulty {
+      display: inline-block;
+      font-size: 0.8rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      font-weight: normal;
+    }
+    .difficulty-beginner { 
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
+    }
+    .difficulty-intermediate { 
+      background: rgba(255, 152, 0, 0.2);
+      color: #ff9800;
+    }
+    .difficulty-advanced { 
+      background: rgba(244, 67, 54, 0.2);
+      color: #f44336;
+    }
+    .intro-text {
+      color: var(--vscode-text);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .chapter {
+      margin-bottom: 3rem;
+    }
+    .chapter-title {
+      color: #4ec9b0;
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toc-card .icon {
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📝 SQL DDL (Data Definition Language)</h1>
+      <p class="intro-text">데이터베이스 스키마를 정의하고 관리하는 DDL(Data Definition Language)에 대해 학습합니다. 테이블 생성, 수정, 삭제 등 데이터베이스 객체를 관리하는 방법을 알아봅니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>🔍 DDL 개요</h2>
+        <p>DDL(Data Definition Language)은 데이터베이스의 구조를 정의하고 변경하는 데 사용되는 SQL의 하위 언어입니다. 주로 데이터베이스 객체(테이블, 인덱스, 뷰 등)를 생성, 수정, 삭제하는 데 사용됩니다.</p>
+        
+        <div class="note" style="border-left: 4px solid #4ec9b0; padding: 1rem; margin: 1.5rem 0; background: rgba(78, 201, 176, 0.1);">
+          <h3>📌 주요 DDL 명령어</h3>
+          <ul>
+            <li><strong>CREATE</strong> - 데이터베이스 객체 생성</li>
+            <li><strong>ALTER</strong> - 기존 데이터베이스 객체 수정</li>
+            <li><strong>DROP</strong> - 데이터베이스 객체 삭제</li>
+            <li><strong>TRUNCATE</strong> - 테이블의 모든 행 삭제 (구조는 유지)</li>
+            <li><strong>RENAME</strong> - 데이터베이스 객체 이름 변경</li>
+            <li><strong>COMMENT</strong> - 데이터베이스 객체에 주석 추가</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="chapter">
+        <h2 class="chapter-title">📚 DDL 학습하기</h2>
+        <div class="method-grid">
+          <div class="toc-card">
+            <h3><span class="icon">1️⃣</span> 테이블 생성 (CREATE)</h3>
+            <ul>
+              <li><a href="sql_ddl_part1.html">CREATE TABLE 기본 문법 <span class="difficulty difficulty-beginner">초급</span></a></li>
+              <li><a href="sql_ddl_part1.html#datatypes">데이터 타입 이해하기</a></li>
+              <li><a href="sql_ddl_part1.html#constraints">제약 조건 (CONSTRAINTS)</a></li>
+              <li><a href="sql_ddl_part1.html#examples">실전 예제</a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">2️⃣</span> 인덱스 & 뷰 (INDEX & VIEW)</h3>
+            <ul>
+              <li><a href="sql_ddl_part2.html">인덱스 생성 및 관리 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="sql_ddl_part2.html#views">뷰 생성 및 활용</a></li>
+              <li><a href="sql_ddl_part2.html#sequences">시퀀스 (SEQUENCE)</a></li>
+              <li><a href="sql_ddl_part2.html#examples">실전 예제</a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">3️⃣</span> 테이블 수정 (ALTER)</h3>
+            <ul>
+              <li><a href="sql_ddl_part3_alter.html">테이블 구조 수정 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="sql_ddl_part3_rename.html">이름 변경 및 제약 조건</a></li>
+              <li><a href="sql_ddl_part3_drop.html">테이블 삭제 및 관리</a></li>
+              <li><a href="sql_ddl_part3_drop.html#truncate">TRUNCATE vs DELETE</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>📌 DDL 모범 사례</h2>
+        <div class="tip">
+          <h3>💡 DDL 사용 시 주의사항</h3>
+          <ul>
+            <li><strong>백업 필수</strong>: DDL 명령은 데이터베이스 구조를 변경하므로 실행 전 반드시 백업을 수행하세요.</li>
+            <li><strong>트랜잭션 주의</strong>: 일부 데이터베이스에서는 DDL 명령이 자동 커밋되므로 주의가 필요합니다.</li>
+            <li><strong>성능 고려</strong>: 대용량 테이블의 ALTER 작업은 시스템 부하를 유발할 수 있습니다.</li>
+            <li><strong>의존성 확인</strong>: 객체를 삭제하거나 수정할 때는 해당 객체를 참조하는 다른 객체가 없는지 확인하세요.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>📚 학습 가이드</h2>
+        <p>DDL을 효과적으로 학습하기 위한 가이드라인입니다.</p>
+        
+        <h3>1. 기본 문법 마스터하기</h3>
+        <p>CREATE, ALTER, DROP 등의 기본 문법을 익히고, 간단한 테이블을 만들어보세요.</p>
+        
+        <h3>2. 제약 조건 이해하기</h3>
+        <p>PRIMARY KEY, FOREIGN KEY, UNIQUE, CHECK, NOT NULL 등의 제약 조건을 사용하여 데이터 무결성을 유지하는 방법을 배우세요.</p>
+        
+        <h3>3. 실습 환경 구축</h3>
+        <p>MySQL, PostgreSQL, SQLite 등의 데이터베이스를 설치하고 직접 실습해보세요.</p>
+        
+        <h3>4. 프로젝트에 적용</h3>
+        <p>간단한 프로젝트를 통해 실제로 데이터베이스 스키마를 설계하고 구현해보세요.</p>
+      </div>
+
+      <div class="nav-buttons" style="display: flex; justify-content: space-between; margin: 2rem 0;">
+        <a href="sql_functions.html" class="nav-button" style="padding: 0.75rem 1.5rem; background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 1rem;">이전: SQL 함수</a>
+        <a href="sql_dml.html" class="nav-button" style="padding: 0.75rem 1.5rem; background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 1rem;">다음: DML (데이터 조작 언어)</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

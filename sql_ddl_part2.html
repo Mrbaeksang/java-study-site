@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 SQL DDL (Data Definition Language) - Part 2 - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 이전 파일과 동일한 스타일 유지 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    h4 {
+      margin-top: 1.5rem;
+      color: #ce9178;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    .syntax-box {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      font-family: 'Consolas', monospace;
+    }
+    .example {
+      background: #1e1e1e;
+      border-left: 4px solid #4ec9b0;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .example h4 {
+      margin-top: 0;
+      color: #4ec9b0;
+    }
+    .result-table {
+      width: 100%;
+      margin: 15px 0;
+      border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+      border: 1px solid #444;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .result-table th {
+      background-color: #2d2d2d;
+    }
+    .data-type {
+      color: #9cdcfe;
+    }
+    .constraint {
+      color: #ce9178;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📝 SQL DDL (Data Definition Language) - Part 2</h1>
+      <p>데이터베이스 구조를 정의하고 관리하는 SQL 명령어 계속하기</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>3. 인덱스(Index) 생성 및 관리</h2>
+        <p>인덱스는 데이터베이스 테이블의 검색 성능을 향상시키는 데이터 구조입니다. 자주 검색 조건에 사용되는 열에 인덱스를 생성합니다.</p>
+        
+        <h3>3.1 인덱스 생성</h3>
+        <div class="syntax-box">
+          <strong>기본 구문:</strong>
+          <div class="code-block">
+            <span class="sql-comment">-- 기본 인덱스 생성</span><br>
+            <span class="sql-keyword">CREATE</span> [<span class="sql-keyword">UNIQUE</span>] <span class="sql-keyword">INDEX</span> index_name<br>
+            <span class="sql-keyword">ON</span> table_name (column1 [<span class="sql-keyword">ASC</span>|<span class="sql-keyword">DESC</span>], column2 [<span class="sql-keyword">ASC</span>|<span class="sql-keyword">DESC</span>], ...);
+            
+            <br><br><span class="sql-comment">-- 테이블 생성 시 인덱스 지정</span><br>
+            <span class="sql-keyword">CREATE TABLE</span> table_name (
+              column1 datatype [<span class="constraint">CONSTRAINTS</span>],
+              column2 datatype [<span class="constraint">CONSTRAINTS</span>],
+              ...
+              [<span class="constraint">CONSTRAINT</span> constraint_name] <span class="sql-keyword">INDEX</span> [<span class="sql-keyword">USING</span> index_type] (column1, column2, ...)
+            );
+          </div>
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 5: 인덱스 생성</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 단일 컬럼 인덱스</span><br>
+            <span class="sql-keyword">CREATE INDEX</span> idx_employees_last_name
+            <span class="sql-keyword">ON</span> employees(last_name);
+            
+            <br><br><span class="sql-comment">-- 복합 인덱스 (두 개 이상의 컬럼)</span><br>
+            <span class="sql-keyword">CREATE INDEX</span> idx_employees_name
+            <span class="sql-keyword">ON</span> employees(last_name, first_name);
+            
+            <br><br><span class="sql-comment">-- 고유 인덱스 (중복 허용 안 함)</span><br>
+            <span class="sql-keyword">CREATE UNIQUE INDEX</span> idx_employees_email
+            <span class="sql-keyword">ON</span> employees(email);
+            
+            <br><br><span class="sql-comment">-- 내림차순 인덱스 (MySQL 8.0+, PostgreSQL, SQL Server)</span><br>
+            <span class="sql-keyword">CREATE INDEX</span> idx_employees_hire_date
+            <span class="sql-keyword">ON</span> employees(hire_date <span class="sql-keyword">DESC</span>);
+            
+            <br><br><span class="sql-comment">-- 함수 기반 인덱스 (MySQL 8.0+, Oracle, PostgreSQL)</span><br>
+            <span class="sql-keyword">CREATE INDEX</span> idx_employees_upper_email
+            <span class="sql-keyword">ON</span> employees((<span class="sql-keyword">UPPER</span>(email)));
+            
+            <br><br><span class="sql-comment">-- 테이블 생성 시 인덱스 지정</span><br>
+            <span class="sql-keyword">CREATE TABLE</span> products (
+              product_id     <span class="data-type">INT</span> <span class="constraint">PRIMARY KEY</span> <span class="constraint">AUTO_INCREMENT</span>,
+              product_name   <span class="data-type">VARCHAR</span>(100) <span class="constraint">NOT NULL</span>,
+              category_id    <span class="data-type">INT</span>,
+              price          <span class="data-type">DECIMAL</span>(10,2) <span class="constraint">NOT NULL</span>,
+              stock_quantity <span class="data-type">INT</span> <span class="constraint">DEFAULT</span> 0,
+              created_at     <span class="data-type">TIMESTAMP</span> <span class="constraint">DEFAULT</span> <span class="sql-keyword">CURRENT_TIMESTAMP</span>,
+              
+              <span class="constraint">INDEX</span> idx_category (category_id),
+              <span class="constraint">INDEX</span> idx_price (price),
+              <span class="constraint">FULLTEXT INDEX</span> idx_product_name (product_name)  <span class="sql-comment">-- 전체 텍스트 검색용</span>
+            );
+          </div>
+        </div>
+        
+        <h3>3.2 인덱스 조회 및 삭제</h3>
+        <div class="code-block">
+          <span class="sql-comment">-- 테이블의 인덱스 조회 (MySQL)</span><br>
+          <span class="sql-keyword">SHOW INDEX</span> <span class="sql-keyword">FROM</span> table_name;
+          
+          <br><br><span class="sql-comment">-- 인덱스 삭제</span><br>
+          <span class="sql-keyword">DROP INDEX</span> index_name <span class="sql-keyword">ON</span> table_name;
+          
+          <br><br><span class="sql-comment">-- SQL Server, PostgreSQL, Oracle</span><br>
+          <span class="sql-keyword">DROP INDEX</span> index_name;
+        </div>
+        
+        <div class="tip">
+          <h3>💡 인덱스 사용 시 주의사항</h3>
+          <ul>
+            <li>인덱스는 SELECT 쿼리의 성능을 향상시키지만, INSERT, UPDATE, DELETE 작업 속도는 저하시킬 수 있습니다.</li>
+            <li>자주 조회되지만 값의 종류가 적은 컬럼(예: 성별, Y/N 플래그)에는 인덱스가 효과적이지 않을 수 있습니다.</li>
+            <li>테이블의 데이터가 적은 경우(수백 건 이하) 인덱스가 오히려 성능을 저하시킬 수 있습니다.</li>
+            <li>복합 인덱스를 생성할 때는 컬럼의 순서가 중요합니다. 자주 사용되는 조건을 왼쪽에 배치하세요.</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>4. 뷰(View) 생성 및 관리</h2>
+        <p>뷰는 하나 이상의 테이블에서 데이터를 가져와 마치 테이블처럼 사용할 수 있는 가상 테이블입니다.</p>
+        
+        <h3>4.1 뷰 생성</h3>
+        <div class="syntax-box">
+          <strong>기본 구문:</strong>
+          <div class="code-block">
+            <span class="sql-keyword">CREATE</span> [<span class="sql-keyword">OR REPLACE</span>] [<span class="sql-keyword">ALGORITHM</span> = {UNDEFINED | MERGE | TEMPTABLE}]
+            [<span class="sql-keyword">DEFINER</span> = { user | <span class="sql-keyword">CURRENT_USER</span> }]
+            [<span class="sql-keyword">SQL SECURITY</span> { DEFINER | INVOKER }]
+            <span class="sql-keyword">VIEW</span> view_name [(column_list)]
+            <span class="sql-keyword">AS</span> select_statement
+            [<span class="sql-keyword">WITH</span> [<span class="sql-keyword">CASCADED</span> | <span class="sql-keyword">LOCAL</span>] <span class="sql-keyword">CHECK OPTION</span>];
+          </div>
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 6: 뷰 생성</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 간단한 뷰 생성</span><br>
+            <span class="sql-keyword">CREATE VIEW</span> vw_employee_info <span class="sql-keyword">AS</span>
+            <span class="sql-keyword">SELECT</span> e.employee_id, e.first_name, e.last_name, e.email, 
+                   e.phone_number, e.hire_date, e.salary,
+                   d.department_name, l.city, l.country_id
+            <span class="sql-keyword">FROM</span> employees e
+            <span class="sql-keyword">LEFT JOIN</span> departments d <span class="sql-keyword">ON</span> e.department_id = d.department_id
+            <span class="sql-keyword">LEFT JOIN</span> locations l <span class="sql-keyword">ON</span> d.location_id = l.location_id;
+            
+            <br><br><span class="sql-comment">-- OR REPLACE를 사용하여 기존 뷰 수정</span><br>
+            <span class="sql-keyword">CREATE OR REPLACE VIEW</span> vw_employee_info <span class="sql-keyword">AS</span>
+            <span class="sql-keyword">SELECT</span> e.employee_id, e.first_name, e.last_name, e.email, 
+                   e.phone_number, e.hire_date, e.salary, e.commission_pct,
+                   d.department_name, l.city, l.country_id,
+                   CONCAT(m.first_name, ' ', m.last_name) AS manager_name
+            <span class="sql-keyword">FROM</span> employees e
+            <span class="sql-keyword">LEFT JOIN</span> departments d <span class="sql-keyword">ON</span> e.department_id = d.department_id
+            <span class="sql-keyword">LEFT JOIN</span> locations l <span class="sql-keyword">ON</span> d.location_id = l.location_id
+            <span class="sql-keyword">LEFT JOIN</span> employees m <span class="sql-keyword">ON</span> e.manager_id = m.employee_id;
+            
+            <br><br><span class="sql-comment">-- WITH CHECK OPTION을 사용한 뷰 (업데이트 제한)</span><br>
+            <span class="sql-keyword">CREATE VIEW</span> vw_high_salary_employees <span class="sql-keyword">AS</span>
+            <span class="sql-keyword">SELECT</span> employee_id, first_name, last_name, salary, department_id
+            <span class="sql-keyword">FROM</span> employees
+            <span class="sql-keyword">WHERE</span> salary > 10000
+            <span class="sql-keyword">WITH CHECK OPTION</span>;  <span class="sql-comment">-- 뷰를 통해 10000 이하로 수정 불가</span>
+          </div>
+        </div>
+        
+        <h3>4.2 뷰 조회 및 삭제</h3>
+        <div class="code-block">
+          <span class="sql-comment">-- 데이터베이스의 모든 뷰 조회 (MySQL)</span><br>
+          <span class="sql-keyword">SHOW FULL TABLES</span> <span class="sql-keyword">WHERE</span> Table_type = 'VIEW';
+          
+          <br><br><span class="sql-comment">-- 뷰 정의 확인 (MySQL)</span><br>
+          <span class="sql-keyword">SHOW CREATE VIEW</span> view_name;
+          
+          <br><br><span class="sql-comment">-- 뷰 삭제</span><br>
+          <span class="sql-keyword">DROP VIEW</span> [<span class="sql-keyword">IF EXISTS</span>] view_name;
+        </div>
+        
+        <h3>4.3 뷰의 장점</h3>
+        <ul>
+          <li><strong>보안 강화</strong>: 민감한 데이터를 제외하고 필요한 데이터만 노출</li>
+          <li><strong>쿼리 단순화</strong>: 복잡한 조인 쿼리를 뷰로 캡슐화</li>
+          <li><strong>일관성 유지</strong>: 공통으로 사용되는 쿼리 로직을 한 곳에서 관리</li>
+          <li><strong>호환성</strong>: 기존 테이블 구조를 변경하지 않고도 뷰를 통해 호환성 유지</li>
+        </ul>
+      </div>
+      
+      <div class="section">
+        <h2>5. 시퀀스(Sequence) 생성 및 관리</h2>
+        <p>시퀀스는 일련번호를 생성하는 데이터베이스 객체로, 주로 기본 키 값을 자동으로 생성하는 데 사용됩니다.</p>
+        
+        <h3>5.1 Oracle, PostgreSQL, DB2에서의 시퀀스</h3>
+        <div class="syntax-box">
+          <strong>기본 구문:</strong>
+          <div class="code-block">
+            <span class="sql-keyword">CREATE SEQUENCE</span> sequence_name
+            [<span class="sql-keyword">INCREMENT BY</span> n]
+            [<span class="sql-keyword">START WITH</span> n]
+            [{<span class="sql-keyword">MAXVALUE</span> n | <span class="sql-keyword">NOMAXVALUE</span>}]
+            [{<span class="sql-keyword">MINVALUE</span> n | <span class="sql-keyword">NOMINVALUE</span>}]
+            [{<span class="sql-keyword">CYCLE</span> | <span class="sql-keyword">NOCYCLE</span>}]
+            [{<span class="sql-keyword">CACHE</span> n | <span class="sql-keyword">NOCACHE</span>}];
+          </div>
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 7: 시퀀스 생성 및 사용 (Oracle, PostgreSQL)</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 시퀀스 생성</span><br>
+            <span class="sql-keyword">CREATE SEQUENCE</span> seq_employee_id
+            <span class="sql-keyword">START WITH</span> 1000
+            <span class="sql-keyword">INCREMENT BY</span> 1
+            <span class="sql-keyword">MAXVALUE</span> 999999
+            <span class="sql-keyword">NOCYCLE</span>
+            <span class="sql-keyword">CACHE</span> 20;
+            
+            <br><span class="sql-comment">-- 시퀀스에서 다음 값 가져오기</span><br>
+            <span class="sql-keyword">SELECT</span> seq_employee_id.NEXTVAL <span class="sql-keyword">FROM</span> dual;  <span class="sql-comment">-- Oracle</span>
+            <span class="sql-keyword">SELECT</span> nextval('seq_employee_id');  <span class="sql-comment">-- PostgreSQL</span>
+            
+            <br><br><span class="sql-comment">-- 현재 시퀀스 값 조회 (증가하지 않음)</span><br>
+            <span class="sql-keyword">SELECT</span> seq_employee_id.CURRVAL <span class="sql-keyword">FROM</span> dual;  <span class="sql-comment">-- Oracle</span>
+            <span class="sql-keyword">SELECT</span> currval('seq_employee_id');  <span class="sql-comment">-- PostgreSQL</span>
+            
+            <br><br><span class="sql-comment">-- 테이블에 시퀀스 사용 (INSERT 시)</span><br>
+            <span class="sql-keyword">INSERT INTO</span> employees (employee_id, first_name, last_name, email, hire_date, job_id)
+            <span class="sql-keyword">VALUES</span> (seq_employee_id.NEXTVAL, 'John', 'Doe', 'john.doe@example.com', SYSDATE, 'IT_PROG');
+            
+            <br><br><span class="sql-comment">-- 시퀀스 수정</span><br>
+            <span class="sql-keyword">ALTER SEQUENCE</span> seq_employee_id
+            <span class="sql-keyword">INCREMENT BY</span> 10
+            <span class="sql-keyword">MAXVALUE</span> 9999999;
+            
+            <br><br><span class="sql-comment">-- 시퀀스 삭제</span><br>
+            <span class="sql-keyword">DROP SEQUENCE</span> seq_employee_id;
+          </div>
+        </div>
+        
+        <h3>5.2 MySQL, SQL Server에서의 자동 증가</h3>
+        <p>MySQL과 SQL Server는 테이블 생성 시 AUTO_INCREMENT 또는 IDENTITY 속성을 사용하여 자동 증가 컬럼을 정의합니다.</p>
+        
+        <div class="example">
+          <h4>📝 예제 8: MySQL, SQL Server에서의 자동 증가</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- MySQL</span><br>
+            <span class="sql-keyword">CREATE TABLE</span> employees (
+              employee_id <span class="data-type">INT</span> <span class="constraint">PRIMARY KEY</span> <span class="constraint">AUTO_INCREMENT</span>,
+              first_name <span class="data-type">VARCHAR</span>(50) <span class="constraint">NOT NULL</span>,
+              last_name <span class="data-type">VARCHAR</span>(50) <span class="constraint">NOT NULL</span>,
+              <span class="sql-comment">-- 다른 컬럼들</span>
+            ) <span class="sql-keyword">AUTO_INCREMENT</span> = 1001;  <span class="sql-comment">-- 시작 값 설정</span>
+            
+            <br><br><span class="sql-comment">-- SQL Server</span><br>
+            <span class="sql-keyword">CREATE TABLE</span> employees (
+              employee_id <span class="data-type">INT</span> <span class="constraint">PRIMARY KEY</span> <span class="constraint">IDENTITY</span>(1001, 1),  <span class="sql-comment">-- (시작값, 증가량)</span>
+              first_name <span class="data-type">VARCHAR</span>(50) <span class="constraint">NOT NULL</span>,
+              last_name <span class="data-type">VARCHAR</span>(50) <span class="constraint">NOT NULL</span>,
+              <span class="sql-comment">-- 다른 컬럼들</span>
+            );
+            
+            <br><br><span class="sql-comment">-- MySQL에서 마지막으로 삽입된 ID 가져오기</span><br>
+            <span class="sql-keyword">SELECT</span> LAST_INSERT_ID();
+            
+            <br><br><span class="sql-comment">-- SQL Server에서 마지막으로 삽입된 ID 가져오기</span><br>
+            <span class="sql-keyword">SELECT</span> SCOPE_IDENTITY();
+            <span class="sql-keyword">SELECT</span> IDENT_CURRENT('employees');
+          </div>
+        </div>
+      </div>
+      
+      <div class="nav-buttons">
+        <a href="sql_ddl_part1.html" class="nav-button">이전: DDL Part 1 (테이블 생성)</a>
+        <a href="sql_ddl_part3.html" class="nav-button">다음: DDL Part 3 (ALTER, DROP, TRUNCATE)</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // SQL 구문 강조
+    document.addEventListener('DOMContentLoaded', function() {
+      const codeBlocks = document.querySelectorAll('.code-block');
+      
+      codeBlocks.forEach(block => {
+        let html = block.innerHTML;
+        
+        // SQL 키워드 강조
+        const keywords = [
+          'SELECT', 'FROM', 'WHERE', 'ORDER BY', 'GROUP BY', 'HAVING', 'JOIN',
+          'INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL JOIN', 'ON', 'AS',
+          'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE',
+          'TABLE', 'ALTER', 'DROP', 'INDEX', 'VIEW', 'TRIGGER', 'PROCEDURE',
+          'FUNCTION', 'CURSOR', 'BEGIN', 'END', 'IF', 'ELSE', 'THEN', 'CASE',
+          'WHEN', 'ELSE', 'END', 'AND', 'OR', 'NOT', 'IN', 'BETWEEN', 'LIKE',
+          'IS NULL', 'IS NOT NULL', 'EXISTS', 'UNION', 'ALL', 'DISTINCT',
+          'ASC', 'DESC', 'LIMIT', 'OFFSET', 'NULLS FIRST', 'NULLS LAST',
+          'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'COALESCE', 'NULLIF',
+          'EXTRACT', 'YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND',
+          'INTERVAL', 'DATE_ADD', 'DATE_SUB', 'ADD_MONTHS', 'TRUNC', 'TRUNCATE',
+          'ROUND', 'MOD', 'CONCAT', 'SUBSTRING', 'UPPER', 'LOWER', 'TRIM',
+          'LTRIM', 'RTRIM', 'LEADING', 'TRAILING', 'BOTH', 'MERGE', 'INTO',
+          'USING', 'MATCHED', 'NOT MATCHED', 'DELETE WHERE', 'START TRANSACTION',
+          'COMMIT', 'ROLLBACK', 'SAVEPOINT', 'RELEASE SAVEPOINT', 'SET TRANSACTION',
+          'ISOLATION LEVEL', 'READ UNCOMMITTED', 'READ COMMITTED', 'REPEATABLE READ',
+          'SERIALIZABLE', 'DECLARE', 'HANDLER', 'CONTINUE', 'FOR', 'SQLEXCEPTION',
+          'GLOBAL', 'SESSION', 'VARIABLES', 'ROW_COUNT', 'CURRENT_DATE', 'CURRENT_TIMESTAMP',
+          'DATABASE', 'DATABASES', 'TABLESPACE', 'SCHEMA', 'TABLES', 'COLUMNS',
+          'ENGINE', 'CHARACTER SET', 'COLLATE', 'CHARSET', 'AUTO_INCREMENT',
+          'PRIMARY KEY', 'FOREIGN KEY', 'REFERENCES', 'UNIQUE', 'CHECK', 'DEFAULT',
+          'NOT NULL', 'NULL', 'AUTOINCREMENT', 'IDENTITY', 'SERIAL', 'ON DELETE',
+          'ON UPDATE', 'CASCADE', 'SET NULL', 'NO ACTION', 'RESTRICT', 'CONSTRAINT',
+          'SEQUENCE', 'NEXTVAL', 'CURRVAL', 'INCREMENT BY', 'START WITH', 'MAXVALUE',
+          'MINVALUE', 'CYCLE', 'NOCYCLE', 'CACHE', 'NOCACHE', 'CURRENT_USER',
+          'DEFINER', 'SQL SECURITY', 'WITH CHECK OPTION', 'LOCAL', 'CASCADED'
+        ];
+        
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+          html = html.replace(regex, `<span class="sql-keyword">${keyword}</span>`);
+        });
+        
+        // 문자열 강조 (작은따옴표 안의 내용)
+        html = html.replace(/'([^']*)'/g, '<span class="sql-string">\'$1\'</span>');
+        
+        // 숫자 강조
+        html = html.replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>');
+        
+        // 주석 강조 (--로 시작하는 줄)
+        html = html.replace(/--(.*)/g, '<span class="sql-comment">--$1</span>');
+        
+        // 블록 주석 강조 (/* */)
+        html = html.replace(/\/\*([\s\S]*?)\*\//g, '<span class="sql-comment">/*$1*/</span>');
+        
+        block.innerHTML = html;
+      });
+    });
+  </script>
+</body>
+</html>

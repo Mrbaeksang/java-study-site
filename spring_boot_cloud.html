@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>☁️ 스프링 부트 클라우드 네이티브 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .note {
+      border-left: 4px solid #4ec9b0;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(78, 201, 176, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>☁️ 클라우드 네이티브 개발</h1>
+      <p class="intro-text">AWS와 스프링 클라우드를 활용한 클라우드 네이티브 개발 방법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. AWS 서비스 개요</h2>
+        <p>주요 AWS 서비스들:</p>
+        <ul>
+          <li>EC2: 가상 서버</li>
+          <li>RDS: 관계형 데이터베이스</li>
+          <li>S3: 오브젝트 스토리지</li>
+          <li>Elastic Load Balancer: 로드 밸런싱</li>
+          <li>CloudWatch: 모니터링</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>2. 스프링 클라우드 구성</h2>
+        <h3>2.1. Config Server 설정</h3>
+        <div class="code-block">
+          <pre><code class="java">@SpringBootApplication
+@EnableConfigServer
+public class ConfigServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ConfigServerApplication.class, args);
+    }
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+          <pre><code class="yaml">spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/your-repo/config-repo
+          clone-on-start: true
+          search-paths: config-files</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. AWS SDK 설정</h2>
+        <h3>3.1. 의존성 추가</h3>
+        <div class="code-block">
+          <pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+    &lt;artifactId&gt;s3&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+    &lt;artifactId&gt;dynamodb&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+        </div>
+
+        <h3>3.2. S3 클라이언트 설정</h3>
+        <div class="code-block">
+          <pre><code class="java">@Configuration
+public class AwsConfig {
+    
+    @Value("${aws.region}")
+    private String region;
+
+    @Value("${aws.s3.bucket}")
+    private String bucketName;
+
+    @Bean
+    public S3Client s3Client() {
+        return S3Client.builder()
+            .region(Region.of(region))
+            .build();
+    }
+
+    @Bean
+    public DynamoDbClient dynamoDbClient() {
+        return DynamoDbClient.builder()
+            .region(Region.of(region))
+            .build();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 서버리스 개발</h2>
+        <h3>4.1. AWS Lambda와 API Gateway</h3>
+        <div class="code-block">
+          <pre><code class="java">@SpringBootApplication
+public class LambdaApplication {
+    
+    @Bean
+    public Handler&lt;Stream&gt; handler() {
+        return new SpringBootLambdaContainerHandler&lt;&gt;(Application.class);
+    }
+}
+
+@RestController
+public class LambdaController {
+    
+    @GetMapping("/api/lambda")
+    public String handleRequest() {
+        return "Hello from Lambda!";
+    }
+}</code></pre>
+        </div>
+
+        <h3>4.2. DynamoDB 연동</h3>
+        <div class="code-block">
+          <pre><code class="java">@DynamoDBTable(tableName = "Products")
+public class Product {
+    
+    @DynamoDBHashKey
+    private String id;
+    
+    @DynamoDBAttribute
+    private String name;
+    
+    @DynamoDBAttribute
+    private double price;
+
+    // getters and setters
+}
+
+@Service
+public class ProductService {
+    
+    @Autowired
+    private DynamoDbClient dynamoDbClient;
+
+    public Product getProduct(String id) {
+        return dynamoDbClient.getItem(
+            GetItemRequest.builder()
+                .tableName("Products")
+                .key(Collections.singletonMap("id", AttributeValue.builder().s(id).build()))
+                .build()
+        ).item();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>5. CI/CD 파이프라인</h2>
+        <h3>5.1. Jenkins 설정</h3>
+        <div class="code-block">
+          <pre><code class="groovy">pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com'
+                sh 'docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .'
+                sh 'docker push ${IMAGE_NAME}:${BUILD_NUMBER}'
+            }
+        }
+    }
+}</code></pre>
+        </div>
+
+        <h3>5.2. Kubernetes 설정</h3>
+        <div class="code-block">
+          <pre><code class="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+      - name: product-service
+        image: ${IMAGE_NAME}:${BUILD_NUMBER}
+        ports:
+        - containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+spec:
+  selector:
+    app: product-service
+  ports:
+  - port: 8080
+    targetPort: 8080</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>6. 모니터링과 로깅</h2>
+        <h3>6.1. CloudWatch 설정</h3>
+        <div class="code-block">
+          <pre><code class="yaml">spring:
+  cloud:
+    aws:
+      cloudwatch:
+        enabled: true
+        region: ${AWS_REGION}
+        namespace: ${APP_NAME}
+
+  sleuth:
+    enabled: true
+    sampler:
+      probability: 1.0</code></pre>
+        </div>
+
+        <h3>6.2. ELK 스택 설정</h3>
+        <div class="code-block">
+          <pre><code class="yaml">filebeat.inputs:
+- type: container
+  paths:
+    - /var/lib/docker/containers/*/*.log
+
+output.elasticsearch:
+  hosts: ["${ELASTICSEARCH_HOST:localhost:9200}"]
+
+output.logstash:
+  hosts: ["${LOGSTASH_HOST:localhost:5044}"]</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>7. 다음 단계</h2>
+        <p>이제 클라우드 네이티브 개발을 배웠습니다. 다음으로는 다음과 같은 주제들을 배우게 됩니다:</p>
+        <ul>
+          <li><a href="spring_boot_performance.html">성능 최적화</a></li>
+          <li><a href="spring_boot_testing.html">테스팅 전략</a></li>
+          <li><a href="spring_boot_advanced_topics.html">고급 주제들</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

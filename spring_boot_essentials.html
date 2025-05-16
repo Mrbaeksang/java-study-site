@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 스프링 부트 핵심 개념 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📚 스프링 부트 핵심 개념</h1>
+      <p class="intro-text">스프링 부트의 핵심 개념들을 이해하고 효과적으로 활용하는 방법을 배웁니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 자동 구성(Auto-Configuration)</h2>
+        <p>스프링 부트의 핵심 기능 중 하나로, 클래스패스에 있는 라이브러리들을 기반으로 자동으로 스프링 애플리케이션을 구성해줍니다.</p>
+        
+        <h3>주요 특징</h3>
+        <ul>
+          <li>의존성 기반 자동 구성</li>
+          <li>조건부 빈 등록</li>
+          <li>사용자 정의 구성 오버라이딩</li>
+        </ul>
+        
+        <div class="code-block">
+          <pre><code>@SpringBootApplication
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+}</code></pre>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>2. 스타터 의존성(Starter Dependencies)</h2>
+        <p>공통적인 기능을 쉽게 추가할 수 있도록 미리 구성된 의존성 그룹입니다.</p>
+        
+        <h3>주요 스타터</h3>
+        <ul>
+          <li><code>spring-boot-starter-web</code>: 웹 애플리케이션 개발</li>
+          <li><code>spring-boot-starter-data-jpa</code>: JPA를 사용한 데이터 접근</li>
+          <li><code>spring-boot-starter-security</code>: 보안 기능</li>
+          <li><code>spring-boot-starter-test</code>: 테스트 지원</li>
+        </ul>
+      </div>
+      
+      <div class="section">
+        <h2>3. 외부 구성(Externalized Configuration)</h2>
+        <p>애플리케이션 설정을 외부에서 관리할 수 있는 다양한 방법을 제공합니다.</p>
+        
+        <h3>주요 설정 방식</h3>
+        <ul>
+          <li><code>application.properties</code> 또는 <code>application.yml</code> 파일</li>
+          <li>환경 변수</li>
+          <li>명령줄 인수</li>
+          <li>프로필별 설정</li>
+        </ul>
+        
+        <div class="code-block">
+          <pre><code># application.yml 예시
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true</code></pre>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>4. 내장 서버(Embedded Server)</h2>
+        <p>톰캣(Tomcat), 제티(Jetty), 언더토우(Undertow)와 같은 서블릿 컨테이너를 내장하고 있어 별도의 웹 서버 설치 없이 실행할 수 있습니다.</p>
+        
+        <div class="tip">
+          💡 <strong>팁</strong>: <code>spring-boot-starter-web</code>을 추가하면 기본적으로 톰캣이 내장 서버로 사용됩니다.
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>5. 액추에이터(Actuator)</h2>
+        <p>애플리케이션의 모니터링과 관리를 위한 다양한 엔드포인트를 제공합니다.</p>
+        
+        <h3>주요 엔드포인트</h3>
+        <ul>
+          <li><code>/actuator/health</code>: 애플리케이션 상태 확인</li>
+          <li><code>/actuator/info</code>: 애플리케이션 정보</li>
+          <li><code>/actuator/metrics</code>: 메트릭 정보</li>
+          <li><code>/actuator/env</code>: 환경 속성</li>
+        </ul>
+        
+        <div class="code-block">
+          <pre><code># 의존성 추가
+implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+# application.yml 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always</code></pre>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>© 2025 스프링 부트 완전 정복. 모든 권리 보유.</p>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 SQL DML - UPDATE/DELETE/MERGE - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 이전 파일과 동일한 스타일 유지 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    h4 {
+      margin-top: 1.5rem;
+      color: #ce9178;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    .syntax-box {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      font-family: 'Consolas', monospace;
+    }
+    .example {
+      background: #1e1e1e;
+      border-left: 4px solid #4ec9b0;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .example h4 {
+      margin-top: 0;
+      color: #4ec9b0;
+    }
+    .result-table {
+      width: 100%;
+      margin: 15px 0;
+      border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+      border: 1px solid #444;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .result-table th {
+      background-color: #2d2d2d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📝 SQL DML - UPDATE/DELETE/MERGE</h1>
+      <p>데이터를 수정, 삭제, 병합하는 SQL 명령어에 대해 배워봅시다.</p>
+    </header>
+
+    <main>
+      <div class="section" id="update">
+        <h2>1. UPDATE 문</h2>
+        <p>UPDATE 문은 테이블의 기존 행을 수정하는 데 사용됩니다.</p>
+        
+        <h3>1.1 기본 구문</h3>
+        <div class="syntax-box">
+          <strong>기본 구문:</strong>
+          <div class="code-block">
+            <span class="sql-keyword">UPDATE</span> table_name<br>
+            <span class="sql-keyword">SET</span> column1 = value1, column2 = value2, ...<br>
+            <span class="sql-keyword">WHERE</span> condition;
+          </div>
+        </div>
+        
+        <div class="warning">
+          <h3>⚠️ 주의: WHERE 절 생략 시</h3>
+          <p>WHERE 절을 생략하면 테이블의 <strong>모든 행</strong>이 업데이트됩니다. 항상 신중하게 WHERE 절을 작성하세요.</p>
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 1: 단일 행 업데이트</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 직원 ID가 207인 직원의 급여를 10% 인상</span><br>
+            <span class="sql-keyword">UPDATE</span> employees<br>
+            <span class="sql-keyword">SET</span> salary = salary * 1.1<br>
+            <span class="sql-keyword">WHERE</span> employee_id = 207;
+          </div>
+          
+          <h4>📝 예제 2: 여러 열 동시 업데이트</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 직원 ID가 208인 직원의 부서와 급여 변경</span><br>
+            <span class="sql-keyword">UPDATE</span> employees<br>
+            <span class="sql-keyword">SET</span> 
+              department_id = 60,
+              salary = 7000,
+              job_id = 'IT_PROG'<br>
+            <span class="sql-keyword">WHERE</span> employee_id = 208;
+          </div>
+        </div>
+        
+        <h3>1.2 서브쿼리를 사용한 UPDATE</h3>
+        <p>서브쿼리를 사용하여 다른 테이블의 값을 참조하여 업데이트할 수 있습니다.</p>
+        
+        <div class="example">
+          <h4>📝 예제 3: 서브쿼리를 사용한 업데이트</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 모든 직원의 급여를 해당 부서의 평균 급여로 업데이트</span><br>
+            <span class="sql-keyword">UPDATE</span> employees e1<br>
+            <span class="sql-keyword">SET</span> salary = (
+              <span class="sql-keyword">SELECT</span> <span class="sql-keyword">AVG</span>(salary)<br>
+              <span class="sql-keyword">FROM</span> employees e2<br>
+              <span class="sql-keyword">WHERE</span> e1.department_id = e2.department_id<br>
+              <span class="sql-keyword">GROUP BY</span> department_id
+            );
+          </div>
+          
+          <div class="code-block">
+            <span class="sql-comment">-- 다른 테이블을 참조하여 업데이트 (MySQL, SQL Server, PostgreSQL 등)</span><br>
+            <span class="sql-keyword">UPDATE</span> employees e<br>
+            <span class="sql-keyword">JOIN</span> departments d <span class="sql-keyword">ON</span> e.department_id = d.department_id<br>
+            <span class="sql-keyword">SET</span> e.salary = e.salary * 1.1<br>
+            <span class="sql-keyword">WHERE</span> d.department_name = 'IT';
+            
+            <span class="sql-comment">-- Oracle에서는 다음과 같이 사용</span><br>
+            <span class="sql-comment">/*
+            UPDATE (
+              SELECT e.salary, d.department_name
+              FROM employees e
+              JOIN departments d ON e.department_id = d.department_id
+              WHERE d.department_name = 'IT'
+            ) t
+            SET t.salary = t.salary * 1.1;
+            */</span>
+          </div>
+        </div>
+        
+        <div class="tip">
+          <h3>💡 UPDATE 시 주의사항</h3>
+          <ul>
+            <li>WHERE 절을 생략하면 테이블의 모든 행이 업데이트됩니다.</li>
+            <li>외래키 제약조건이 있는 경우, 참조 무결성을 위반하지 않도록 주의하세요.</li>
+            <li>트리거가 설정된 경우, 예상치 못한 부작용이 발생할 수 있습니다.</li>
+            <li>대량 업데이트 시에는 성능에 영향을 줄 수 있으니 주의가 필요합니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section" id="delete">
+        <h2>2. DELETE 문</h2>
+        <p>DELETE 문은 테이블에서 행을 삭제하는 데 사용됩니다.</p>
+        
+        <h3>2.1 기본 구문</h3>
+        <div class="syntax-box">
+          <strong>기본 구문:</strong>
+          <div class="code-block">
+            <span class="sql-keyword">DELETE FROM</span> table_name<br>
+            <span class="sql-keyword">WHERE</span> condition;
+          </div>
+        </div>
+        
+        <div class="warning">
+          <h3>⚠️ 주의: WHERE 절 생략 시</h3>
+          <p>WHERE 절을 생략하면 테이블의 <strong>모든 행</strong>이 삭제됩니다. 항상 신중하게 WHERE 절을 작성하세요.</p>
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 4: 단일 행 삭제</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 직원 ID가 211인 직원 정보 삭제</span><br>
+            <span class="sql-keyword">DELETE FROM</span> employees<br>
+            <span class="sql-keyword">WHERE</span> employee_id = 211;
+          </div>
+          
+          <h4>📝 예제 5: 여러 행 삭제</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 2023년 이후에 입사한 직원들 삭제</span><br>
+            <span class="sql-keyword">DELETE FROM</span> employees<br>
+            <span class="sql-keyword">WHERE</span> hire_date >= '2023-01-01';
+          </div>
+        </div>
+        
+        <h3>2.2 TRUNCATE TABLE</h3>
+        <p>테이블의 모든 행을 빠르게 삭제하려면 TRUNCATE TABLE을 사용할 수 있습니다. DELETE와 달리 WHERE 절을 사용할 수 없으며, 자동으로 커밋됩니다.</p>
+        
+        <div class="example">
+          <h4>📝 예제 6: TRUNCATE TABLE</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- employees_backup 테이블의 모든 데이터 삭제</span><br>
+            <span class="sql-keyword">TRUNCATE TABLE</span> employees_backup;
+          </div>
+          
+          <div class="tip">
+            <h3>💡 DELETE vs TRUNCATE</h3>
+            <ul>
+              <li><strong>DELETE</strong>: WHERE 절로 특정 행만 삭제 가능, 트랜잭션 로그를 기록하므로 느림, ROLLBACK 가능</li>
+              <li><strong>TRUNCATE</strong>: 모든 행 삭제, 트랜잭션 로그를 최소화하므로 빠름, 대부분의 DBMS에서 ROLLBACK 불가</li>
+            </ul>
+          </div>
+        </div>
+        
+        <h3>2.3 서브쿼리를 사용한 DELETE</h3>
+        <p>서브쿼리를 사용하여 다른 테이블을 기반으로 행을 삭제할 수 있습니다.</p>
+        
+        <div class="example">
+          <h4>📝 예제 7: 서브쿼리를 사용한 삭제</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- IT 부서에 속한 모든 직원 삭제 (MySQL, SQL Server, PostgreSQL 등)</span><br>
+            <span class="sql-keyword">DELETE</span> e <span class="sql-keyword">FROM</span> employees e<br>
+            <span class="sql-keyword">JOIN</span> departments d <span class="sql-keyword">ON</span> e.department_id = d.department_id<br>
+            <span class="sql-keyword">WHERE</span> d.department_name = 'IT';
+            
+            <span class="sql-comment">-- Oracle에서는 다음과 같이 사용</span><br>
+            <span class="sql-comment">/*
+            DELETE FROM employees
+            WHERE department_id IN (
+              SELECT department_id 
+              FROM departments 
+              WHERE department_name = 'IT'
+            );
+            */</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="merge">
+        <h2>3. MERGE 문</h2>
+        <p>MERGE 문은 조건에 따라 INSERT, UPDATE, DELETE를 한 번에 수행할 수 있는 강력한 명령어입니다. 데이터 웨어하우스에서 자주 사용됩니다.</p>
+        
+        <h3>3.1 기본 구문</h3>
+        <div class="syntax-box">
+          <strong>기본 구문 (Oracle, SQL Server, PostgreSQL 15+):</strong>
+          <div class="code-block">
+            <span class="sql-keyword">MERGE INTO</span> target_table <span class="sql-keyword">USING</span> source_table<br>
+            <span class="sql-keyword">ON</span> (condition)<br>
+            <span class="sql-keyword">WHEN MATCHED THEN</span><br>
+              <span class="sql-keyword">UPDATE SET</span> column1 = value1, column2 = value2, ...<br>
+            <span class="sql-keyword">WHEN NOT MATCHED THEN</span><br>
+              <span class="sql-keyword">INSERT</span> (column1, column2, ...) <span class="sql-keyword">VALUES</span> (value1, value2, ...);
+          </div>
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 8: 기본적인 MERGE 예제</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- employees 테이블에 직원 데이터를 병합</span><br>
+            <span class="sql-comment">-- 이미 존재하면 급여를 업데이트하고, 없으면 새로 삽입</span><br>
+            <span class="sql-keyword">MERGE INTO</span> employees e<br>
+            <span class="sql-keyword">USING</span> (
+              <span class="sql-keyword">SELECT</span> 215 <span class="sql-keyword">AS</span> employee_id, 'David' <span class="sql-keyword">AS</span> first_name, 
+                     'Wilson' <span class="sql-keyword">AS</span> last_name, 'dwilson@example.com' <span class="sql-keyword">AS</span> email, 
+                     '2023-03-15' <span class="sql-keyword">AS</span> hire_date, 'IT_PROG' <span class="sql-keyword">AS</span> job_id, 
+                     7500 <span class="sql-keyword">AS</span> salary, 0.1 <span class="sql-keyword">AS</span> commission_pct, 
+                     103 <span class="sql-keyword">AS</span> manager_id, 60 <span class="sql-keyword">AS</span> department_id<br>
+              <span class="sql-keyword">FROM</span> dual
+            ) d<br>
+            <span class="sql-keyword">ON</span> (e.employee_id = d.employee_id)<br>
+            <span class="sql-keyword">WHEN MATCHED THEN</span><br>
+              <span class="sql-keyword">UPDATE SET</span> e.salary = d.salary<br>
+            <span class="sql-keyword">WHEN NOT MATCHED THEN</span><br>
+              <span class="sql-keyword">INSERT</span> (employee_id, first_name, last_name, email, hire_date, 
+                      job_id, salary, commission_pct, manager_id, department_id)<br>
+              <span class="sql-keyword">VALUES</span> (d.employee_id, d.first_name, d.last_name, d.email, d.hire_date, 
+                      d.job_id, d.salary, d.commission_pct, d.manager_id, d.department_id);
+          </div>
+          
+          <h4>📝 예제 9: DELETE가 포함된 복잡한 MERGE</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- employees 테이블에 직원 데이터를 병합</span><br>
+            <span class="sql-comment">-- 이미 존재하면 급여를 업데이트하고, 없으면 새로 삽입</span><br>
+            <span class="sql-comment">-- 급여가 0인 직원은 삭제</span><br>
+            <span class="sql-keyword">MERGE INTO</span> employees e<br>
+            <span class="sql-keyword">USING</span> (
+              <span class="sql-keyword">SELECT</span> 216 <span class="sql-keyword">AS</span> employee_id, 'Sarah' <span class="sql-keyword">AS</span> first_name, 
+                     'Miller' <span class="sql-keyword">AS</span> last_name, 'smiller@example.com' <span class="sql-keyword">AS</span> email, 
+                     '2023-03-20' <span class="sql-keyword">AS</span> hire_date, 'SA_REP' <span class="sql-keyword">AS</span> job_id, 
+                     0 <span class="sql-keyword">AS</span> salary, 0.15 <span class="sql-keyword">AS</span> commission_pct, 
+                     100 <span class="sql-keyword">AS</span> manager_id, 80 <span class="sql-keyword">AS</span> department_id<br>
+              <span class="sql-keyword">FROM</span> dual
+            ) d<br>
+            <span class="sql-keyword">ON</span> (e.employee_id = d.employee_id)<br>
+            <span class="sql-keyword">WHEN MATCHED THEN</span><br>
+              <span class="sql-keyword">UPDATE SET</span> e.salary = d.salary, e.commission_pct = d.commission_pct<br>
+              <span class="sql-keyword">DELETE WHERE</span> d.salary = 0
+            <span class="sql-keyword">WHEN NOT MATCHED THEN</span><br>
+              <span class="sql-keyword">INSERT</span> (employee_id, first_name, last_name, email, hire_date, 
+                      job_id, salary, commission_pct, manager_id, department_id)<br>
+              <span class="sql-keyword">VALUES</span> (d.employee_id, d.first_name, d.last_name, d.email, d.hire_date, 
+                      d.job_id, d.salary, d.commission_pct, d.manager_id, d.department_id);
+          </div>
+        </div>
+        
+        <div class="tip">
+          <h3>💡 MERGE 문의 장점</h3>
+          <ul>
+            <li>여러 개의 DML 작업을 하나의 문장으로 처리할 수 있어 성능이 향상됩니다.</li>
+            <li>원자성을 보장하므로 일관성을 유지하기 쉽습니다.</li>
+            <li>데이터 웨어하우스 환경에서 ETL 작업에 매우 유용합니다.</li>
+            <li>코드가 간결해져 유지보수가 용이합니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_dml.html" class="nav-button">이전: INSERT 문</a>
+        <a href="sql_dml_transaction.html" class="nav-button">다음: 트랜잭션 관리</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // SQL 구문 강조
+    document.addEventListener('DOMContentLoaded', function() {
+      const codeBlocks = document.querySelectorAll('.code-block');
+      
+      codeBlocks.forEach(block => {
+        let html = block.innerHTML;
+        
+        // SQL 키워드 강조
+        const keywords = [
+          'SELECT', 'FROM', 'WHERE', 'ORDER BY', 'GROUP BY', 'HAVING', 'JOIN',
+          'INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL JOIN', 'ON', 'AS',
+          'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE',
+          'TABLE', 'ALTER', 'DROP', 'INDEX', 'VIEW', 'TRIGGER', 'PROCEDURE',
+          'FUNCTION', 'CURSOR', 'BEGIN', 'END', 'IF', 'ELSE', 'THEN', 'CASE',
+          'WHEN', 'ELSE', 'END', 'AND', 'OR', 'NOT', 'IN', 'BETWEEN', 'LIKE',
+          'IS NULL', 'IS NOT NULL', 'EXISTS', 'UNION', 'ALL', 'DISTINCT',
+          'ASC', 'DESC', 'LIMIT', 'OFFSET', 'NULLS FIRST', 'NULLS LAST',
+          'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'COALESCE', 'NULLIF',
+          'EXTRACT', 'YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND',
+          'INTERVAL', 'DATE_ADD', 'DATE_SUB', 'ADD_MONTHS', 'TRUNC', 'TRUNCATE',
+          'ROUND', 'MOD', 'CONCAT', 'SUBSTRING', 'UPPER', 'LOWER', 'TRIM',
+          'LTRIM', 'RTRIM', 'LEADING', 'TRAILING', 'BOTH', 'MERGE', 'INTO',
+          'USING', 'MATCHED', 'NOT MATCHED', 'DELETE WHERE'
+        ];
+        
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+          html = html.replace(regex, `<span class="sql-keyword">${keyword}</span>`);
+        });
+        
+        // 문자열 강조 (작은따옴표 안의 내용)
+        html = html.replace(/'([^']*)'/g, '<span class="sql-string">\'$1\'</span>');
+        
+        // 숫자 강조
+        html = html.replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>');
+        
+        // 주석 강조 (--로 시작하는 줄)
+        html = html.replace(/--(.*)/g, '<span class="sql-comment">--$1</span>');
+        
+        // 블록 주석 강조 (/* */)
+        html = html.replace(/\/\*([\s\S]*?)\*\//g, '<span class="sql-comment">/*$1*/</span>');
+        
+        block.innerHTML = html;
+      });
+    });
+  </script>
+</body>
+</html>

@@ -197,6 +197,8 @@
   <header>
     <h1>💫 String API 완벽 가이드</h1>
     <nav class="api-nav">
+      <a href="index.html" class="api-nav-link">홈</a>
+      <a href="exception.html" class="api-nav-link" style="background:#f97583;color:white;">예외처리 가이드</a>
       <a href="string.html" class="api-nav-link active">String</a>
       <a href="math.html" class="api-nav-link">Math</a>
       <a href="arrays.html" class="api-nav-link">Arrays</a>
@@ -207,7 +209,6 @@
       <a href="hashset.html" class="api-nav-link">HashSet</a>
       <a href="map.html" class="api-nav-link">Map</a>
       <a href="stream.html" class="api-nav-link">Stream</a>
-      <a href="index.html" class="api-nav-link">홈</a>
       <a href="math.html" class="api-nav-next">다음장 ➡️</a>
     </nav>
   </header>
@@ -435,6 +436,161 @@ System.out.println(id); // ?
           <li>toCharArray(), getBytes() 등 변환 메서드도 유용</li>
           <li>문자열 포맷(format) 적극 활용</li>
         </ul>
+      </div>
+    </section>
+
+    <!-- 🔑 주요 메서드별 상세 사용법 & 실전 예시 -->
+    <section class="section">
+      <h2>🔑 주요 메서드별 상세 사용법 & 실전 예시</h2>
+      <!-- length() -->
+      <div class="example-box">
+        <h3>length() - 문자열 길이 구하기</h3>
+        <ul>
+          <li><b>언제/왜?</b> 문자열의 문자 개수를 알고 싶을 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "hello";
+System.out.println(s.length()); // 5
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 입력값 검증, 반복문 조건</li>
+        </ul>
+        <div class="tip">미션: "java"의 length() 결과는?</div>
+        <details><summary>정답 보기</summary><div class="note">4</div></details>
+      </div>
+      <!-- substring() -->
+      <div class="example-box">
+        <h3>substring() - 부분 문자열 추출</h3>
+        <ul>
+          <li><b>언제/왜?</b> 문자열의 일부만 추출할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "abcdef";
+System.out.println(s.substring(2, 5)); // "cde"
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 아이디, 도메인, 구분자 추출</li>
+          <li><b>자주 하는 실수:</b> 인덱스 범위 주의(0부터 시작, 끝은 미포함)</li>
+        </ul>
+        <div class="tip">미션: "abcdef"에서 substring(1,4)의 결과는?</div>
+        <details><summary>정답 보기</summary><div class="note">"bcd"</div></details>
+      </div>
+      <!-- equals(), equalsIgnoreCase() -->
+      <div class="example-box">
+        <h3>equals(), equalsIgnoreCase() - 문자열 비교</h3>
+        <ul>
+          <li><b>언제/왜?</b> 두 문자열이 같은지(대소문자 구분/무시) 비교할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String a = "Java";
+String b = "java";
+System.out.println(a.equals(b)); // false
+System.out.println(a.equalsIgnoreCase(b)); // true
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 사용자 입력 검증, 검색</li>
+          <li><b>자주 하는 실수:</b> ==(참조비교)와 혼동 금지</li>
+        </ul>
+        <div class="tip">미션: "abc"와 "ABC"의 equalsIgnoreCase 결과는?</div>
+        <details><summary>정답 보기</summary><div class="note">true</div></details>
+      </div>
+      <!-- contains() -->
+      <div class="example-box">
+        <h3>contains() - 포함 여부 확인</h3>
+        <ul>
+          <li><b>언제/왜?</b> 특정 문자열이 포함되어 있는지 확인할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "hello world";
+System.out.println(s.contains("world")); // true
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 필터링, 조건 분기, 검색</li>
+        </ul>
+        <div class="tip">미션: "banana"에 "na"가 포함되어 있나요?</div>
+        <details><summary>정답 보기</summary><div class="note">true</div></details>
+      </div>
+      <!-- replace() -->
+      <div class="example-box">
+        <h3>replace() - 문자열 치환</h3>
+        <ul>
+          <li><b>언제/왜?</b> 문자열의 일부를 다른 값으로 바꿀 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "apple";
+System.out.println(s.replace("p", "b")); // "abble"
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 데이터 정제, 마스킹, 변환</li>
+        </ul>
+        <div class="tip">미션: "hello"에서 l을 x로 replace하면?</div>
+        <details><summary>정답 보기</summary><div class="note">"hexxo"</div></details>
+      </div>
+      <!-- split() -->
+      <div class="example-box">
+        <h3>split() - 문자열 분리</h3>
+        <ul>
+          <li><b>언제/왜?</b> 구분자를 기준으로 문자열을 여러 조각으로 나눌 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "a,b,c";
+String[] arr = s.split(",");
+System.out.println(Arrays.toString(arr)); // [a, b, c]
+            </div>
+          </li>
+          <li><b>실전 활용:</b> CSV 파싱, 데이터 분해, 반복문과 조합</li>
+        </ul>
+        <div class="tip">미션: "a:b:c"를 ':'로 split하면?</div>
+        <details><summary>정답 보기</summary><div class="note">[a, b, c]</div></details>
+      </div>
+      <!-- trim() -->
+      <div class="example-box">
+        <h3>trim() - 공백 제거</h3>
+        <ul>
+          <li><b>언제/왜?</b> 문자열 양 끝의 공백을 제거할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "  hi  ";
+System.out.println(s.trim()); // "hi"
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 입력값 정제, 데이터 전처리</li>
+        </ul>
+        <div class="tip">미션: "  java  "에 trim()을 적용하면?</div>
+        <details><summary>정답 보기</summary><div class="note">"java"</div></details>
+      </div>
+      <!-- charAt() -->
+      <div class="example-box">
+        <h3>charAt() - 특정 문자 추출</h3>
+        <ul>
+          <li><b>언제/왜?</b> 문자열에서 특정 위치의 문자 1개를 추출할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "hello";
+System.out.println(s.charAt(1)); // 'e'
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 문자 검사, for문과 조합, 조건문 분기</li>
+        </ul>
+        <div class="tip">미션: "hello"의 4번째 문자는?</div>
+        <details><summary>정답 보기</summary><div class="note">'l'</div></details>
+      </div>
+      <!-- indexOf() -->
+      <div class="example-box">
+        <h3>indexOf() - 위치 찾기</h3>
+        <ul>
+          <li><b>언제/왜?</b> 특정 문자가 문자열에서 처음 등장하는 위치를 찾을 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+String s = "banana";
+System.out.println(s.indexOf('a')); // 1
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 검색, 조건 분기, 반복문과 조합</li>
+          <li><b>자주 하는 실수:</b> 없는 문자 검색 시 -1 반환</li>
+        </ul>
+        <div class="tip">미션: "banana"에서 indexOf('z')의 결과는?</div>
+        <details><summary>정답 보기</summary><div class="note">-1</div></details>
       </div>
     </section>
   </main>

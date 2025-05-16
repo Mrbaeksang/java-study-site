@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 Spring Data JPA - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 기존 스타일 재사용 */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📚 Spring Data JPA</h1>
+      <p class="intro-text">Spring Data JPA를 활용한 데이터베이스 접근 방식을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 엔티티 매핑</h2>
+        <div class="code-block">
+          <pre><code class="java">@Entity
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @ManyToOne
+    private Category category;
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> orderItems;
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. 레포지토리 패턴</h2>
+        <div class="code-block">
+          <pre><code class="java">@Repository
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    List<Product> findByNameContaining(String name);
+    
+    @Query("SELECT p FROM Product p WHERE p.price > :minPrice")
+    List<Product> findByPriceGreaterThan(@Param("minPrice") Double minPrice);
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. 쿼리 메소드</h2>
+        <div class="code-block">
+          <pre><code class="java">@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    User findByUsername(String username);
+    
+    List<User> findByRoleAndActive(String role, boolean active);
+    
+    @Query("SELECT u FROM User u WHERE u.email = ?1")
+    Optional<User> findByEmail(String email);
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 다음 단계</h2>
+        <p>이제 Spring Data JPA의 기본적인 개념을 배웠습니다. 다음으로는 다음과 같은 주제들을 배우게 됩니다:</p>
+        <ul>
+          <li><a href="spring_boot_security.html">보안 구현</a></li>
+          <li><a href="spring_boot_testing.html">테스팅</a></li>
+          <li><a href="spring_boot_performance.html">성능 최적화</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

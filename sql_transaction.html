@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔄 트랜잭션 - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔄 트랜잭션</h1>
+      <p>데이터베이스 작업의 일관성을 보장하는 트랜잭션의 이해와 활용법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 트랜잭션 기본 개념</h2>
+        <p>트랜잭션은 데이터베이스에서 일련의 작업을 하나의 단위로 처리하는 것을 의미합니다.</p>
+
+        <div class="note">
+          <h3>🎯 트랜잭션의 특성 (ACID)</h3>
+          <ul>
+            <li>Atomicity (원자성): 트랜잭션은 전체가 성공하거나 전체가 실패해야 합니다.</li>
+            <li>Consistency (일관성): 트랜잭션은 데이터베이스의 일관성을 유지해야 합니다.</li>
+            <li>Isolation (분리성): 다른 트랜잭션과 독립적으로 실행되어야 합니다.</li>
+            <li>Durability (영속성): 트랜잭션이 성공하면 영구적으로 저장되어야 합니다.</li>
+          </ul>
+        </div>
+
+        <h2>2. 트랜잭션 제어 명령어</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>명령어</th>
+              <th>설명</th>
+              <th>예시</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>BEGIN</td>
+              <td>트랜잭션 시작</td>
+              <td>BEGIN;</td>
+            </tr>
+            <tr>
+              <td>COMMIT</td>
+              <td>트랜잭션 완료</td>
+              <td>COMMIT;</td>
+            </tr>
+            <tr>
+              <td>ROLLBACK</td>
+              <td>트랜잭션 취소</td>
+              <td>ROLLBACK;</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>3. 트랜잭션 예시</h2>
+        <div class="example">
+          <h3>📝 예제: 계좌 이체 트랜잭션</h3>
+          <div class="code-block">
+            -- 계좌 이체 트랜잭션 예시<br>
+            BEGIN;<br>
+
+            -- 출금 계좌에서 금액 차감<br>
+            UPDATE accounts SET balance = balance - 100000<br>
+            WHERE account_id = '1234';<br>
+
+            -- 입금 계좌에 금액 추가<br>
+            UPDATE accounts SET balance = balance + 100000<br>
+            WHERE account_id = '5678';<br>
+
+            COMMIT;
+          </div>
+        </div>
+
+        <div class="warning">
+          <h3>⚠️ 트랜잭션 주의사항</h3>
+          <ul>
+            <li>트랜잭션은 가능한 한 짧게 유지하는 것이 좋습니다.</li>
+            <li>트랜잭션 내에서 오류가 발생하면 즉시 ROLLBACK을 수행해야 합니다.</li>
+            <li>트랜잭션은 데이터베이스 자원을 잠그므로, 너무 많은 트랜잭션을 동시에 실행하면 성능에 영향을 줄 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <h2>4. 트랜잭션 격리 수준</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>격리 수준</th>
+              <th>설명</th>
+              <th>문제</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>READ UNCOMMITTED</td>
+              <td>다른 트랜잭션의 미완료 데이터도 읽을 수 있다.</td>
+              <td>Dirty Read</td>
+            </tr>
+            <tr>
+              <td>READ COMMITTED</td>
+              <td>다른 트랜잭션의 완료된 데이터만 읽을 수 있다.</td>
+              <td>Non-repeatable Read</td>
+            </tr>
+            <tr>
+              <td>REPEATABLE READ</td>
+              <td>트랜잭션 내에서 같은 데이터를 반복적으로 읽을 수 있다.</td>
+              <td>Phantom Read</td>
+            </tr>
+            <tr>
+              <td>SERIALIZABLE</td>
+              <td>완전한 격리를 보장한다.</td>
+              <td>성능 저하</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_constraints.html" class="nav-button">이전: 제약조건</a>
+        <a href="sql_advanced.html" class="nav-button">다음: 고급 SQL 요소</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

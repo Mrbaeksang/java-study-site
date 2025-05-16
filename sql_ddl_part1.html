@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 SQL DDL (Data Definition Language) - Part 1 - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 공통 스타일 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+
+    /* 텍스트 스타일 */
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    h4 {
+      margin-top: 1.5rem;
+      color: #ce9178;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+
+    /* 코드 블록 스타일 */
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    /* 노트/팁/경고 스타일 */
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+
+    /* 테이블 스타일 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+
+    /* 네비게이션 버튼 스타일 */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+
+    /* SQL 구문 박스 스타일 */
+    .syntax-box {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      font-family: 'Consolas', monospace;
+    }
+    .example {
+      background: #1e1e1e;
+      border-left: 4px solid #4ec9b0;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .example h4 {
+      margin-top: 0;
+      color: #4ec9b0;
+    }
+    .result-table {
+      width: 100%;
+      margin: 15px 0;
+      border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+      border: 1px solid #444;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .result-table th {
+      background-color: #2d2d2d;
+    }
+    .data-type {
+      color: #9cdcfe;
+    }
+    .constraint {
+      color: #ce9178;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📝 SQL DDL (Data Definition Language) - Part 1</h1>
+      <p>데이터베이스 구조를 정의하고 관리하는 SQL 명령어에 대해 배워봅시다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. DDL 개요</h2>
+        <p>DDL(Data Definition Language)은 데이터베이스의 구조를 정의하고 변경하는 데 사용되는 SQL 명령어들의 집합입니다. 주요 DDL 명령어로는 다음과 같은 것들이 있습니다:</p>
+        
+        <ul>
+          <li><strong>CREATE</strong>: 데이터베이스, 테이블, 인덱스, 뷰, 저장 프로시저 등의 객체를 생성합니다.</li>
+          <li><strong>ALTER</strong>: 기존 데이터베이스 객체의 구조를 수정합니다.</li>
+          <li><strong>DROP</strong>: 데이터베이스 객체를 삭제합니다.</li>
+          <li><strong>TRUNCATE</strong>: 테이블의 모든 행을 삭제하지만, 테이블 구조는 유지합니다.</li>
+          <li><strong>RENAME</strong>: 데이터베이스 객체의 이름을 변경합니다.</li>
+          <li><strong>COMMENT</strong>: 데이터베이스 객체에 주석을 추가합니다.</li>
+        </ul>
+        
+        <div class="note">
+          <h3>📌 DDL과 DML의 차이점</h3>
+          <p>DDL은 데이터베이스 구조를 정의하고 변경하는 반면, DML(Data Manipulation Language)은 데이터를 조작(조회, 삽입, 수정, 삭제)하는 데 사용됩니다. DDL 명령어는 자동으로 커밋되지만, DML 명령어는 명시적으로 커밋해야 합니다.</p>
+        </div>
+      </div>
+
+      <div class="section" id="create">
+        <h2>2. CREATE 문</h2>
+        <p>CREATE 문은 데이터베이스 객체(테이블, 뷰, 인덱스 등)를 생성하는 데 사용됩니다.</p>
+        
+        <h3>2.1 데이터베이스 생성</h3>
+        <div class="code-block">
+          <span class="sql-comment">-- MySQL/MariaDB</span><br>
+          <span class="sql-keyword">CREATE DATABASE</span> database_name<br>
+          [<span class="sql-keyword">CHARACTER SET</span> charset_name]<br>
+          [<span class="sql-keyword">COLLATE</span> collation_name];
+          
+          <br><br><span class="sql-comment">-- SQL Server</span><br>
+          <span class="sql-keyword">CREATE DATABASE</span> database_name
+          [<span class="sql-keyword">ON</span> <span class="sql-keyword">PRIMARY</span> (NAME = logical_file_name, FILENAME = 'os_file_name', SIZE = size)]
+          [<span class="sql-keyword">LOG ON</span> (NAME = log_file_name, FILENAME = 'log_file_name', SIZE = size)];
+          
+          <br><br><span class="sql-comment">-- Oracle</span><br>
+          <span class="sql-comment">-- Oracle에서는 데이터베이스가 아닌 테이블스페이스를 생성</span><br>
+          <span class="sql-keyword">CREATE TABLESPACE</span> tablespace_name
+          <span class="sql-keyword">DATAFILE</span> 'path_to_datafile.dbf' <span class="sql-keyword">SIZE</span> size
+          [<span class="sql-keyword">AUTOEXTEND</span> <span class="sql-keyword">ON</span> [<span class="sql-keyword">NEXT</span> size] [<span class="sql-keyword">MAXSIZE</span> max_size]];
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 1: 데이터베이스 생성</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- MySQL/MariaDB</span><br>
+            <span class="sql-keyword">CREATE DATABASE</span> my_database<br>
+            <span class="sql-keyword">CHARACTER SET</span> utf8mb4<br>
+            <span class="sql-keyword">COLLATE</span> utf8mb4_unicode_ci;
+            
+            <br><br><span class="sql-comment">-- SQL Server</span><br>
+            <span class="sql-keyword">CREATE DATABASE</span> my_database<br>
+            <span class="sql-keyword">ON</span> <span class="sql-keyword">PRIMARY</span> (<br>
+              <span class="sql-keyword">NAME</span> = my_database_data,<br>
+              <span class="sql-keyword">FILENAME</span> = 'C:\\Data\\my_database.mdf',<br>
+              <span class="sql-keyword">SIZE</span> = 100MB,
+              <span class="sql-keyword">MAXSIZE</span> = UNLIMITED,
+              <span class="sql-keyword">FILEGROWTH</span> = 10%
+            )
+            <span class="sql-keyword">LOG ON</span> (
+              <span class="sql-keyword">NAME</span> = my_database_log,<br>
+              <span class="sql-keyword">FILENAME</span> = 'C:\\Data\\my_database.ldf',<br>
+              <span class="sql-keyword">SIZE</span> = 20MB,
+              <span class="sql-keyword">MAXSIZE</span> = 1GB,
+              <span class="sql-keyword">FILEGROWTH</span> = 5%
+            );
+          </div>
+        </div>
+        
+        <h3>2.2 테이블 생성</h3>
+        <div class="syntax-box">
+          <strong>기본 구문:</strong>
+          <div class="code-block">
+            <span class="sql-keyword">CREATE TABLE</span> [schema_name.]table_name (
+              column1 datatype [<span class="constraint">CONSTRAINTS</span>],
+              column2 datatype [<span class="constraint">CONSTRAINTS</span>],
+              ...
+              [<span class="constraint">TABLE_CONSTRAINTS</span>]
+            ) [<span class="sql-keyword">ENGINE</span>=engine_name] [<span class="sql-keyword">DEFAULT CHARSET</span>=charset_name];
+          </div>
+        </div>
+        
+        <h4>2.2.1 데이터 타입</h4>
+        <p>주요 데이터 타입은 다음과 같습니다:</p>
+        
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>데이터 타입</th>
+              <th>설명</th>
+              <th>예시</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="data-type">INT</span>, <span class="data-type">INTEGER</span></td>
+              <td>정수형 (4바이트)</td>
+              <td>1, 42, -15</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">BIGINT</span></td>
+              <td>큰 정수형 (8바이트)</td>
+              <td>1234567890123456789</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">DECIMAL(p,s)</span>, <span class="data-type">NUMERIC(p,s)</span></td>
+              <td>고정 소수점 (전체 자릿수 p, 소수점 이하 s자리)</td>
+              <td>123.45, 999.99</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">FLOAT</span>, <span class="data-type">DOUBLE</span></td>
+              <td>부동 소수점</td>
+              <td>3.14159, -0.001</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">VARCHAR(n)</span></td>
+              <td>가변 길이 문자열 (최대 n자)</td>
+              <td>'Hello', 'SQL'</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">CHAR(n)</span></td>
+              <td>고정 길이 문자열 (n자)</td>
+              <td>'Y', 'N'</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">TEXT</span></td>
+              <td>긴 텍스트 데이터</td>
+              <td>게시글 내용 등</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">DATE</span></td>
+              <td>날짜 (YYYY-MM-DD)</td>
+              <td>'2023-01-15'</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">TIME</span></td>
+              <td>시간 (HH:MM:SS)</td>
+              <td>'14:30:00'</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">DATETIME</span>, <span class="data-type">TIMESTAMP</span></td>
+              <td>날짜와 시간</td>
+              <td>'2023-01-15 14:30:00'</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">BOOLEAN</span>, <span class="data-type">BOOL</span></td>
+              <td>참/거짓</td>
+              <td>TRUE, FALSE, 1, 0</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">BLOB</span>, <span class="data-type">LONGBLOB</span></td>
+              <td>이진 대용량 데이터</td>
+              <td>이미지, 동영상 등</td>
+            </tr>
+            <tr>
+              <td><span class="data-type">JSON</span></td>
+              <td>JSON 형식의 데이터 (MySQL 5.7+, PostgreSQL, SQL Server 2016+)</td>
+              <td>'{"name": "John", "age": 30}'</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <h4>2.2.2 제약 조건(Constraints)</h4>
+        <p>테이블의 열에 적용할 수 있는 주요 제약 조건은 다음과 같습니다:</p>
+        
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>제약 조건</th>
+              <th>설명</th>
+              <th>예시</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="constraint">PRIMARY KEY</span></td>
+              <td>기본 키 (NOT NULL + UNIQUE)</td>
+              <td><span class="constraint">PRIMARY KEY</span> (id)</td>
+            </tr>
+            <tr>
+              <td><span class="constraint">FOREIGN KEY</span></td>
+              <td>외래 키 (다른 테이블의 기본 키 참조)</td>
+              <td><span class="constraint">FOREIGN KEY</span> (dept_id) <span class="sql-keyword">REFERENCES</span> departments(id)</td>
+            </tr>
+            <tr>
+              <td><span class="constraint">UNIQUE</span></td>
+              <td>고유한 값 (NULL 허용)</td>
+              <td>email <span class="data-type">VARCHAR</span>(100) <span class="constraint">UNIQUE</span></td>
+            </tr>
+            <tr>
+              <td><span class="constraint">NOT NULL</span></td>
+              <td>NULL 값 허용 안 함</td>
+              <td>name <span class="data-type">VARCHAR</span>(50) <span class="constraint">NOT NULL</span></td>
+            </tr>
+            <tr>
+              <td><span class="constraint">CHECK</span></td>
+              <td>조건 검사</td>
+              <td>age <span class="data-type">INT</span> <span class="constraint">CHECK</span> (age >= 0)</td>
+            </tr>
+            <tr>
+              <td><span class="constraint">DEFAULT</span></td>
+              <td>기본값 설정</td>
+              <td>created_at <span class="data-type">TIMESTAMP</span> <span class="constraint">DEFAULT</span> <span class="sql-keyword">CURRENT_TIMESTAMP</span></td>
+            </tr>
+            <tr>
+              <td><span class="constraint">AUTO_INCREMENT</span> (MySQL)<br><span class="constraint">IDENTITY</span> (SQL Server)<br><span class="constraint">SERIAL</span> (PostgreSQL)<br><span class="constraint">AUTOINCREMENT</span> (SQLite)</td>
+              <td>자동 증가 (주로 기본 키에 사용)</td>
+              <td>id <span class="data-type">INT</span> <span class="constraint">PRIMARY KEY</span> <span class="constraint">AUTO_INCREMENT</span></td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="example">
+          <h4>📝 예제 2: 테이블 생성</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 부서 테이블 생성</span><br>
+            <span class="sql-keyword">CREATE TABLE</span> departments (
+              department_id   <span class="data-type">INT</span> <span class="constraint">PRIMARY KEY</span> <span class="constraint">AUTO_INCREMENT</span>,
+              department_name <span class="data-type">VARCHAR</span>(50) <span class="constraint">NOT NULL</span>,
+              location        <span class="data-type">VARCHAR</span>(100),
+              created_at      <span class="data-type">TIMESTAMP</span> <span class="constraint">DEFAULT</span> <span class="sql-keyword">CURRENT_TIMESTAMP</span>,
+              <span class="constraint">CONSTRAINT</span> uk_department_name <span class="constraint">UNIQUE</span> (department_name)
+            ) <span class="sql-keyword">ENGINE</span>=InnoDB <span class="sql-keyword">DEFAULT CHARSET</span>=utf8mb4;
+            
+            <br><span class="sql-comment">-- 직원 테이블 생성 (부서 테이블 참조)</span><br>
+            <span class="sql-keyword">CREATE TABLE</span> employees (
+              employee_id     <span class="data-type">INT</span> <span class="constraint">PRIMARY KEY</span> <span class="constraint">AUTO_INCREMENT</span>,
+              first_name      <span class="data-type">VARCHAR</span>(50) <span class="constraint">NOT NULL</span>,
+              last_name       <span class="data-type">VARCHAR</span>(50) <span class="constraint">NOT NULL</span>,
+              email           <span class="data-type">VARCHAR</span>(100) <span class="constraint">UNIQUE</span> <span class="constraint">NOT NULL</span>,
+              phone_number    <span class="data-type">VARCHAR</span>(20),
+              hire_date       <span class="data-type">DATE</span> <span class="constraint">NOT NULL</span>,
+              job_id          <span class="data-type">VARCHAR</span>(10) <span class="constraint">NOT NULL</span>,
+              salary          <span class="data-type">DECIMAL</span>(10,2) <span class="constraint">CHECK</span> (salary >= 0),
+              commission_pct  <span class="data-type">DECIMAL</span>(3,2),
+              manager_id      <span class="data-type">INT</span>,
+              department_id   <span class="data-type">INT</span>,
+              created_at      <span class="data-type">TIMESTAMP</span> <span class="constraint">DEFAULT</span> <span class="sql-keyword">CURRENT_TIMESTAMP</span>,
+              updated_at      <span class="data-type">TIMESTAMP</span> <span class="constraint">DEFAULT</span> <span class="sql-keyword">CURRENT_TIMESTAMP</span> <span class="sql-keyword">ON UPDATE</span> <span class="sql-keyword">CURRENT_TIMESTAMP</span>,
+              
+              <span class="constraint">CONSTRAINT</span> fk_emp_dept <span class="constraint">FOREIGN KEY</span> (department_id) <span class="sql-keyword">REFERENCES</span> departments(department_id)
+                <span class="sql-keyword">ON DELETE SET NULL</span>
+                <span class="sql-keyword">ON UPDATE CASCADE</span>,
+              <span class="constraint">CONSTRAINT</span> fk_emp_mgr <span class="constraint">FOREIGN KEY</span> (manager_id) <span class="sql-keyword">REFERENCES</span> employees(employee_id)
+                <span class="sql-keyword">ON DELETE SET NULL</span>
+            ) <span class="sql-keyword">ENGINE</span>=InnoDB <span class="sql-keyword">DEFAULT CHARSET</span>=utf8mb4;
+            
+            <br><span class="sql-comment">-- 직무 이력 테이블 (복합 기본 키 사용)</span><br>
+            <span class="sql-keyword">CREATE TABLE</span> job_history (
+              employee_id     <span class="data-type">INT</span> <span class="constraint">NOT NULL</span>,
+              start_date      <span class="data-type">DATE</span> <span class="constraint">NOT NULL</span>,
+              end_date        <span class="data-type">DATE</span> <span class="constraint">NOT NULL</span>,
+              job_id          <span class="data-type">VARCHAR</span>(10) <span class="constraint">NOT NULL</span>,
+              department_id   <span class="data-type">INT</span>,
+              
+              <span class="constraint">PRIMARY KEY</span> (employee_id, start_date),
+              <span class="constraint">CONSTRAINT</span> fk_job_history_emp <span class="constraint">FOREIGN KEY</span> (employee_id) 
+                <span class="sql-keyword">REFERENCES</span> employees(employee_id) <span class="sql-keyword">ON DELETE CASCADE</span>,
+              <span class="constraint">CONSTRAINT</span> fk_job_history_dept <span class="constraint">FOREIGN KEY</span> (department_id) 
+                <span class="sql-keyword">REFERENCES</span> departments(department_id) <span class="sql-keyword">ON DELETE SET NULL</span>,
+              <span class="constraint">CONSTRAINT</span> chk_job_history_dates <span class="constraint">CHECK</span> (end_date > start_date)
+            ) <span class="sql-keyword">ENGINE</span>=InnoDB <span class="sql-keyword">DEFAULT CHARSET</span>=utf8mb4;
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_dml_transaction.html" class="nav-button">이전: 트랜잭션 관리</a>
+        <a href="sql_ddl_part2.html" class="nav-button">다음: DDL Part 2 (인덱스, 뷰, 시퀀스)</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // SQL 구문 강조
+    document.addEventListener('DOMContentLoaded', function() {
+      const codeBlocks = document.querySelectorAll('.code-block');
+      
+      codeBlocks.forEach(block => {
+        let html = block.innerHTML;
+        
+        // SQL 키워드 강조
+        const keywords = [
+          'SELECT', 'FROM', 'WHERE', 'ORDER BY', 'GROUP BY', 'HAVING', 'JOIN',
+          'INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL JOIN', 'ON', 'AS',
+          'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE',
+          'TABLE', 'ALTER', 'DROP', 'INDEX', 'VIEW', 'TRIGGER', 'PROCEDURE',
+          'FUNCTION', 'CURSOR', 'BEGIN', 'END', 'IF', 'ELSE', 'THEN', 'CASE',
+          'WHEN', 'ELSE', 'END', 'AND', 'OR', 'NOT', 'IN', 'BETWEEN', 'LIKE',
+          'IS NULL', 'IS NOT NULL', 'EXISTS', 'UNION', 'ALL', 'DISTINCT',
+          'ASC', 'DESC', 'LIMIT', 'OFFSET', 'NULLS FIRST', 'NULLS LAST',
+          'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'COALESCE', 'NULLIF',
+          'EXTRACT', 'YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND',
+          'INTERVAL', 'DATE_ADD', 'DATE_SUB', 'ADD_MONTHS', 'TRUNC', 'TRUNCATE',
+          'ROUND', 'MOD', 'CONCAT', 'SUBSTRING', 'UPPER', 'LOWER', 'TRIM',
+          'LTRIM', 'RTRIM', 'LEADING', 'TRAILING', 'BOTH', 'MERGE', 'INTO',
+          'USING', 'MATCHED', 'NOT MATCHED', 'DELETE WHERE', 'START TRANSACTION',
+          'COMMIT', 'ROLLBACK', 'SAVEPOINT', 'RELEASE SAVEPOINT', 'SET TRANSACTION',
+          'ISOLATION LEVEL', 'READ UNCOMMITTED', 'READ COMMITTED', 'REPEATABLE READ',
+          'SERIALIZABLE', 'DECLARE', 'HANDLER', 'CONTINUE', 'FOR', 'SQLEXCEPTION',
+          'GLOBAL', 'SESSION', 'VARIABLES', 'ROW_COUNT', 'CURRENT_DATE', 'CURRENT_TIMESTAMP',
+          'DATABASE', 'DATABASES', 'TABLESPACE', 'SCHEMA', 'TABLES', 'COLUMNS',
+          'ENGINE', 'CHARACTER SET', 'COLLATE', 'CHARSET', 'AUTO_INCREMENT',
+          'PRIMARY KEY', 'FOREIGN KEY', 'REFERENCES', 'UNIQUE', 'CHECK', 'DEFAULT',
+          'NOT NULL', 'NULL', 'AUTOINCREMENT', 'IDENTITY', 'SERIAL', 'ON DELETE',
+          'ON UPDATE', 'CASCADE', 'SET NULL', 'NO ACTION', 'RESTRICT', 'CONSTRAINT'
+        ];
+        
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+          html = html.replace(regex, `<span class="sql-keyword">${keyword}</span>`);
+        });
+        
+        // 문자열 강조 (작은따옴표 안의 내용)
+        html = html.replace(/'([^']*)'/g, '<span class="sql-string">\'$1\'</span>');
+        
+        // 숫자 강조
+        html = html.replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>');
+        
+        // 주석 강조 (--로 시작하는 줄)
+        html = html.replace(/--(.*)/g, '<span class="sql-comment">--$1</span>');
+        
+        // 블록 주석 강조 (/* */)
+        html = html.replace(/\/\*([\s\S]*?)\*\//g, '<span class="sql-comment">/*$1*/</span>');
+        
+        block.innerHTML = html;
+      });
+    });
+  </script>
+</body>
+</html>

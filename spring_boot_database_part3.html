@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💽 스프링 부트 JPA 연동</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 이전과 동일한 스타일 유지 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    /* ... (나머지 스타일도 이전과 동일) ... */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>💽 스프링 부트 JPA 연동</h1>
+      <p class="intro-text">Spring Data JPA를 활용한 객체-관계 매핑(ORM) 방법을 알아봅시다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>4. JPA를 이용한 데이터베이스 연동</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> 의존성 추가</h3>
+          <p>JPA와 사용할 데이터베이스 드라이버를 의존성에 추가합니다.</p>
+          
+          <div class="method-grid">
+            <div class="toc-card">
+              <h4>Gradle (build.gradle)</h4>
+              <pre class="code-block"><code class="language-groovy">dependencies {
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    
+    // H2 데이터베이스 (개발용)
+    runtimeOnly 'com.h2database:h2'
+    
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // 테스트
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}</code></pre>
+            </div>
+            
+            <div class="toc-card">
+              <h4>Maven (pom.xml)</h4>
+              <pre class="code-block"><code class="language-xml">&lt;dependencies&gt;
+    &lt;!-- JPA --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    
+    &lt;!-- H2 데이터베이스 (개발용) --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.h2database&lt;/groupId&gt;
+        &lt;artifactId&gt;h2&lt;/artifactId&gt;
+        &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;/dependency&gt;
+    
+    &lt;!-- Lombok --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+        &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+    
+    &lt;!-- 테스트 --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 엔티티 클래스 생성</h3>
+          <p>데이터베이스 테이블과 매핑될 엔티티 클래스를 생성합니다.</p>
+          
+          <pre class="code-block"><code class="language-java">package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "users")
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
+public class User {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false, unique = true, length = 50)
+    private String username;
+    
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
+    
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
+    
+    @Column(name = "first_name", length = 50)
+    private String firstName;
+    
+    @Column(name = "last_name", length = 50)
+    private String lastName;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private UserStatus status = UserStatus.ACTIVE;
+    
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    
+    @Version
+    private Long version;
+    
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
+    
+    // 연관관계 편의 메서드
+    public void addPost(Post post) {
+        posts.add(post);
+        post.setAuthor(this);
+    }
+    
+    // 정적 팩토리 메서드
+    public static User createUser(String username, String email, String passwordHash) {
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPasswordHash(passwordHash);
+        return user;
+    }
+    
+    // 비즈니스 메서드
+    public void deactivate() {
+        this.status = UserStatus.INACTIVE;
+    }
+    
+    // 상태 열거형
+    public enum UserStatus {
+        ACTIVE, INACTIVE, SUSPENDED, DELETED
+    }
+}
+
+// 게시글 엔티티
+@Entity
+@Table(name = "posts")
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Post {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false, length = 200)
+    private String title;
+    
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User author;
+    
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+    
+    @ManyToMany
+    @JoinTable(
+        name = "post_tags",
+        joinColumns = @JoinColumn(name = "post_id"),
+        inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags = new HashSet<>();
+    
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    
+    @Version
+    private Long version;
+    
+    // 연관관계 편의 메서드
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setPost(this);
+    }
+    
+    public void addTag(Tag tag) {
+        tags.add(tag);
+        tag.getPosts().add(this);
+    }
+    
+    // 정적 팩토리 메서드
+    public static Post createPost(String title, String content, User author) {
+        Post post = new Post();
+        post.setTitle(title);
+        post.setContent(content);
+        post.setAuthor(author);
+        return post;
+    }
+}
+
+// 댓글 엔티티
+@Entity
+@Table(name = "comments")
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Comment {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User author;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+    
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    
+    @Version
+    private Long version;
+    
+    // 정적 팩토리 메서드
+    public static Comment createComment(String content, User author, Post post) {
+        Comment comment = new Comment();
+        comment.setContent(content);
+        comment.setAuthor(author);
+        comment.setPost(post);
+        return comment;
+    }
+}
+
+// 태그 엔티티
+@Entity
+@Table(name = "tags")
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Tag {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false, unique = true, length = 50)
+    private String name;
+    
+    @ManyToMany(mappedBy = "tags")
+    private Set<Post> posts = new HashSet<>();
+    
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    
+    // 정적 팩토리 메서드
+    public static Tag createTag(String name) {
+        Tag tag = new Tag();
+        tag.setName(name);
+        return tag;
+    }
+}</code></pre>
+          
+          <div class="note">
+            <h4>📌 JPA 엔티티 설계 시 주의사항</h4>
+            <ul>
+              <li>기본 생성자는 <code>protected</code>로 제한하여 무분별한 객체 생성을 방지</li>
+              <li>엔티티 식별자는 <code>Long</code> 타입의 자동 생성 값 사용 권장</li>
+              <li>엔티티 간 연관관계는 필요할 때만 설정하고, 지연 로딩(LAZY)을 기본으로 사용</li>
+              <li>양방향 연관관계는 편의 메서드를 통해 관리</li>
+              <li>엔티티의 생명주기 이벤트를 활용하여 생성일시, 수정일시 자동 관리</li>
+              <li>도메인 주도 설계(DDD) 원칙에 따라 엔티티에 비즈니스 로직 포함</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="spring_boot_database_part2.html" class="nav-button">← 이전: JdbcTemplate 활용</a>
+        <a href="spring_boot_database_part4.html" class="nav-button">다음: Spring Data JPA →</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

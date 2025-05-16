@@ -47,77 +47,26 @@
   </header>
   <main>
     <section class="section">
-      <h2><span class="highlight">🍎 Iterator는 왜 필요할까?</span></h2>
+      <h2><span class="highlight">🎯 Iterator API 완벽 가이드</span></h2>
       <div class="example-box">
-        <b>실생활에서 Iterator가 필요한 순간!</b>
+        <h3>개요</h3>
         <ul>
-          <li>리스트, Set 등 <span class="important">모든 컬렉션</span>을 <span class="important">반복문 없이</span> 순회하고 싶을 때</li>
-          <li>for-each문으로 처리할 수 없는 <span class="important">삭제/수정</span>이 필요할 때</li>
+          <li>순차적 접근</li>
+          <li>요소 제거 가능</li>
+          <li>다양한 컬렉션 지원</li>
+          <li>자바 8+ 향상된 Iterator</li>
         </ul>
-      </div>
-      <div class="code-block">
-// Iterator로 요소 출력
-Iterator<String> it = list.iterator();
-while(it.hasNext()) {
-  System.out.println(it.next());
-}
-      </div>
-      <div class="note">
-        <b>Iterator는 <span style="color:#85e89d">컬렉션 순회</span>를 표준화한 <span class="important">반복자</span>입니다!</b>
-      </div>
-    </section>
-    <section class="section">
-      <h2>📖 Iterator 클래스 개요</h2>
-      <div class="example-box">
-        <ul>
-          <li>모든 컬렉션에서 <span class="important">iterator()</span>로 획득</li>
-          <li>hasNext(), next(), remove() 등 메서드 제공</li>
-          <li>for-each문 내부적으로도 Iterator 사용</li>
-        </ul>
-      </div>
-    </section>
-    <section class="section">
-      <h2>🔑 주요 메서드 한눈에 보기 &amp; 실전 활용</h2>
-      <div class="example-box">
-        <h3>hasNext()</h3>
-        <ul>
-          <li><b>언제/왜?</b> 다음 요소가 남아있는지 확인할 때</li>
-          <li><b>코드 예시:</b>
-            <div class="code-block">
-Iterator<String> it = list.iterator();
-while(it.hasNext()) {
-  System.out.println(it.next());
-}
-            </div>
-          </li>
-          <li><b>실전 활용:</b> 반복문 종료 조건, 안전한 순회</li>
-        </ul>
-        <div class="tip">미션: hasNext()가 false면 반복문은?</div>
-        <details><summary>정답 보기</summary><div class="note">종료</div></details>
-      </div>
-      <div class="example-box">
-        <h3>next()</h3>
-        <ul>
-          <li><b>언제/왜?</b> 다음 요소를 꺼낼 때</li>
-          <li><b>코드 예시:</b>
-            <div class="code-block">
-Iterator<String> it = list.iterator();
-if(it.hasNext()) {
-  String s = it.next();
-  System.out.println(s);
-}
-            </div>
-          </li>
-          <li><b>실전 활용:</b> 요소 접근, 순회, 조건부 처리</li>
-          <li><b>자주 하는 실수:</b> hasNext() 없이 next() 호출 시 예외</li>
-        </ul>
-        <div class="tip">미션: hasNext()가 false인데 next() 호출하면?</div>
-        <details><summary>정답 보기</summary><div class="note">예외 발생(NoSuchElementException)</div></details>
-      </div>
-      <div class="example-box">
-        <h3>remove()</h3>
-        <ul>
-          <li><b>언제/왜?</b> 현재 가리키는 요소를 안전하게 삭제할 때</li>
+
+        <h3>주요 특징</h3>
+        <div class="ascii-art">
+          +-------------------+
+          |     Iterator     |
+          |-------------------|
+          | - 순차적 접근    |
+          | - 요소 제거      |
+          | - 컬렉션 통합    |
+          | - 향상된 기능    |
+          +-------------------+
           <li><b>코드 예시:</b>
             <div class="code-block">
 Iterator<String> it = list.iterator();

@@ -198,17 +198,20 @@
   <header>
     <h1>📚 Wrapper 클래스 완벽 가이드</h1>
     <nav class="api-nav">
+      <a href="index.html" class="api-nav-link">Home</a>
       <a href="string.html" class="api-nav-link">String</a>
-      <a href="math.html" class="api-nav-link">Math</a>
-      <a href="arrays.html" class="api-nav-link">Arrays</a>
-      <a href="wrapper.html" class="api-nav-link active">Wrapper</a>
+      <a href="collections.html" class="api-nav-link">Collections</a>
+      <a href="stream.html" class="api-nav-link">Stream</a>
+      <a href="random.html" class="api-nav-link">Random</a>
       <a href="stringbuilder.html" class="api-nav-link">StringBuilder</a>
       <a href="arraylist.html" class="api-nav-link">ArrayList</a>
       <a href="collections.html" class="api-nav-link">Collections</a>
       <a href="hashset.html" class="api-nav-link">HashSet</a>
       <a href="map.html" class="api-nav-link">Map</a>
+      <a href="wrapper.html" class="api-nav-link active">Wrapper</a>
       <a href="stream.html" class="api-nav-link">Stream</a>
       <a href="index.html" class="api-nav-link">홈</a>
+      <a href="exception.html" class="api-nav-link" style="background:#f97583;color:white;">예외처리 가이드</a>
       <a href="stringbuilder.html" class="api-nav-next">다음장 ➡️</a>
     </nav>
   </header>
@@ -259,15 +262,62 @@
       <div class="example-box">
         <table class="method-table">
           <tr><th>메서드</th><th>설명</th><th>사용 예</th><th>실전 활용</th></tr>
-          <tr><td>parseXxx()</td><td>문자열 → 기본형</td><td>Integer.parseInt("123")</td><td>입력값 처리</td></tr>
-          <tr><td>valueOf()</td><td>문자열/기본형 → Wrapper</td><td>Integer.valueOf("123")</td><td>컬렉션 저장</td></tr>
-          <tr><td>toString()</td><td>객체 → 문자열</td><td>num.toString()</td><td>출력, 변환</td></tr>
-          <tr><td>compareTo()</td><td>값 비교</td><td>num1.compareTo(num2)</td><td>정렬, 비교</td></tr>
-          <tr><td>equals()</td><td>값 동등 비교</td><td>num1.equals(num2)</td><td>null 안전 비교</td></tr>
+          <tr><td>parseInt()</td><td>문자열 → int</td><td>Integer.parseInt("123")</td><td>입력 변환</td></tr>
+          <tr><td>valueOf()</td><td>문자열/숫자 → 객체</td><td>Integer.valueOf("10")</td><td>박싱, 캐싱</td></tr>
+          <tr><td>toString()</td><td>숫자 → 문자열</td><td>Integer.toString(5)</td><td>출력, 변환</td></tr>
           <tr><td>xxxValue()</td><td>기본값 반환</td><td>num.intValue()</td><td>계산, 연산</td></tr>
           <tr><td>MAX_VALUE/MIN_VALUE</td><td>최대/최소 상수</td><td>Integer.MAX_VALUE</td><td>오버플로우 방지</td></tr>
           <tr><td>toBinaryString()</td><td>2진수 변환</td><td>Integer.toBinaryString(10)</td><td>진수 변환</td></tr>
         </table>
+      </div>
+      <!-- 상세 메서드별 설명/예시/실수/미션 추가 -->
+      <div class="example-box">
+        <h3>Integer.parseInt()</h3>
+        <div class="code-block">String s = "123";\nint n = Integer.parseInt(s); // 123</div>
+        <div class="tip">언제/왜? 문자열 입력을 숫자로 변환할 때</div>
+        <div class="warning">실수: 숫자가 아닌 문자열은 NumberFormatException 발생!</div>
+        <b>미션: "42"를 int로 변환해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">Integer.parseInt("42")</div></details>
+      </div>
+      <div class="example-box">
+        <h3>Integer.valueOf()</h3>
+        <div class="code-block">Integer i = Integer.valueOf("10");</div>
+        <div class="tip">언제/왜? 박싱, 객체 캐싱 활용</div>
+        <div class="warning">실수: new Integer() 대신 valueOf() 사용!</div>
+        <b>미션: 문자열 "77"을 Integer 객체로 변환해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">Integer.valueOf("77")</div></details>
+      </div>
+      <div class="example-box">
+        <h3>Integer.toString()</h3>
+        <div class="code-block">int n = 99;\nString s = Integer.toString(n); // "99"</div>
+        <div class="tip">언제/왜? 숫자를 문자열로 출력/저장할 때</div>
+        <div class="warning">실수: null 객체에서 호출 시 NPE!</div>
+        <b>미션: 1234를 문자열로 변환해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">Integer.toString(1234)</div></details>
+      </div>
+      <div class="example-box">
+        <h3>xxxValue() (예: intValue())</h3>
+        <div class="code-block">Integer i = 5;\nint n = i.intValue(); // 5</div>
+        <div class="tip">언제/왜? 객체 → 기본형 변환</div>
+        <div class="warning">실수: null 객체에서 언박싱 시 NPE!</div>
+        <b>미션: Integer i = 7;을 int로 변환해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">i.intValue()</div></details>
+      </div>
+      <div class="example-box">
+        <h3>MAX_VALUE/MIN_VALUE</h3>
+        <div class="code-block">int max = Integer.MAX_VALUE; // 2147483647</div>
+        <div class="tip">언제/왜? 오버플로우 방지, 경계값 체크</div>
+        <div class="warning">실수: 값 범위 벗어나면 오버/언더플로우!</div>
+        <b>미션: int의 최대/최소값은?</b>
+        <details><summary>정답 보기</summary><div class="note">2147483647, -2147483648</div></details>
+      </div>
+      <div class="example-box">
+        <h3>Integer.toBinaryString()</h3>
+        <div class="code-block">int n = 10;\nString bin = Integer.toBinaryString(n); // "1010"</div>
+        <div class="tip">언제/왜? 진수 변환, 비트 연산 시</div>
+        <div class="warning">실수: 음수는 2의 보수로 출력됨!</div>
+        <b>미션: 15를 2진수로 변환해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">Integer.toBinaryString(15) // 1111</div></details>
       </div>
     </section>
 
@@ -313,60 +363,187 @@ for (String s : arr) {
 System.out.println(sum); // ?
         </div>
         <details><summary>정답 보기</summary>
-          <div class="note">60</div>
-        </details>
-      </div>
+          <section class="section">
+      <h2>🎯 Wrapper API 완벽 가이드</h2>
       <div class="example-box">
-        <b>미션 2. null 안전 비교 함수 작성</b>
-        <div class="note">public static boolean safeEquals(Integer a, Integer b) { <b>직접 작성</b> }</div>
-      </div>
-    </section>
-
-    <!-- ❓ FAQ / 자주 하는 질문 -->
-    <section class="section">
-      <h2>❓ 자주 하는 질문 (FAQ)</h2>
-      <div class="example-box">
-        <b>Q. Wrapper 클래스는 언제 꼭 필요할까?</b><br>
-        <span class="note">컬렉션, 제네릭, null 처리, 문자열 변환 등 객체로서 기능이 필요할 때!</span>
-      </div>
-      <div class="example-box">
-        <b>Q. ==와 equals의 차이?</b><br>
-        <span class="note">==는 참조비교, equals는 값비교!</span>
-      </div>
-      <div class="example-box">
-        <b>Q. 박싱/언박싱은 언제 자동?</b><br>
-        <span class="note">대입, 연산 등에서 컴파일러가 자동 변환해줍니다.</span>
-      </div>
-      <div class="example-box">
-        <b>Q. null과 비교할 때 주의점?</b><br>
-        <span class="note">equals() 호출 전 반드시 null 체크!</span>
-      </div>
-      <div class="example-box">
-        <b>Q. Integer.valueOf와 new Integer의 차이?</b><br>
-        <span class="note">valueOf는 캐싱(재사용), new는 무조건 새 객체 생성(비추천)</span>
-      </div>
-    </section>
-
-    <!-- ⚡ 성능과 주의사항 -->
-    <section class="section">
-      <h2>⚡ 성능과 주의사항</h2>
-      <div class="warning">
-        <b>성능 특성</b>
+        <h3>개요</h3>
         <ul>
-          <li>== 연산자 대신 equals() 사용</li>
-          <li>불필요한 객체 생성 피하기 (valueOf/parse 계열 활용)</li>
-          <li>null 체크 필수</li>
-          <li>Wrapper는 불변(immutable)이라 값 변경 불가</li>
-          <li>박싱/언박싱 반복 시 성능 저하 가능</li>
+          <li>기본 자료형의 객체화</li>
+          <li>자바 5.0+ 자동 박싱/언박싱</li>
+          <li>메모리 효율 고려</li>
+          <li>성능 최적화</li>
         </ul>
-      </div>
-      <div class="tip">
-        <b>실무 사용 팁</b>
+
+        <h3>주요 특징</h3>
+        <div class="ascii-art">
+          +-------------------+
+          |    Wrapper API    |
+          |-------------------|
+          | - 기본 자료형    |
+          | - 객체화        |
+          | - 자동 박싱    |
+          | - 메모리 효율    |
+          +-------------------+
+        </div>
         <ul>
-          <li>상수(Integer.MAX_VALUE 등) 적극 활용</li>
-          <li>문자열 변환/파싱 시 NumberFormatException 주의</li>
-          <li>Optional<Integer> 등과 함께 null 안전하게 활용</li>
+          <li>기본 자료형의 객체화</li>
+          <li>자동 박싱/언박싱 지원</li>
+          <li>메모리 효율적</li>
+          <li>성능 최적화</li>
         </ul>
+
+        <h3>실제 사용 예시</h3>
+        <div class="code-block">
+// 기본 사용법
+Integer num = 100;  // 자동 박싱
+int primitive = num;  // 자동 언박싱
+
+// 복잡한 변환
+String str = "123";
+Integer num = Integer.parseInt(str);
+int primitive = num.intValue();
+        </div>
+
+        <h3>주의사항</h3>
+        <div class="warning">
+          <ul>
+            <li>자동 박싱/언박싱 주의</li>
+            <li>메모리 사용량 고려</li>
+            <li>성능 최적화 필요</li>
+            <li>null 처리 주의</li>
+          </ul>
+        </div>
+
+        <h3>성능 특성</h3>
+        <ul>
+          <li>자동 박싱: O(1)</li>
+          <li>자동 언박싱: O(1)</li>
+          <li>메모리 사용량 최적화</li>
+          <li>성능 최적화</li>
+        </ul>
+
+        <h3>관련 Wrapper 클래스 상세 설명</h3>
+        <div class="method-box">
+          <h4>Integer</h4>
+          <div class="code-block">
+// 예시
+Integer num = Integer.parseInt("123");
+int primitive = num.intValue();
+          </div>
+          <ul>
+            <li><b>사용처:</b> 정수 변환, 정수 처리</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 정수 변환, 정수 처리</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>자동 박싱/언박싱 주의</li>
+                <li>메모리 사용량</li>
+                <li>성능 고려</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="method-box">
+          <h4>Double</h4>
+          <div class="code-block">
+// 예시
+Double num = Double.parseDouble("123.45");
+double primitive = num.doubleValue();
+          </div>
+          <ul>
+            <li><b>사용처:</b> 실수 변환, 실수 처리</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 실수 변환, 실수 처리</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>정밀도 주의</li>
+                <li>NaN 처리</li>
+                <li>성능 고려</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="method-box">
+          <h4>Boolean</h4>
+          <div class="code-block">
+// 예시
+Boolean bool = Boolean.parseBoolean("true");
+boolean primitive = bool.booleanValue();
+          </div>
+          <ul>
+            <li><b>사용처:</b> 논리값 변환, 논리값 처리</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 논리값 변환, 논리값 처리</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>null 처리 주의</li>
+                <li>성능 고려</li>
+                <li>메모리 사용량</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <h3>예외 처리</h3>
+        <div class="warning">
+          <ul>
+            <li>NumberFormatException: 변환 실패</li>
+            <li>NullPointerException: null 처리</li>
+            <li>OutOfMemoryError: 메모리 부족</li>
+          </ul>
+        </div>
+
+        <h3>동시성 고려사항</h3>
+        <div class="note">
+          <ul>
+            <li>박싱/언박싱 성능 고려</li>
+            <li>메모리 사용량</li>
+            <li>성능 최적화</li>
+            <li>null 처리</li>
+          </ul>
+        </div>
+
+        <h3>메모리 사용량</h3>
+        <div class="tip">
+          <ul>
+            <li>자동 박싱으로 메모리 효율적</li>
+            <li>메모리 풀 사용</li>
+            <li>성능 최적화</li>
+            <li>메모리 사용량 최적화</li>
+          </ul>
+        </div>
+
+        <h3>최적화 팁</h3>
+        <div class="tip">
+          <ul>
+            <li>자동 박싱/언박싱 활용</li>
+            <li>메모리 풀 활용</li>
+            <li>성능 측정</li>
+            <li>메모리 사용량 최적화</li>
+            <li>예외 처리 최적화</li>
+          </ul>
+        </div>
+
+        <h3>관련 API 링크</h3>
+        <ul>
+          <li><a href="string.html">String API</a></li>
+          <li><a href="collections.html">Collections API</a></li>
+          <li><a href="stream.html">Stream API</a></li>
+          <li><a href="math.html">Math API</a></li>
+        </ul>
+
+        <h3>실전 활용 팁</h3>
+        <div class="note">
+          <ul>
+            <li>기본 자료형의 객체화</li>
+            <li>자동 박싱/언박싱 활용</li>
+            <li>메모리 효율 고려</li>
+            <li>성능 최적화</li>
+            <li>예외 처리 최적화</li>
+          </ul>
+        </div>
       </div>
     </section>
   </main>

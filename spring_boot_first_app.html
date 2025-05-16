@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🛠️ 첫 번째 스프링 부트 애플리케이션 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .note {
+      border-left: 4px solid #4ec9b0;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(78, 201, 176, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    .step {
+      margin-bottom: 2rem;
+    }
+    .step-number {
+      display: inline-block;
+      background: #4ec9b0;
+      color: #1e1e1e;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🛠️ 첫 번째 스프링 부트 애플리케이션</h1>
+      <p class="intro-text">간단한 RESTful API를 만들어보며 스프링 부트의 기본 구조를 익혀봅시다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 프로젝트 구조 살펴보기</h2>
+        
+        <div class="section">
+          <h2>1. 프로젝트 생성</h2>
+          <h3>1.1. Spring Initializer 사용하기</h3>
+          <p>Spring Initializer를 사용하여 프로젝트를 생성할 수 있습니다. 다음과 같은 설정을 선택하세요:</p>
+          <ul>
+            <li>Language: Java</li>
+            <li>Spring Boot: 최신 버전</li>
+            <li>Project: Maven</li>
+            <li>Java: 17 이상</li>
+            <li>Dependencies: Spring Web</li>
+          </ul>
+
+          <h3>1.2. 프로젝트 구조</h3>
+          <p>생성된 프로젝트의 기본 구조는 다음과 같습니다:</p>
+          <div class="code-block">
+            <pre><code>src/main/java/
+├── com/
+│   └── example/
+│       └── demo/
+│           ├── DemoApplication.java
+│           └── controller/
+│               └── HelloController.java
+├── resources/
+│   ├── application.properties
+│   ├── static/
+│   └── templates/
+└── test/</code></pre>
+          </div>
+
+          <div class="note">
+            <p>src/main/java 디렉토리에는 Java 소스 코드가, src/main/resources에는 리소스 파일들이 위치합니다.</p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>2. Hello World 애플리케이션</h2>
+          <h3>2.1. Controller 작성</h3>
+          <p>src/main/java/com/example/demo/controller 디렉토리에 HelloController.java를 작성합니다:</p>
+          <div class="code-block">
+            <pre><code class="java">package com.example.demo.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class HelloController {
+    
+    @GetMapping("/")
+    public String hello() {
+        return "Hello, Spring Boot!";
+    }
+}</code></pre>
+          </div>
+
+          <h3>2.2. 애플리케이션 실행</h3>
+          <p>Spring Boot 애플리케이션을 실행하는 방법은 다음과 같습니다:</p>
+          <div class="code-block">
+            <pre><code class="bash"># 1. Maven을 사용하여 실행
+mvn spring-boot:run
+
+# 2. IDE에서 실행 (DemoApplication.java의 메인 메소드 실행)</code></pre>
+          </div>
+
+          <div class="tip">
+            <p>애플리케이션이 실행되면 http://localhost:8080에서 "Hello, Spring Boot!" 메시지를 확인할 수 있습니다.</p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>3. 애플리케이션 구조 이해</h2>
+          <h3>3.1. DemoApplication.java</h3>
+          <p>메인 애플리케이션 클래스는 다음과 같습니다:</p>
+          <div class="code-block">
+            <pre><code class="java">package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}</code></pre>
+          </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 애플리케이션 실행 및 테스트</h3>
+          <p>애플리케이션을 실행하고 다음 엔드포인트로 접속해보세요:</p>
+          
+          <ul>
+            <li><a href="http://localhost:8080/api/hello" target="_blank">http://localhost:8080/api/hello</a> - 간단한 텍스트 응답</li>
+            <li><a href="http://localhost:8080/api/greeting" target="_blank">http://localhost:8080/api/greeting</a> - JSON 응답</li>
+          </ul>
+          
+          <p>두 번째 엔드포인트의 응답은 다음과 같은 JSON 형식입니다:</p>
+          <pre class="code-block"><code class="language-json">{
+  "id": 1,
+  "content": "안녕하세요, 스프링 부트!"
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. 서비스 레이어 추가하기</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> 서비스 인터페이스 생성</h3>
+          <p>비즈니스 로직을 처리할 서비스 인터페이스를 생성합니다.</p>
+          
+          <pre class="code-block"><code class="language-java">package com.example.demo.service;
+
+public interface GreetingService {
+    String getGreeting(String name);
+    String getDefaultGreeting();
+}</code></pre>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 서비스 구현체 생성</h3>
+          <p>서비스 인터페이스를 구현한 클래스를 생성합니다.</p>
+          
+          <pre class="code-block"><code class="language-java">package com.example.demo.service.impl;
+
+import org.springframework.stereotype.Service;
+import com.example.demo.service.GreetingService;
+
+@Service
+public class GreetingServiceImpl implements GreetingService {
+    
+    @Override
+    public String getGreeting(String name) {
+        return String.format("안녕하세요, %s님!", name);
+    }
+    
+    @Override
+    public String getDefaultGreeting() {
+        return "안녕하세요, 방문자님!";
+    }
+}</code></pre>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">3</span> 컨트롤러 수정</h3>
+          <p>서비스를 주입받아 사용하도록 컨트롤러를 수정합니다.</p>
+          
+          <pre class="code-block"><code class="language-java">package com.example.demo.controller;
+
+import org.springframework.web.bind.annotation.*;
+import com.example.demo.service.GreetingService;
+
+@RestController
+@RequestMapping("/api")
+public class HelloController {
+    
+    private final GreetingService greetingService;
+    
+    // 생성자 주입
+    public HelloController(GreetingService greetingService) {
+        this.greetingService = greetingService;
+    }
+    
+    @GetMapping("/hello")
+    public String sayHello(@RequestParam(required = false) String name) {
+        if (name != null && !name.trim().isEmpty()) {
+            return greetingService.getGreeting(name);
+        }
+        return greetingService.getDefaultGreeting();
+    }
+    
+    @GetMapping("/hello/{name}")
+    public String sayHelloTo(@PathVariable String name) {
+        return greetingService.getGreeting(name);
+    }
+}</code></pre>
+          
+          <div class="note">
+            <h4>📌 의존성 주입 방법</h4>
+            <p>스프링에서는 생성자 주입을 권장합니다. 이유는 다음과 같습니다:</p>
+            <ul>
+              <li>필수 의존성을 명확히 표현할 수 있음</li>
+              <li>불변성(immutability) 보장</li>
+              <li>테스트 용이성 향상</li>
+              <li>순환 의존성 방지</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 애플리케이션 설정</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> application.properties 설정</h3>
+          <p><code>src/main/resources/application.properties</code> 파일을 수정하여 다양한 설정을 할 수 있습니다.</p>
+          
+          <pre class="code-block"><code class="properties"># 서버 포트 설정
+server.port=8080
+
+# 애플리케이션 이름
+spring.application.name=my-first-spring-boot-app
+
+# 로깅 레벨 설정
+logging.level.root=INFO
+logging.level.com.example.demo=DEBUG
+
+# JPA 설정 (향후 사용)
+# spring.datasource.url=jdbc:h2:mem:testdb
+# spring.datasource.driverClassName=org.h2.Driver
+# spring.datasource.username=sa
+# spring.datasource.password=password
+# spring.h2.console.enabled=true
+# spring.h2.console.path=/h2-console
+
+# Actuator 엔드포인트 설정
+management.endpoints.web.exposure.include=health,info,metrics</code></pre>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 프로필별 설정</h3>
+          <p>환경별로 다른 설정을 적용할 수 있습니다.</p>
+          
+          <div class="method-grid">
+            <div class="toc-card">
+              <h4>application-dev.properties</h4>
+              <pre class="code-block"><code class="properties"># 개발 환경 설정
+spring.h2.console.enabled=true
+logging.level.com.example.demo=DEBUG</code></pre>
+            </div>
+            
+            <div class="toc-card">
+              <h4>application-prod.properties</h4>
+              <pre class="code-block"><code class="properties"># 운영 환경 설정
+logging.level.root=WARN
+management.endpoints.web.exposure.include=health,metrics</code></pre>
+            </div>
+          </div>
+          
+          <p>활성화할 프로필을 지정하려면 다음 중 하나를 사용하세요:</p>
+          <ul>
+            <li>명령줄 인수: <code>java -jar app.jar --spring.profiles.active=dev</code></li>
+            <li>환경 변수: <code>SPRING_PROFILES_ACTIVE=dev</code></li>
+            <li>application.properties: <code>spring.profiles.active=dev</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>5. 테스트 작성하기</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> 단위 테스트</h3>
+          <p>서비스 레이어의 단위 테스트를 작성해봅시다.</p>
+          
+          <pre class="code-block"><code class="language-java">package com.example.demo.service.impl;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class GreetingServiceImplTest {
+    
+    private GreetingServiceImpl greetingService;
+    
+    @BeforeEach
+    void setUp() {
+        greetingService = new GreetingServiceImpl();
+    }
+    
+    @Test
+    void getGreeting_WithName_ShouldReturnPersonalizedGreeting() {
+        // given
+        String name = "홍길동";
+        
+        // when
+        String result = greetingService.getGreeting(name);
+        
+        // then
+        assertEquals("안녕하세요, 홍길동님!", result);
+    }
+    
+    @Test
+    void getDefaultGreeting_ShouldReturnDefaultMessage() {
+        // when
+        String result = greetingService.getDefaultGreeting();
+        
+        // then
+        assertEquals("안녕하세요, 방문자님!", result);
+    }
+}</code></pre>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 통합 테스트</h3>
+          <p>스프링의 테스트 지원을 활용한 통합 테스트를 작성해봅시다.</p>
+          
+          <pre class="code-block"><code class="language-java">package com.example.demo.controller;
+
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.servlet.MockMvc;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+class HelloControllerIntegrationTest {
+    
+    @Autowired
+    private MockMvc mockMvc;
+    
+    @Test
+    void sayHello_WithNoParam_ShouldReturnDefaultMessage() throws Exception {
+        mockMvc.perform(get("/api/hello"))
+               .andExpect(status().isOk())
+               .andExpect(content().string("안녕하세요, 방문자님!"));
+    }
+    
+    @Test
+    void sayHello_WithNameParam_ShouldReturnPersonalizedMessage() throws Exception {
+        String name = "스프링";
+        mockMvc.perform(get("/api/hello").param("name", name))
+               .andExpect(status().isOk())
+               .andExpect(content().string("안녕하세요, " + name + "님!"));
+    }
+    
+    @Test
+    void sayHelloTo_WithPathVariable_ShouldReturnPersonalizedMessage() throws Exception {
+        String name = "부트";
+        mockMvc.perform(get("/api/hello/{name}", name))
+               .andExpect(status().isOk())
+               .andExpect(content().string("안녕하세요, " + name + "님!"));
+    }
+    
+    @Test
+    void getGreeting_ShouldReturnJson() throws Exception {
+        mockMvc.perform(get("/api/greeting"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.id", is(1)))
+               .andExpect(jsonPath("$.content", containsString("안녕하세요")));
+    }
+}</code></pre>
+          
+          <div class="tip">
+            <h4>💡 테스트 실행 방법</h4>
+            <p>IDE에서 테스트 클래스를 실행하거나, 다음 명령어로 테스트를 실행할 수 있습니다:</p>
+            <pre class="code-block"><code># Maven
+mvn test
+
+# Gradle
+./gradlew test</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>6. 애플리케이션 패키징 및 실행</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> 실행 가능한 JAR 파일 생성</h3>
+          <p>스프링 부트는 내장 서버를 포함한 실행 가능한 JAR 파일을 생성할 수 있습니다.</p>
+          
+          <pre class="code-block"><code># Maven을 사용하는 경우
+mvn clean package
+
+# Gradle을 사용하는 경우
+./gradlew build</code></pre>
+          
+          <p>빌드가 완료되면 <code>target</code>(Maven) 또는 <code>build/libs</code>(Gradle) 디렉토리에 JAR 파일이 생성됩니다.</p>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 애플리케이션 실행</h3>
+          <p>생성된 JAR 파일로 애플리케이션을 실행할 수 있습니다.</p>
+          
+          <pre class="code-block"><code># 기본 포트(8080)로 실행
+java -jar target/my-first-spring-boot-app-0.0.1-SNAPSHOT.jar
+
+# 다른 포트로 실행
+java -jar -Dserver.port=8081 target/my-first-spring-boot-app-0.0.1-SNAPSHOT.jar
+
+# 특정 프로필로 실행
+java -jar -Dspring.profiles.active=prod target/my-first-spring-boot-app-0.0.1-SNAPSHOT.jar</code></pre>
+        </div>
+        
+        <div class="note">
+          <h4>📌 프로덕션 환경 고려사항</h4>
+          <ul>
+            <li>로깅 설정을 프로덕션에 맞게 조정</li>
+            <li>보안 설정 강화 (예: 기본 자격 증명 변경, CSRF 보호 활성화 등)</li>
+            <li>모니터링 및 메트릭 수집 설정</li>
+            <li>적절한 JVM 옵션 설정 (힙 메모리 등)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="spring_boot_environment.html" class="nav-button">← 이전: 개발 환경 설정</a>
+        <a href="spring_boot_rest_api.html" class="nav-button">다음: RESTful API 개발 →</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

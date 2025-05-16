@@ -197,6 +197,7 @@
     <h1>StringBuilder API 완벽 가이드</h1>
     <nav class="api-nav">
       <a href="index.html" class="api-nav-link">홈</a>
+      <a href="exception.html" class="api-nav-link" style="background:#f97583;color:white;">예외처리 가이드</a>
       <a href="string.html" class="api-nav-link">String</a>
       <a href="stringbuilder.html" class="api-nav-link active">StringBuilder</a>
       <a href="arraylist.html" class="api-nav-link">ArrayList</a>
@@ -277,6 +278,55 @@ String result = sb.toString();
           <tr><td>reverse()</td><td>역순 변환</td><td>sb.reverse()</td><td>뒤집기</td></tr>
           <tr><td>toString()</td><td>문자열 변환</td><td>sb.toString()</td><td>최종 결과 반환</td></tr>
         </table>
+      </div>
+      <!-- 상세 메서드별 설명/예시/실수/미션 추가 -->
+      <div class="example-box">
+        <h3>append()</h3>
+        <div class="code-block">StringBuilder sb = new StringBuilder();\nsb.append("A");\nsb.append("B"); // "AB"</div>
+        <div class="tip">언제/왜? 반복문 등에서 문자열을 효율적으로 연결할 때</div>
+        <div class="warning">실수: + 연산보다 append()가 훨씬 빠름!</div>
+        <b>미션: "Hello"와 "Java"를 한 줄로 이어보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">sb.append("Hello").append("Java")</div></details>
+      </div>
+      <div class="example-box">
+        <h3>insert()</h3>
+        <div class="code-block">StringBuilder sb = new StringBuilder("abc");\nsb.insert(1, "z"); // "azbc"</div>
+        <div class="tip">언제/왜? 중간에 값 삽입</div>
+        <div class="warning">실수: 인덱스 범위 벗어나면 예외 발생!</div>
+        <b>미션: "cat"의 1번 인덱스에 "r"을 삽입해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">sb.insert(1, "r") // "crat"</div></details>
+      </div>
+      <div class="example-box">
+        <h3>delete()</h3>
+        <div class="code-block">StringBuilder sb = new StringBuilder("hello");\nsb.delete(1,3); // "hlo"</div>
+        <div class="tip">언제/왜? 일부 문자 제거</div>
+        <div class="warning">실수: 끝 인덱스는 포함하지 않음!</div>
+        <b>미션: "abcdef"에서 2~4번 인덱스 삭제 결과는?</b>
+        <details><summary>정답 보기</summary><div class="note">"abf"</div></details>
+      </div>
+      <div class="example-box">
+        <h3>replace()</h3>
+        <div class="code-block">StringBuilder sb = new StringBuilder("abc");\nsb.replace(0,2,"xy"); // "xyc"</div>
+        <div class="tip">언제/왜? 부분 문자열 교체</div>
+        <div class="warning">실수: 범위 지정 주의(끝 인덱스 포함X)</div>
+        <b>미션: "hello"의 0~2를 "hi"로 바꿔보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">sb.replace(0,2,"hi") // "hillo"</div></details>
+      </div>
+      <div class="example-box">
+        <h3>reverse()</h3>
+        <div class="code-block">StringBuilder sb = new StringBuilder("abc");\nsb.reverse(); // "cba"</div>
+        <div class="tip">언제/왜? 문자열 뒤집기, 회문 검사</div>
+        <div class="warning">실수: toString()으로 변환해야 결과 사용 가능!</div>
+        <b>미션: "racecar"를 뒤집은 결과는?</b>
+        <details><summary>정답 보기</summary><div class="note">"racecar" (회문)</div></details>
+      </div>
+      <div class="example-box">
+        <h3>toString()</h3>
+        <div class="code-block">StringBuilder sb = new StringBuilder("hi");\nString s = sb.toString(); // "hi"</div>
+        <div class="tip">언제/왜? 최종 문자열 반환/출력</div>
+        <div class="warning">실수: sb 자체는 문자열이 아님!</div>
+        <b>미션: sb에 "abc" 추가 후 문자열로 변환해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">sb.append("abc").toString()</div></details>
       </div>
     </section>
 
@@ -373,6 +423,196 @@ System.out.println(sb.toString());
           <li>초기 용량(capacity) 지정 시 메모리 최적화</li>
           <li>문자열 조립 후 toString()으로 반환</li>
         </ul>
+      </div>
+    </section>
+
+    <!-- StringBuilder API 완벽 가이드 -->
+    <section class="section">
+      <h2>🎯 StringBuilder API 완벽 가이드</h2>
+      <div class="example-box">
+        <h3>개요</h3>
+        <ul>
+          <li>문자열 조작을 위한 클래스</li>
+          <li>mutable 특성</li>
+          <li>성능 최적화</li>
+          <li>StringBuffer와의 비교</li>
+        </ul>
+
+        <h3>주요 특징</h3>
+        <div class="ascii-art">
+          +-------------------+
+          |  StringBuilder   |
+          |-------------------|
+          | - 문자열 조작    |
+          | - mutable 특성   |
+          | - 성능 최적화   |
+          | - 메모리 효율   |
+          +-------------------+
+        </div>
+        <ul>
+          <li>문자열 조작을 위한 클래스</li>
+          <li>mutable 특성으로 성능 최적화</li>
+          <li>StringBuffer와 비교</li>
+          <li>메모리 효율적</li>
+        </ul>
+
+        <h3>실제 사용 예시</h3>
+        <div class="code-block">
+// 기본 사용법
+StringBuilder sb = new StringBuilder();
+sb.append("Hello");
+sb.append(" ").append("World");
+String result = sb.toString();
+
+// 복잡한 문자열 조작
+StringBuilder sb = new StringBuilder();
+for (int i = 0; i < 1000; i++) {
+    sb.append("Number: ").append(i).append("\n");
+}
+String result = sb.toString();
+        </div>
+
+        <h3>주의사항</h3>
+        <div class="warning">
+          <ul>
+            <li>mutable 특성 주의</li>
+            <li>성능 최적화 필요</li>
+            <li>메모리 사용량 고려</li>
+            <li>StringBuffer와의 차이</li>
+          </ul>
+        </div>
+
+        <h3>성능 특성</h3>
+        <ul>
+          <li>append(): O(1)</li>
+          <li>insert(): O(n)</li>
+          <li>delete(): O(n)</li>
+          <li>메모리 사용량 최적화</li>
+        </ul>
+
+        <h3>관련 메서드 상세 설명</h3>
+        <div class="method-box">
+          <h4>append(String str)</h4>
+          <div class="code-block">
+// 예시
+StringBuilder sb = new StringBuilder();
+sb.append("Hello");
+sb.append(" ").append("World");
+          </div>
+          <ul>
+            <li><b>사용처:</b> 문자열 결합, 데이터 추가</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 문자열 결합, 데이터 추가</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>성능 최적화</li>
+                <li>mutable 특성</li>
+                <li>메모리 사용량</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="method-box">
+          <h4>insert(int offset, String str)</h4>
+          <div class="code-block">
+// 예시
+StringBuilder sb = new StringBuilder("Hello");
+sb.insert(0, "Good ");
+          </div>
+          <ul>
+            <li><b>사용처:</b> 문자열 삽입, 데이터 삽입</li>
+            <li><b>성능:</b> O(n)</li>
+            <li><b>실전 활용:</b> 문자열 삽입, 데이터 삽입</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>인덱스 범위 주의</li>
+                <li>성능 고려</li>
+                <li>메모리 사용량</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="method-box">
+          <h4>delete(int start, int end)</h4>
+          <div class="code-block">
+// 예시
+StringBuilder sb = new StringBuilder("Hello World");
+sb.delete(0, 5);
+          </div>
+          <ul>
+            <li><b>사용처:</b> 문자열 삭제, 데이터 제거</li>
+            <li><b>성능:</b> O(n)</li>
+            <li><b>실전 활용:</b> 문자열 삭제, 데이터 제거</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>인덱스 범위 주의</li>
+                <li>성능 고려</li>
+                <li>메모리 사용량</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <h3>예외 처리</h3>
+        <div class="warning">
+          <ul>
+            <li>IndexOutOfBoundsException: 인덱스 범위</li>
+            <li>OutOfMemoryError: 메모리 부족</li>
+            <li>NullPointerException: null 처리</li>
+          </ul>
+        </div>
+
+        <h3>동시성 고려사항</h3>
+        <div class="note">
+          <ul>
+            <li>비동기성 안전하지 않음</li>
+            <li>StringBuffer 사용 고려</li>
+            <li>성능 고려</li>
+            <li>메모리 사용량</li>
+          </ul>
+        </div>
+
+        <h3>메모리 사용량</h3>
+        <div class="tip">
+          <ul>
+            <li>mutable 특성으로 메모리 효율적</li>
+            <li>문자열 조작 시 메모리 사용량 최적화</li>
+            <li>성능 최적화</li>
+            <li>메모리 사용량 고려</li>
+          </ul>
+        </div>
+
+        <h3>최적화 팁</h3>
+        <div class="tip">
+          <ul>
+            <li>mutable 특성 활용</li>
+            <li>성능 측정</li>
+            <li>메모리 사용량 최적화</li>
+            <li>StringBuffer와의 적절한 선택</li>
+            <li>문자열 조작 최적화</li>
+          </ul>
+        </div>
+
+        <h3>관련 API 링크</h3>
+        <ul>
+          <li><a href="string.html">String API</a></li>
+          <li><a href="stringbuffer.html">StringBuffer API</a></li>
+          <li><a href="collections.html">Collections API</a></li>
+          <li><a href="stream.html">Stream API</a></li>
+        </ul>
+
+        <h3>실전 활용 팁</h3>
+        <div class="note">
+          <ul>
+            <li>문자열 조작</li>
+            <li>mutable 특성 활용</li>
+            <li>성능 최적화</li>
+            <li>StringBuffer와의 적절한 선택</li>
+            <li>메모리 사용량 최적화</li>
+          </ul>
+        </div>
       </div>
     </section>
   </main>

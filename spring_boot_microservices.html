@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌐 스프링 부트 마이크로서비스 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .note {
+      border-left: 4px solid #4ec9b0;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(78, 201, 176, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🌐 마이크로서비스 아키텍처</h1>
+      <p class="intro-text">스프링 부트를 활용한 마이크로서비스 개발 방법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 마이크로서비스 개요</h2>
+        <p>마이크로서비스 아키텍처는 다음과 같은 특징을 가집니다:</p>
+        <ul>
+          <li>독립적인 서비스로 구성</li>
+          <li>각 서비스는 독립적으로 개발, 배포 가능</li>
+          <li>서비스 간 통신은 API를 통해 이루어짐</li>
+          <li>각 서비스는 자체 데이터베이스를 가짐</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>2. 서비스 등록 및 발견</h2>
+        <h3>2.1. Eureka Server 설정</h3>
+        <div class="code-block">
+          <pre><code class="java">@SpringBootApplication
+@EnableEurekaServer
+public class EurekaServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaServerApplication.class, args);
+    }
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+          <pre><code class="yaml">server:
+  port: 8761
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka/</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. 서비스 간 통신</h2>
+        <h3>3.1. RestTemplate 사용</h3>
+        <div class="code-block">
+          <pre><code class="java">@RestController
+public class ProductController {
+    
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @GetMapping("/products/{id}")
+    public Product getProduct(@PathVariable Long id) {
+        return restTemplate.getForObject(
+            "http://PRODUCT-SERVICE/api/products/{id}",
+            Product.class, id
+        );
+    }
+}</code></pre>
+        </div>
+
+        <h3>3.2. Feign Client</h3>
+        <div class="code-block">
+          <pre><code class="java">@FeignClient("product-service")
+public interface ProductServiceClient {
+    @GetMapping("/api/products/{id}")
+    Product getProduct(@PathVariable Long id);
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. API Gateway</h2>
+        <h3>4.1. Gateway 설정</h3>
+        <div class="code-block">
+          <pre><code class="yaml">spring:
+  cloud:
+    gateway:
+      routes:
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**</code></pre>
+        </div>
+
+        <h3>4.2. Gateway Controller</h3>
+        <div class="code-block">
+          <pre><code class="java">@RestController
+public class GatewayController {
+    
+    @Autowired
+    private WebClient webClient;
+
+    @GetMapping("/api/products/{id}")
+    public Mono&lt;Product&gt; getProduct(@PathVariable Long id) {
+        return webClient.get()
+            .uri("/api/products/{id}", id)
+            .retrieve()
+            .bodyToMono(Product.class);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>5. 서비스 간 통신 모니터링</h2>
+        <h3>5.1. Zipkin 설정</h3>
+        <div class="code-block">
+          <pre><code class="yaml">spring:
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sampler:
+      probability: 1.0</code></pre>
+        </div>
+
+        <h3>5.2. Zipkin 서버 설정</h3>
+        <div class="code-block">
+          <pre><code class="java">@SpringBootApplication
+@EnableZipkinServer
+public class ZipkinServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ZipkinServerApplication.class, args);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>6. 데이터베이스 분리 전략</h2>
+        <h3>6.1. 독립적인 데이터베이스</h3>
+        <div class="code-block">
+          <pre><code class="yaml">spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/product_db
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true</code></pre>
+        </div>
+
+        <h3>6.2. 데이터베이스 마이그레이션</h3>
+        <div class="code-block">
+          <pre><code class="java">@SpringBootApplication
+public class ProductServiceApplication {
+    
+    @Bean
+    CommandLineRunner initDatabase(ProductRepository repository) {
+        return args -&gt; {
+            repository.save(new Product("Laptop", 999.99));
+            repository.save(new Product("Smartphone", 499.99));
+        };
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>7. 다음 단계</h2>
+        <p>이제 스프링 부트를 활용한 마이크로서비스 개발을 배웠습니다. 다음으로는 다음과 같은 주제들을 배우게 됩니다:</p>
+        <ul>
+          <li><a href="spring_boot_cloud.html">클라우드 네이티브 개발</a></li>
+          <li><a href="spring_boot_performance.html">성능 최적화</a></li>
+          <li><a href="spring_boot_testing.html">테스팅 전략</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

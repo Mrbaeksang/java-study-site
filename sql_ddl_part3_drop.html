@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🗑️ DROP - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🗑️ DROP 명령어</h1>
+      <p>테이블, 인덱스, 뷰 등을 삭제하는 방법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. DROP TABLE</h2>
+        <p>DROP TABLE 명령어는 테이블을 완전히 삭제합니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: 테이블 삭제</h3>
+          <div class="code-block">
+            DROP TABLE students;
+          </div>
+        </div>
+
+        <div class="warning">
+          <h3>⚠️ 주의사항</h3>
+          <p>DROP TABLE은 테이블과 그 안의 모든 데이터를 완전히 삭제합니다. 복구가 불가능하므로 주의가 필요합니다.</p>
+        </div>
+
+        <h2>2. CASCADE 옵션</h2>
+        <p>CASCADE 옵션을 사용하면 참조하는 테이블들도 함께 삭제됩니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: CASCADE 옵션 사용</h3>
+          <div class="code-block">
+            DROP TABLE students CASCADE;
+          </div>
+        </div>
+
+        <div class="note">
+          <h3>🎯 CASCADE 옵션 주의사항</h3>
+          <ul>
+            <li>CASCADE 옵션은 데이터 무결성을 유지하기 위해 사용됩니다.</li>
+            <li>하지만 주의가 필요하며, 가능하면 참조 무결성 제약조건을 먼저 제거하는 것이 좋습니다.</li>
+          </ul>
+        </div>
+
+        <h2>3. TRUNCATE TABLE</h2>
+        <p>TRUNCATE TABLE은 테이블의 데이터만 삭제하고 테이블 구조는 유지합니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: TRUNCATE 사용</h3>
+          <div class="code-block">
+            TRUNCATE TABLE students;
+          </div>
+        </div>
+
+        <div class="note">
+          <h3>🎯 TRUNCATE와 DELETE의 차이점</h3>
+          <ul>
+            <li>TRUNCATE: 데이터만 삭제, 빠르고 롤백 불가능</li>
+            <li>DELETE: 데이터 삭제 시 트랜잭션 관리 가능</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_ddl_part3_alter.html" class="nav-button">이전: ALTER</a>
+        <a href="sql_constraints.html" class="nav-button">다음: 제약조건</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

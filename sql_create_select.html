@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2️⃣ CREATE, INSERT, SELECT - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 공통 스타일 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    
+    /* 텍스트 스타일 */
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    h4 {
+      margin-top: 1.5rem;
+      color: #ce9178;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+
+    /* 코드 블록 스타일 */
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    /* 노트/팁/경고 스타일 */
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+
+    /* 테이블 스타일 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+
+    /* 네비게이션 버튼 스타일 */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+
+    /* SQL 구문 박스 스타일 */
+    .syntax-box {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      font-family: 'Consolas', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>2️⃣ CREATE, INSERT, SELECT</h1>
+      <p>테이블 생성과 기본 데이터 조회를 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. CREATE TABLE 문</h2>
+        <p>CREATE TABLE 문은 새로운 테이블을 생성하는 SQL 명령어입니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: 학생 정보 테이블 생성</h3>
+          <div class="code-block">
+            CREATE TABLE students (
+              student_id INT PRIMARY KEY,
+              name VARCHAR(50) NOT NULL,
+              department VARCHAR(50),
+              grade INT,
+              admission_date DATE
+            );
+          </div>
+        </div>
+
+        <h2>2. INSERT INTO 문</h2>
+        <p>INSERT INTO 문은 테이블에 새로운 데이터를 삽입합니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: 학생 데이터 삽입</h3>
+          <div class="code-block">
+            INSERT INTO students (student_id, name, department, grade, admission_date)
+            VALUES (20230001, '김철수', '컴퓨터공학', 2, '2023-03-01');
+          </div>
+        </div>
+
+        <h2>3. SELECT 문 기본</h2>
+        <p>SELECT 문은 테이블에서 데이터를 조회하는 가장 기본적인 SQL 명령어입니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: 모든 열 조회</h3>
+          <div class="code-block">
+            SELECT * FROM students;
+          </div>
+        </div>
+
+        <div class="example">
+          <h3>📝 예제: 특정 열만 조회</h3>
+          <div class="code-block">
+            SELECT name, department FROM students;
+          </div>
+        </div>
+
+        <div class="tip">
+          <h3>💡 팁: 조회 성능 최적화</h3>
+          <p>필요한 열만 SELECT 문에 포함시키는 것이 성능에 좋습니다.</p>
+        </div>
+
+        <h2>4. 데이터 타입</h2>
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>데이터 타입</th>
+              <th>설명</th>
+              <th>예시</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>INT</td>
+              <td>정수형</td>
+              <td>20230001</td>
+            </tr>
+            <tr>
+              <td>VARCHAR(n)</td>
+              <td>문자열 (최대 n자)</td>
+              <td>'김철수'</td>
+            </tr>
+            <tr>
+              <td>DATE</td>
+              <td>날짜형</td>
+              <td>'2023-03-01'</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_basic_structure.html" class="nav-button">이전: 관계형 DB 구조 이해</a>
+        <a href="sql_where.html" class="nav-button">다음: WHERE 조건절</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

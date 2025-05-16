@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 SQL 트랜잭션 관리 - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 이전 파일과 동일한 스타일 유지 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    h4 {
+      margin-top: 1.5rem;
+      color: #ce9178;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    .syntax-box {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      font-family: 'Consolas', monospace;
+    }
+    .example {
+      background: #1e1e1e;
+      border-left: 4px solid #4ec9b0;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .example h4 {
+      margin-top: 0;
+      color: #4ec9b0;
+    }
+    .result-table {
+      width: 100%;
+      margin: 15px 0;
+      border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+      border: 1px solid #444;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .result-table th {
+      background-color: #2d2d2d;
+    }
+    .acid-box {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .acid-item {
+      background: #2d2d2d;
+      border-radius: 6px;
+      padding: 1rem;
+    }
+    .acid-item h4 {
+      margin-top: 0;
+      color: #4ec9b0;
+      border-bottom: 1px solid #444;
+      padding-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📝 SQL 트랜잭션 관리</h1>
+      <p>데이터 무결성을 유지하기 위한 트랜잭션 관리 방법을 배워봅시다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 트랜잭션이란?</h2>
+        <p>트랜잭션(Transaction)은 데이터베이스의 상태를 변환시키는 하나의 논리적 기능을 수행하기 위한 작업의 단위 또는 한꺼번에 모두 수행되어야 할 일련의 연산을 의미합니다.</p>
+        
+        <div class="acid-box">
+          <div class="acid-item">
+            <h4>원자성 (Atomicity)</h4>
+            <p>트랜잭션의 연산은 데이터베이스에 모두 반영되거나, 전혀 반영되지 않아야 합니다. 즉, 트랜잭션 내의 모든 작업이 완전히 수행되거나, 전혀 수행되지 않아야 합니다.</p>
+          </div>
+          <div class="acid-item">
+            <h4>일관성 (Consistency)</h4>
+            <p>트랜잭션이 성공적으로 완료되면, 데이터베이스는 일관된 상태를 유지해야 합니다. 즉, 모든 제약 조건을 만족해야 합니다.</p>
+          </div>
+          <div class="acid-item">
+            <h4>고립성 (Isolation)</h4>
+            <p>동시에 실행되는 트랜잭션들이 서로에게 영향을 미치지 않아야 합니다. 한 트랜잭션의 중간 결과는 다른 트랜잭션에게는 보이지 않아야 합니다.</p>
+          </div>
+          <div class="acid-item">
+            <h4>지속성 (Durability)</h4>
+            <p>한 번 커밋된 트랜잭션의 결과는 시스템이 고장나더라도 영구적으로 반영되어야 합니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="transaction-control">
+        <h2>2. 트랜잭션 제어 명령어</h2>
+        
+        <h3>2.1 트랜잭션 시작</h3>
+        <p>데이터베이스에 따라 트랜잭션을 시작하는 방법이 다릅니다:</p>
+        
+        <div class="code-block">
+          <span class="sql-comment">-- MySQL, PostgreSQL, SQL Server</span><br>
+          <span class="sql-keyword">START TRANSACTION</span>;  <span class="sql-comment">-- 또는 BEGIN, BEGIN TRANSACTION</span><br>
+          <br>
+          <span class="sql-comment">-- Oracle</span><br>
+          <span class="sql-comment">-- SET TRANSACTION;  -- 선택사항, 명시적 시작</span><br>
+          <span class="sql-comment">-- 또는 첫 번째 DML 문장이 자동으로 트랜잭션 시작</span>
+        </div>
+        
+        <h3>2.2 변경 사항 확정 (COMMIT)</h3>
+        <p>트랜잭션에서 수행한 모든 변경 사항을 데이터베이스에 영구적으로 반영합니다.</p>
+        
+        <div class="code-block">
+          <span class="sql-keyword">COMMIT</span>;  <span class="sql-comment">-- 모든 변경 사항 확정</span>
+        </div>
+        
+        <h3>2.3 변경 사항 취소 (ROLLBACK)</h3>
+        <p>트랜잭션에서 수행한 모든 변경 사항을 취소하고, 트랜잭션 시작 전 상태로 되돌립니다.</p>
+        
+        <div class="code-block">
+          <span class="sql-keyword">ROLLBACK</span>;  <span class="sql-comment">-- 모든 변경 사항 취소</span>
+        </div>
+        
+        <h3>2.4 저장점 (SAVEPOINT)</h3>
+        <p>트랜잭션 내에 저장점을 설정하여, 특정 지점까지만 롤백할 수 있습니다.</p>
+        
+        <div class="code-block">
+          <span class="sql-keyword">SAVEPOINT</span> savepoint_name;  <span class="sql-comment">-- 저장점 설정</span><br>
+          <span class="sql-keyword">ROLLBACK</span> <span class="sql-keyword">TO</span> savepoint_name;  <span class="sql-comment">-- 저장점까지 롤백</span><br>
+          <span class="sql-keyword">RELEASE SAVEPOINT</span> savepoint_name;  <span class="sql-comment">-- 저장점 해제 (일부 DBMS)</span>
+        </div>
+      </div>
+
+      <div class="section" id="transaction-examples">
+        <h2>3. 트랜잭션 예제</h2>
+        
+        <h3>3.1 기본적인 트랜잭션 예제</h3>
+        <div class="example">
+          <h4>📝 예제 1: 계좌 이체 예제</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 트랜잭션 시작</span><br>
+            <span class="sql-keyword">START TRANSACTION</span>;
+            
+            <span class="sql-comment">-- 계좌 A에서 1000원 출금</span><br>
+            <span class="sql-keyword">UPDATE</span> accounts<br>
+            <span class="sql-keyword">SET</span> balance = balance - 1000<br>
+            <span class="sql-keyword">WHERE</span> account_id = 'A'
+            <span class="sql-keyword">AND</span> balance >= 1000;
+            
+            <span class="sql-comment">-- 출금이 성공했는지 확인</span><br>
+            <span class="sql-keyword">SET</span> @withdraw_success = <span class="sql-keyword">ROW_COUNT</span>();
+            
+            <span class="sql-comment">-- 계좌 B에 1000원 입금</span><br>
+            <span class="sql-keyword">UPDATE</span> accounts<br>
+            <span class="sql-keyword">SET</span> balance = balance + 1000<br>
+            <span class="sql-keyword">WHERE</span> account_id = 'B';
+            
+            <span class="sql-comment">-- 입금이 성공했는지 확인</span><br>
+            <span class="sql-keyword">SET</span> @deposit_success = <span class="sql-keyword">ROW_COUNT</span>();
+            
+            <span class="sql-comment">-- 두 작업이 모두 성공했는지 확인</span><br>
+            <span class="sql-keyword">IF</span> @withdraw_success > 0 <span class="sql-keyword">AND</span> @deposit_success > 0 <span class="sql-keyword">THEN</span>
+              <span class="sql-comment">-- 모두 성공하면 변경 사항 확정</span><br>
+              <span class="sql-keyword">COMMIT</span>;
+              <span class="sql-keyword">SELECT</span> '이체가 성공적으로 완료되었습니다.' <span class="sql-keyword">AS</span> message;
+            <span class="sql-keyword">ELSE</span>
+              <span class="sql-comment">-- 실패 시 변경 사항 취소</span><br>
+              <span class="sql-keyword">ROLLBACK</span>;
+              <span class="sql-keyword">SELECT</span> '이체에 실패했습니다. 잔액을 확인해주세요.' <span class="sql-keyword">AS</span> message;
+            <span class="sql-keyword">END IF</span>;
+          </div>
+        </div>
+        
+        <h3>3.2 저장점(SAVEPOINT)을 사용한 예제</h3>
+        <div class="example">
+          <h4>📝 예제 2: 저장점을 사용한 부분 롤백</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 트랜잭션 시작</span><br>
+            <span class="sql-keyword">START TRANSACTION</span>;
+            
+            <span class="sql-comment">-- 1. 상품 재고 감소</span><br>
+            <span class="sql-keyword">UPDATE</span> products<br>
+            <span class="sql-keyword">SET</span> stock = stock - 1<br>
+            <span class="sql-keyword">WHERE</span> product_id = 101 <span class="sql-keyword">AND</span> stock > 0;
+            
+            <span class="sql-comment">-- 저장점 설정</span><br>
+            <span class="sql-keyword">SAVEPOINT</span> after_product_update;
+            
+            <span class="sql-comment">-- 2. 주문 정보 추가</span><br>
+            <span class="sql-keyword">INSERT INTO</span> orders (order_id, customer_id, order_date, total_amount)<br>
+            <span class="sql-keyword">VALUES</span> (1001, 5001, <span class="sql-keyword">CURRENT_DATE</span>, 19900);
+            
+            <span class="sql-comment">-- 3. 주문 상세 정보 추가 (오류 발생 가능성 있음)</span><br>
+            <span class="sql-keyword">BEGIN</span>
+              <span class="sql-keyword">DECLARE</span> CONTINUE <span class="sql-keyword">HANDLER</span> <span class="sql-keyword">FOR</span> SQLEXCEPTION
+              <span class="sql-keyword">BEGIN</span>
+                <span class="sql-comment">-- 오류 발생 시 저장점까지 롤백</span><br>
+                <span class="sql-keyword">ROLLBACK</span> <span class="sql-keyword">TO</span> after_product_update;
+                <span class="sql-keyword">SELECT</span> '주문 상세 정보 추가 중 오류가 발생했습니다.' <span class="sql-keyword">AS</span> message;
+              <span class="sql-keyword">END</span>;
+              
+              <span class="sql-comment">-- 주문 상세 정보 추가</span><br>
+              <span class="sql-keyword">INSERT INTO</span> order_details (order_id, product_id, quantity, price)<br>
+              <span class="sql-keyword">VALUES</span> (1001, 101, 1, 19900);
+              
+              <span class="sql-comment">-- 모든 작업이 성공하면 변경 사항 확정</span><br>
+              <span class="sql-keyword">COMMIT</span>;
+              <span class="sql-keyword">SELECT</span> '주문이 성공적으로 완료되었습니다.' <span class="sql-keyword">AS</span> message;
+            <span class="sql-keyword">END</span>;
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="isolation-levels">
+        <h2>4. 트랜잭션 격리 수준 (Isolation Levels)</h2>
+        <p>트랜잭션 격리 수준은 동시에 실행되는 트랜잭션 간의 격리 정도를 결정합니다. 격리 수준이 높을수록 데이터 일관성은 보장되지만, 동시성은 저하됩니다.</p>
+        
+        <h3>4.1 격리 수준의 종류</h3>
+        
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>격리 수준</th>
+              <th>Dirty Read</th>
+              <th>Non-Repeatable Read</th>
+              <th>Phantom Read</th>
+              <th>Serialization Anomaly</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>READ UNCOMMITTED</td>
+              <td>가능</td>
+              <td>가능</td>
+              <td>가능</td>
+              <td>가능</td>
+            </tr>
+            <tr>
+              <td>READ COMMITTED</td>
+              <td>불가능</td>
+              <td>가능</td>
+              <td>가능</td>
+              <td>가능</td>
+            </tr>
+            <tr>
+              <td>REPEATABLE READ</td>
+              <td>불가능</td>
+              <td>불가능</td>
+              <td>가능</td>
+              <td>가능</td>
+            </tr>
+            <tr>
+              <td>SERIALIZABLE</td>
+              <td>불가능</td>
+              <td>불가능</td>
+              <td>불가능</td>
+              <td>불가능</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <h3>4.2 격리 수준 설정</h3>
+        
+        <div class="code-block">
+          <span class="sql-comment">-- MySQL</span><br>
+          <span class="sql-keyword">SET</span> <span class="sql-keyword">TRANSACTION</span> <span class="sql-keyword">ISOLATION LEVEL</span> READ COMMITTED;
+          
+          <span class="sql-comment">-- PostgreSQL</span><br>
+          <span class="sql-keyword">SET</span> <span class="sql-keyword">TRANSACTION</span> <span class="sql-keyword">ISOLATION LEVEL</span> SERIALIZABLE;
+          
+          <span class="sql-comment">-- SQL Server</span><br>
+          <span class="sql-keyword">SET</span> <span class="sql-keyword">TRANSACTION</span> <span class="sql-keyword">ISOLATION LEVEL</span> REPEATABLE READ;
+          
+          <span class="sql-comment">-- Oracle (기본값은 READ COMMITTED)</span><br>
+          <span class="sql-keyword">SET</span> <span class="sql-keyword">TRANSACTION</span> <span class="sql-keyword">ISOLATION LEVEL</span> SERIALIZABLE;
+        </div>
+        
+        <div class="tip">
+          <h3>💡 격리 수준 선택 가이드</h3>
+          <ul>
+            <li><strong>READ UNCOMMITTED</strong>: 거의 사용하지 않음. 데이터 정확성보다 성능이 훨씬 더 중요한 경우에만 고려</li>
+            <li><strong>READ COMMITTED</strong>: 대부분의 애플리케이션에 적합한 기본 수준. Oracle의 기본값</li>
+            <li><strong>REPEATABLE READ</strong>: MySQL의 기본값. 동일 트랜잭션 내에서 일관된 읽기 보장</li>
+            <li><strong>SERIALIZABLE</strong>: 가장 높은 격리 수준. 동시성이 낮아지지만, 데이터 정확성이 가장 중요할 때 사용</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section" id="deadlocks">
+        <h2>5. 데드락(Deadlock)과 교착 상태</h2>
+        <p>데드락은 두 개 이상의 트랜잭션이 서로가 가진 자원을 기다리며 무한 대기하는 상태를 말합니다.</p>
+        
+        <h3>5.1 데드락 예시</h3>
+        <div class="example">
+          <h4>📝 예제 3: 데드락 발생 시나리오</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 트랜잭션 1</span><br>
+            <span class="sql-keyword">START TRANSACTION</span>;
+            <span class="sql-keyword">UPDATE</span> accounts <span class="sql-keyword">SET</span> balance = balance - 100 <span class="sql-keyword">WHERE</span> account_id = 'A';  <span class="sql-comment">-- 계좌 A 잠금</span>
+            
+            <span class="sql-comment">-- 트랜잭션 2 (동시에 실행)</span><br>
+            <span class="sql-keyword">START TRANSACTION</span>;
+            <span class="sql-keyword">UPDATE</span> accounts <span class="sql-keyword">SET</span> balance = balance + 200 <span class="sql-keyword">WHERE</span> account_id = 'B';  <span class="sql-comment">-- 계좌 B 잠금</span>
+            
+            <span class="sql-comment">-- 트랜잭션 1</span><br>
+            <span class="sql-keyword">UPDATE</span> accounts <span class="sql-keyword">SET</span> balance = balance + 100 <span class="sql-keyword">WHERE</span> account_id = 'B';  <span class="sql-comment">-- 계좌 B를 기다림</span>
+            
+            <span class="sql-comment">-- 트랜잭션 2</span><br>
+            <span class="sql-keyword">UPDATE</span> accounts <span class="sql-keyword">SET</span> balance = balance - 200 <span class="sql-keyword">WHERE</span> account_id = 'A';  <span class="sql-comment">-- 계좌 A를 기다림 (데드락 발생)</span>
+          </div>
+        </div>
+        
+        <h3>5.2 데드락 방지 방법</h3>
+        <ul>
+          <li><strong>일관된 순서로 자원 접근</strong>: 모든 트랜잭션이 동일한 순서로 테이블이나 행을 잠그도록 설계</li>
+          <li><strong>타임아웃 설정</strong>: 트랜잭션에 타임아웃을 설정하여 일정 시간이 지나면 롤백되도록 함</li>
+          <li><strong>작은 트랜잭션 사용</strong>: 트랜잭션의 크기와 지속 시간을 최소화</li>
+          <li><strong>인덱스 사용</strong>: 적절한 인덱스를 사용하여 잠금 범위를 줄임</li>
+        </ul>
+        
+        <div class="code-block">
+          <span class="sql-comment">-- MySQL에서 데드락 감지 및 타임아웃 설정</span><br>
+          <span class="sql-keyword">SET</span> <span class="sql-keyword">GLOBAL</span> innodb_deadlock_detect = <span class="sql-keyword">ON</span>;  <span class="sql-comment">-- 데드락 감지 활성화</span><br>
+          <span class="sql-keyword">SET</span> <span class="sql-keyword">GLOBAL</span> innodb_lock_wait_timeout = 30;  <span class="sql-comment">-- 잠금 대기 시간 30초로 설정</span>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_dml_update.html" class="nav-button">이전: UPDATE/DELETE/MERGE</a>
+        <a href="sql_ddl.html" class="nav-button">다음: DDL (데이터 정의 언어)</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // SQL 구문 강조
+    document.addEventListener('DOMContentLoaded', function() {
+      const codeBlocks = document.querySelectorAll('.code-block');
+      
+      codeBlocks.forEach(block => {
+        let html = block.innerHTML;
+        
+        // SQL 키워드 강조
+        const keywords = [
+          'SELECT', 'FROM', 'WHERE', 'ORDER BY', 'GROUP BY', 'HAVING', 'JOIN',
+          'INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL JOIN', 'ON', 'AS',
+          'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE',
+          'TABLE', 'ALTER', 'DROP', 'INDEX', 'VIEW', 'TRIGGER', 'PROCEDURE',
+          'FUNCTION', 'CURSOR', 'BEGIN', 'END', 'IF', 'ELSE', 'THEN', 'CASE',
+          'WHEN', 'ELSE', 'END', 'AND', 'OR', 'NOT', 'IN', 'BETWEEN', 'LIKE',
+          'IS NULL', 'IS NOT NULL', 'EXISTS', 'UNION', 'ALL', 'DISTINCT',
+          'ASC', 'DESC', 'LIMIT', 'OFFSET', 'NULLS FIRST', 'NULLS LAST',
+          'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'COALESCE', 'NULLIF',
+          'EXTRACT', 'YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND',
+          'INTERVAL', 'DATE_ADD', 'DATE_SUB', 'ADD_MONTHS', 'TRUNC', 'TRUNCATE',
+          'ROUND', 'MOD', 'CONCAT', 'SUBSTRING', 'UPPER', 'LOWER', 'TRIM',
+          'LTRIM', 'RTRIM', 'LEADING', 'TRAILING', 'BOTH', 'MERGE', 'INTO',
+          'USING', 'MATCHED', 'NOT MATCHED', 'DELETE WHERE', 'START TRANSACTION',
+          'COMMIT', 'ROLLBACK', 'SAVEPOINT', 'RELEASE SAVEPOINT', 'SET TRANSACTION',
+          'ISOLATION LEVEL', 'READ UNCOMMITTED', 'READ COMMITTED', 'REPEATABLE READ',
+          'SERIALIZABLE', 'DECLARE', 'HANDLER', 'CONTINUE', 'FOR', 'SQLEXCEPTION',
+          'GLOBAL', 'SESSION', 'VARIABLES', 'ROW_COUNT', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'
+        ];
+        
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+          html = html.replace(regex, `<span class="sql-keyword">${keyword}</span>`);
+        });
+        
+        // 문자열 강조 (작은따옴표 안의 내용)
+        html = html.replace(/'([^']*)'/g, '<span class="sql-string">\'$1\'</span>');
+        
+        // 숫자 강조
+        html = html.replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>');
+        
+        // 주석 강조 (--로 시작하는 줄)
+        html = html.replace(/--(.*)/g, '<span class="sql-comment">--$1</span>');
+        
+        block.innerHTML = html;
+      });
+    });
+  </script>
+</body>
+</html>

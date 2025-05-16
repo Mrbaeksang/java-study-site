@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ 트랜잭션과 성능 최적화</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 이전과 동일한 스타일 유지 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    /* ... (나머지 스타일도 이전과 동일) ... */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⚡ 트랜잭션과 성능 최적화</h1>
+      <p class="intro-text">스프링 부트에서 트랜잭션을 관리하고 JPA 성능을 최적화하는 방법을 알아봅시다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>7. 트랜잭션 관리</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> 선언적 트랜잭션</h3>
+          <p>스프링의 <code>@Transactional</code> 어노테이션을 사용하여 트랜잭션을 선언적으로 관리할 수 있습니다.</p>
+          
+          <pre class="code-block"><code class="language-java">package com.example.demo.service;
+
+import com.example.demo.dto.TransferRequest;
+import com.example.demo.entity.Account;
+import com.example.demo.exception.InsufficientBalanceException;
+import com.example.demo.repository.AccountRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+
+@Service
+@RequiredArgsConstructor
+public class BankService {
+    
+    private final AccountRepository accountRepository;
+    
+    // 기본 트랜잭션 설정
+    @Transactional
+    public void transferMoney(TransferRequest request) {
+        Account fromAccount = accountRepository.findById(request.getFromAccountId())
+                .orElseThrow(() -> new IllegalArgumentException("출금 계좌를 찾을 수 없습니다."));
+                
+        Account toAccount = accountRepository.findById(request.getToAccountId())
+                .orElseThrow(() -> new IllegalArgumentException("입금 계좌를 찾을 수 없습니다."));
+        
+        // 잔액 확인
+        if (fromAccount.getBalance().compareTo(request.getAmount()) < 0) {
+            throw new InsufficientBalanceException("잔액이 부족합니다.");
+        }
+        
+        // 계좌 이체
+        fromAccount.withdraw(request.getAmount());
+        toAccount.deposit(request.getAmount());
+        
+        // 계좌 정보 저장 (변경 감지 - Dirty Checking)
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+        
+        // 이체 내역 기록 (트랜잭션 전파 예시)
+        transactionHistoryService.recordTransfer(
+            request.getFromAccountId(),
+            request.getToAccountId(),
+            request.getAmount(),
+            "계좌 이체"
+        );
+    }
+    
+    // 읽기 전용 트랜잭션 (성능 최적화)
+    @Transactional(readOnly = true)
+    public Account getAccountWithTransactions(Long accountId) {
+        return accountRepository.findWithTransactionsById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("계좌를 찾을 수 없습니다."));
+    }
+    
+    // 트랜잭션 전파 설정 예시
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void processInNewTransaction() {
+        // 새로운 트랜잭션에서 실행
+    }
+    
+    // 트랜잭션 격리 수준 설정 예시
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void processWithHighIsolation() {
+        // 직렬화 가능한 격리 수준으로 실행
+    }
+    
+    // 트랜잭션 롤백 설정 예시
+    @Transactional(rollbackFor = {BusinessException.class})
+    public void processWithCustomRollback() {
+        // BusinessException 발생 시 롤백
+    }
+    
+    // 트랜잭션 시간 초과 설정 예시
+    @Transactional(timeout = 30) // 30초 후 타임아웃
+    public void processWithTimeout() {
+        // 오래 걸리는 작업
+    }
+}
+
+// 계좌 엔티티 예시
+@Entity
+@Table(name = "accounts")
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Account extends BaseEntity {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false, unique = true, length = 20)
+    private String accountNumber;
+    
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal balance = BigDecimal.ZERO;
+    
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
+    
+    // 비즈니스 메서드
+    public void deposit(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("입금액은 0보다 커야 합니다.");
+        }
+        this.balance = this.balance.add(amount);
+    }
+    
+    public void withdraw(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("출금액은 0보다 커야 합니다.");
+        }
+        if (this.balance.compareTo(amount) < 0) {
+            throw new InsufficientBalanceException("잔액이 부족합니다.");
+        }
+        this.balance = this.balance.subtract(amount);
+    }
+    
+    // 연관관계 편의 메서드
+    public void addTransaction(Transaction transaction) {
+        transactions.add(transaction);
+        transaction.setAccount(this);
+    }
+}</code></pre>
+          
+          <div class="note">
+            <h4>📌 트랜잭션 전파(Propagation) 속성</h4>
+            <ul>
+              <li><code>REQUIRED</code>: 기본값, 이미 시작된 트랜잭션이 있으면 참여하고 없으면 새로 시작</li>
+              <li><code>REQUIRES_NEW</code>: 항상 새로운 트랜잭션을 시작, 기존 트랜잭션은 일시 중지</li>
+              <li><code>SUPPORTS</code>: 이미 시작된 트랜잭션이 있으면 참여하고 없으면 트랜잭션 없이 실행</li>
+              <li><code>NOT_SUPPORTED</code>: 트랜잭션 없이 실행, 기존 트랜잭션이 있으면 일시 중지</li>
+              <li><code>MANDATORY</code>: 반드시 트랜잭션 내에서 실행, 없으면 예외 발생</li>
+              <li><code>NEVER</code>: 트랜잭션 내에서 실행되면 예외 발생</li>
+              <li><code>NESTED</code>: 중첩 트랜잭션 생성 (부모 트랜잭션에 중첩)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>8. JPA 성능 최적화</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> N+1 문제 해결</h3>
+          <p>N+1 문제는 연관된 엔티티를 조회할 때 발생하는 성능 이슈입니다.</p>
+          
+          <pre class="code-block"><code class="language-java">// N+1 문제가 발생하는 예제
+@Transactional(readOnly = true)
+public List<Order> getOrdersWithItems() {
+    // 1. 주문 목록 조회 (1번의 쿼리)
+    List<Order> orders = orderRepository.findAll();
+    
+    // 2. 각 주문의 상품 목록 조회 (N번의 추가 쿼리)
+    for (Order order : orders) {
+        List<OrderItem> items = order.getItems(); // 여기서 추가 쿼리 발생
+        // ...
+    }
+    
+    return orders;
+}
+
+// 해결 방법 1: 페치 조인 사용
+public interface OrderRepository extends JpaRepository<Order, Long> {
+    
+    @Query("SELECT DISTINCT o FROM Order o JOIN FETCH o.items i")
+    List<Order> findAllWithItems();
+    
+    // 페이징과 함께 사용하는 경우
+    @Query(value = "SELECT o FROM Order o JOIN FETCH o.items i",
+           countQuery = "SELECT COUNT(o) FROM Order o")
+    Page<Order> findAllWithItems(Pageable pageable);
+}
+
+// 해결 방법 2: @EntityGraph 사용
+@EntityGraph(attributePaths = {"items"})
+List<Order> findByStatus(OrderStatus status);
+
+// 해결 방법 3: 배치 페치 크기 설정 (in 절로 조회)
+@Entity
+@Table(name = "orders")
+@Getter @Setter
+@BatchSize(size = 100) // 배치 페치 크기 설정
+public class Order {
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    private List<OrderItem> items = new ArrayList<>();
+}
+
+// application.properties에 전역 설정
+spring.jpa.properties.hibernate.default_batch_fetch_size=100</code></pre>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 성능 최적화 팁</h3>
+          
+          <pre class="code-block"><code class="language-java">// 1. 읽기 전용 쿼리 최적화
+@Transactional(readOnly = true) // 읽기 전용 트랜잭션
+public List<Order> findRecentOrders(LocalDateTime from) {
+    return orderRepository.findByCreatedAtAfter(from);
+}
+
+// 2. DTO 프로젝션 사용 (엔티티 대신 필요한 필드만 조회)
+public interface OrderSummary {
+    Long getId();
+    String getOrderNumber();
+    BigDecimal getTotalAmount();
+    
+    // @Value를 사용한 커스텀 생성자
+    @Value("#{target.orderNumber + ' - ' + target.totalAmount}")
+    String getSummary();
+}
+
+@Query("SELECT o.id as id, o.orderNumber as orderNumber, o.totalAmount as totalAmount " +
+       "FROM Order o WHERE o.status = :status")
+List<OrderSummary> findOrderSummariesByStatus(OrderStatus status);
+
+// 3. 벌크 연산 사용
+@Modifying
+@Query("UPDATE Product p SET p.price = p.price * :rate WHERE p.category = :category")
+int updatePriceByCategory(@Param("category") String category, @Param("rate") double rate);
+
+// 4. 쿼리 힌트 사용
+@QueryHints({
+    @QueryHint(name = "org.hibernate.readOnly", value = "true"),
+    @QueryHint(name = "javax.persistence.query.timeout", value = "5000")
+})
+@Query("SELECT o FROM Order o WHERE o.status = :status")
+List<Order> findOrdersByStatusWithHints(@Param("status") OrderStatus status);
+
+// 5. 두 번째 레벨 캐시 활성화
+// application.properties
+spring.jpa.properties.hibernate.cache.use_second_level_cache=true
+spring.jpa.properties.hibernate.cache.region.factory_class=org.hibernate.cache.jcache.JCacheRegionFactory
+spring.jpa.properties.javax.persistence.sharedCache.mode=ENABLE_SELECTIVE
+
+// 엔티티에 캐시 설정
+@Entity
+@Table(name = "products")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class Product {
+    // ...
+}
+
+// 리포지토리 메서드에 캐시 적용
+@Cacheable("products")
+Optional<Product> findById(Long id);
+
+@CacheEvict(value = "products", key = "#product.id")
+Product save(Product product);</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>9. 테스트</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> 데이터 접근 계층 테스트</h3>
+          
+          <pre class="code-block"><code class="language-java">@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
+class UserRepositoryTest {
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private TestEntityManager em;
+    
+    @Test
+    @Sql("/test-data.sql") // 테스트 데이터 로드
+    void whenFindByEmail_thenReturnUser() {
+        // given
+        String email = "test@example.com";
+        
+        // when
+        Optional<User> foundUser = userRepository.findByEmail(email);
+        
+        // then
+        assertThat(foundUser).isPresent();
+        assertThat(foundUser.get().getEmail()).isEqualTo(email);
+    }
+    
+    @Test
+    void whenSaveUser_thenCanFindById() {
+        // given
+        User user = User.builder()
+                .username("testuser")
+                .email("test@example.com")
+                .password("encodedPassword")
+                .build();
+        
+        // when
+        User savedUser = userRepository.save(user);
+        em.flush();
+        em.clear(); // 영속성 컨텍스트 초기화
+        
+        // then
+        User foundUser = userRepository.findById(savedUser.getId())
+                .orElseThrow(() -> new AssertionError("User not found"));
+                
+        assertThat(foundUser.getUsername()).isEqualTo(user.getUsername());
+    }
+    
+    @Test
+    @Transactional
+    void whenUpdateUser_thenUpdated() {
+        // given
+        User user = User.builder()
+                .username("oldname")
+                .email("test@example.com")
+                .password("password")
+                .build();
+        em.persistAndFlush(user);
+        
+        // when
+        user.updateUsername("newname");
+        em.flush();
+        em.clear();
+        
+        // then
+        User updatedUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new AssertionError("User not found"));
+                
+        assertThat(updatedUser.getUsername()).isEqualTo("newname");
+    }
+}
+
+// 테스트용 SQL (src/test/resources/test-data.sql)
+INSERT INTO users (id, username, email, password, created_at, updated_at) 
+VALUES (1, 'testuser', 'test@example.com', 'encodedPassword', NOW(), NOW());</code></pre>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 서비스 계층 테스트</h3>
+          
+          <pre class="code-block"><code class="language-java">@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
+    
+    @Mock
+    private UserRepository userRepository;
+    
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    
+    @InjectMocks
+    private UserService userService;
+    
+    @Test
+    void whenRegisterUser_thenUserIsSaved() {
+        // given
+        String email = "test@example.com";
+        String password = "password";
+        String encodedPassword = "encodedPassword";
+        
+        UserDto.CreateRequest request = new UserDto.CreateRequest();
+        request.setEmail(email);
+        request.setPassword(password);
+        
+        when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
+        when(userRepository.existsByEmail(email)).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setId(1L);
+            return user;
+        });
+        
+        // when
+        Long userId = userService.registerUser(request);
+        
+        // then
+        assertThat(userId).isNotNull();
+        verify(userRepository, times(1)).save(any(User.class));
+        verify(passwordEncoder, times(1)).encode(password);
+    }
+    
+    @Test
+    void whenRegisterWithExistingEmail_thenThrowException() {
+        // given
+        String email = "existing@example.com";
+        
+        UserDto.CreateRequest request = new UserDto.CreateRequest();
+        request.setEmail(email);
+        request.setPassword("password");
+        
+        when(userRepository.existsByEmail(email)).thenReturn(true);
+        
+        // when & then
+        assertThatThrownBy(() -> userService.registerUser(request))
+                .isInstanceOf(DuplicateEmailException.class)
+                .hasMessage("이미 사용 중인 이메일입니다.");
+                
+        verify(userRepository, never()).save(any(User.class));
+    }
+}
+
+// 통합 테스트 예제
+@SpringBootTest
+@Transactional
+@ActiveProfiles("test")
+class UserServiceIntegrationTest {
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Test
+    void whenRegisterUser_thenCanFindByEmail() {
+        // given
+        UserDto.CreateRequest request = new UserDto.CreateRequest();
+        request.setEmail("test@example.com");
+        request.setPassword("password");
+        
+        // when
+        Long userId = userService.registerUser(request);
+        
+        // then
+        User foundUser = userRepository.findByEmail("test@example.com")
+                .orElseThrow(() -> new AssertionError("User not found"));
+                
+        assertThat(foundUser.getId()).isEqualTo(userId);
+        assertThat(passwordEncoder.matches("password", foundUser.getPassword())).isTrue();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="spring_boot_database_part4.html" class="nav-button">← 이전: Spring Data JPA 리포지토리</a>
+        <a href="spring_boot_security.html" class="nav-button">다음: 스프링 시큐리티 →</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

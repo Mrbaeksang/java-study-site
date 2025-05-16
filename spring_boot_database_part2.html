@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💽 스프링 부트 데이터베이스 연동 - Part 2</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 이전과 동일한 스타일 유지 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    /* ... (나머지 스타일도 이전과 동일) ... */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>💽 스프링 부트 데이터베이스 연동 - Part 2</h1>
+      <p class="intro-text">JdbcTemplate을 활용한 데이터베이스 연동 방법을 알아봅시다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>3. JdbcTemplate 활용하기</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> JdbcTemplate 기본 사용법</h3>
+          <p>Spring의 JdbcTemplate을 사용하면 JDBC 작업을 더 쉽게 처리할 수 있습니다.</p>
+          
+          <pre class="code-block"><code class="language-java">package com.example.demo.repository;
+
+import com.example.demo.model.User;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+@Repository
+public class UserJdbcRepository {
+    
+    private final JdbcTemplate jdbcTemplate;
+    
+    public UserJdbcRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+    
+    // 사용자 조회
+    public User findById(Long id) {
+        String sql = "SELECT id, username, email, created_at FROM users WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new UserRowMapper(), id);
+    }
+    
+    // 모든 사용자 조회
+    public List&lt;User&gt; findAll() {
+        String sql = "SELECT id, username, email, created_at FROM users";
+        return jdbcTemplate.query(sql, new UserRowMapper());
+    }
+    
+    // 사용자 생성
+    public int save(User user) {
+        String sql = "INSERT INTO users (username, email, created_at) VALUES (?, ?, ?)";
+        return jdbcTemplate.update(
+            sql,
+            user.getUsername(),
+            user.getEmail(),
+            user.getCreatedAt()
+        );
+    }
+    
+    // 사용자 수정
+    public int update(User user) {
+        String sql = "UPDATE users SET username = ?, email = ? WHERE id = ?";
+        return jdbcTemplate.update(
+            sql,
+            user.getUsername(),
+            user.getEmail(),
+            user.getId()
+        );
+    }
+    
+    // 사용자 삭제
+    public int deleteById(Long id) {
+        String sql = "DELETE FROM users WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+    
+    // RowMapper 구현
+    private static class UserRowMapper implements RowMapper&lt;User&gt; {
+        @Override
+        public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+            User user = new User();
+            user.setId(rs.getLong("id"));
+            user.setUsername(rs.getString("username"));
+            user.setEmail(rs.getString("email"));
+            user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            return user;
+        }
+    }
+}
+
+// User 모델 클래스
+package com.example.demo.model;
+
+import lombok.Data;
+import java.time.LocalDateTime;
+
+@Data
+public class User {
+    private Long id;
+    private String username;
+    private String email;
+    private LocalDateTime createdAt;
+}</code></pre>
+          
+          <div class="tip">
+            <h4>💡 JdbcTemplate의 주요 메서드</h4>
+            <ul>
+              <li><code>queryForObject()</code>: 단일 행 조회</li>
+              <li><code>query()</code>: 여러 행 조회</li>
+              <li><code>update()</code>: INSERT, UPDATE, DELETE 쿼리 실행</li>
+              <li><code>execute()</code>: 임의의 SQL 실행</li>
+              <li><code>batchUpdate()</code>: 배치 처리</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> NamedParameterJdbcTemplate 사용하기</h3>
+          <p>이름 기반 파라미터를 사용하면 가독성과 유지보수성이 향상됩니다.</p>
+          
+          <pre class="code-block"><code class="language-java">package com.example.demo.repository;
+
+import com.example.demo.model.User;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class UserNamedJdbcRepository {
+    
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    
+    public UserNamedJdbcRepository(NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+    
+    // 이름 기반 파라미터로 조회
+    public User findByUsername(String username) {
+        String sql = "SELECT id, username, email, created_at FROM users WHERE username = :username";
+        
+        SqlParameterSource params = new MapSqlParameterSource()
+            .addValue("username", username);
+            
+        return jdbcTemplate.queryForObject(sql, params, (rs, rowNum) -> {
+            User user = new User();
+            user.setId(rs.getLong("id"));
+            user.setUsername(rs.getString("username"));
+            user.setEmail(rs.getString("email"));
+            user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            return user;
+        });
+    }
+    
+    // BeanPropertySqlParameterSource를 사용한 삽입 (자동 매핑)
+    public Long insert(User user) {
+        String sql = """
+            INSERT INTO users (username, email, created_at)
+            VALUES (:username, :email, :createdAt)
+            """;
+            
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        SqlParameterSource params = new BeanPropertySqlParameterSource(user);
+        
+        jdbcTemplate.update(sql, params, keyHolder, new String[]{"id"});
+        
+        return keyHolder.getKey().longValue();
+    }
+    
+    // IN 절 사용 예제
+    public List&lt;User&gt; findByIds(List&lt;Long&gt; ids) {
+        String sql = "SELECT id, username, email, created_at FROM users WHERE id IN (:ids)";
+        
+        SqlParameterSource params = new MapSqlParameterSource("ids", ids);
+        
+        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
+            User user = new User();
+            user.setId(rs.getLong("id"));
+            user.setUsername(rs.getString("username"));
+            user.setEmail(rs.getString("email"));
+            user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            return user;
+        });
+    }
+    
+    // 배치 업데이트 예제
+    public int[] batchInsert(List&lt;User&gt; users) {
+        String sql = """
+            INSERT INTO users (username, email, created_at)
+            VALUES (:username, :email, :createdAt)
+            """;
+            
+        SqlParameterSource[] batchValues = users.stream()
+            .map(BeanPropertySqlParameterSource::new)
+            .toArray(SqlParameterSource[]::new);
+            
+        return jdbcTemplate.batchUpdate(sql, batchValues);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="spring_boot_database_part1.html" class="nav-button">← 이전: 데이터베이스 연동 Part 1</a>
+        <a href="spring_boot_database_part3.html" class="nav-button">다음: JPA 연동 →</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

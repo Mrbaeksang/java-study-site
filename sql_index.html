@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ SQL 인덱스 - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    h4 {
+      margin-top: 1.5rem;
+      color: #ce9178;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    code {
+      background: var(--vscode-textCodeBlock-background);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    pre {
+      background: var(--vscode-textCodeBlock-background);
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .note {
+      border-left: 4px solid #4ec9b0;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(78, 201, 176, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #ff9800;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(255, 152, 0, 0.1);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background-color: var(--vscode-editor-lineHighlightBorder);
+      color: var(--vscode-text);
+    }
+    .index-diagram {
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .index-diagram img {
+      max-width: 100%;
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⚡ SQL 인덱스</h1>
+      <p>데이터베이스 성능을 향상시키는 인덱스의 이해와 활용법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 인덱스란?</h2>
+        <p>인덱스는 데이터베이스에서 데이터를 빠르게 찾기 위한 구조입니다. 마치 책의 목차나 인덱스와 같습니다.</p>
+
+        <div class="warning">
+          <h3>⚠️ 인덱스의 장단점</h3>
+          <ul>
+            <li>장점: 데이터 조회 속도 향상</li>
+            <li>단점: 저장 공간 증가, INSERT/UPDATE 시 성능 저하</li>
+          </ul>
+        </div>
+
+        <h2>2. 인덱스 종류</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>인덱스 종류</th>
+              <th>설명</th>
+              <th>예시</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>단일 인덱스</td>
+              <td>하나의 열에 대한 인덱스</td>
+              <td>CREATE INDEX idx_name ON table_name(column_name);</td>
+            </tr>
+            <tr>
+              <td>복합 인덱스</td>
+              <td>여러 열을 조합한 인덱스</td>
+              <td>CREATE INDEX idx_name ON table_name(col1, col2);</td>
+            </tr>
+            <tr>
+              <td>유니크 인덱스</td>
+              <td>중복되지 않는 값을 가진 인덱스</td>
+              <td>CREATE UNIQUE INDEX idx_name ON table_name(column_name);</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>3. 인덱스 생성 및 삭제</h2>
+        <div class="example">
+          <h3>📝 예제: 인덱스 생성</h3>
+          <div class="code-block">
+            -- 단일 인덱스 생성<br>
+            CREATE INDEX idx_name ON students(name);<br><br>
+
+            -- 복합 인덱스 생성<br>
+            CREATE INDEX idx_dept_grade ON students(department, grade);<br><br>
+
+            -- 유니크 인덱스 생성<br>
+            CREATE UNIQUE INDEX idx_student_id ON students(student_id);
+          </div>
+        </div>
+
+        <div class="example">
+          <h3>📝 예제: 인덱스 삭제</h3>
+          <div class="code-block">
+            DROP INDEX idx_name;
+          </div>
+        </div>
+
+        <h2>4. 인덱스 성능 최적화</h2>
+        <div class="note">
+          <h3>🎯 인덱스 사용 시 고려사항</h3>
+          <ul>
+            <li>자주 검색되는 열에 인덱스 생성</li>
+            <li>데이터가 자주 변경되는 열에는 인덱스 생성을 피함</li>
+            <li>SELECT 문의 WHERE 절에 사용되는 열에 인덱스 생성</li>
+            <li>데이터가 균일하게 분포된 열에 인덱스 생성</li>
+          </ul>
+        </div>
+
+        <h2>5. 인덱스 활용 예시</h2>
+        <div class="example">
+          <h3>📝 예제: 인덱스를 활용한 성능 최적화</h3>
+          <div class="code-block">
+            -- 인덱스가 없는 경우<br>
+            SELECT * FROM students WHERE name = '김철수';<br><br>
+
+            -- 인덱스를 생성한 후<br>
+            CREATE INDEX idx_name ON students(name);<br>
+            SELECT * FROM students WHERE name = '김철수';
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_subquery.html" class="nav-button">이전: 서브쿼리</a>
+        <a href="sql_transaction.html" class="nav-button">다음: 트랜잭션</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

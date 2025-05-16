@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>❌ 커스텀 예외 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 기존 스타일 재사용 */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>❌ 커스텀 예외</h1>
+      <p class="intro-text">스프링 부트에서 커스텀 예외를 활용한 에러 처리 방법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 기본 예외 클래스</h2>
+        <div class="code-block">
+          <pre><code class="java">@ResponseStatus(HttpStatus.NOT_FOUND)
+public class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+}
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class InvalidRequestException extends RuntimeException {
+    public InvalidRequestException(String message) {
+        super(message);
+    }
+}
+
+@ResponseStatus(HttpStatus.UNAUTHORIZED)
+public class UnauthorizedException extends RuntimeException {
+    public UnauthorizedException(String message) {
+        super(message);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. 상세한 에러 정보를 포함한 예외</h2>
+        <div class="code-block">
+          <pre><code class="java">public class DetailedException extends RuntimeException {
+    private final ErrorCode errorCode;
+    private final String detail;
+    private final Object[] parameters;
+
+    public DetailedException(ErrorCode errorCode, String detail, Object... parameters) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
+        this.detail = detail;
+        this.parameters = parameters;
+    }
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public Object[] getParameters() {
+        return parameters;
+    }
+}
+
+public enum ErrorCode {
+    RESOURCE_NOT_FOUND("Resource not found"),
+    INVALID_REQUEST("Invalid request"),
+    UNAUTHORIZED("Unauthorized access"),
+    INTERNAL_ERROR("Internal server error");
+
+    private final String message;
+
+    ErrorCode(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. 예외 사용 예시</h2>
+        <div class="code-block">
+          <pre><code class="java">@RestController
+public class ProductController {
+    
+    @GetMapping("/products/{id}")
+    public ResponseEntity&lt;Product&gt; getProduct(@PathVariable Long id) {
+        Product product = productService.findById(id);
+        if (product == null) {
+            throw new ResourceNotFoundException("Product not found with id: " + id);
+        }
+        return ResponseEntity.ok(product);
+    }
+
+    @PostMapping("/products")
+    public ResponseEntity&lt;Product&gt; createProduct(@RequestBody ProductRequest request) {
+        if (request.getPrice() &lt; 0) {
+            throw new InvalidRequestException("Price cannot be negative");
+        }
+        Product product = productService.create(request);
+        return ResponseEntity.ok(product);
+    }
+}
+
+@Service
+public class ProductService {
+    
+    public Product findById(Long id) {
+        return productRepository.findById(id)
+            .orElseThrow(() -&gt; new ResourceNotFoundException("Product not found"));
+    }
+
+    public Product create(ProductRequest request) {
+        if (request.getPrice() &lt; 0) {
+            throw new InvalidRequestException("Price cannot be negative");
+        }
+        return productRepository.save(ProductMapper.toEntity(request));
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 다음 단계</h2>
+        <p>이제 커스텀 예외의 기본적인 구현을 배웠습니다. 다음으로는 다음과 같은 주제들을 배우게 됩니다:</p>
+        <ul>
+          <li><a href="spring_boot_validation.html">유효성 검사</a></li>
+          <li><a href="spring_boot_error_response.html">에러 응답 표준화</a></li>
+          <li><a href="spring_boot_exception_handling.html">전역 예외 처리</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔒 CSRF 보호 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 기존 스타일 재사용 */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔒 CSRF 보호</h1>
+      <p class="intro-text">CSRF(Cross-Site Request Forgery) 공격을 방어하는 방법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 기본 CSRF 설정</h2>
+        <div class="code-block">
+          <pre><code class="java">@Configuration
+public class SecurityConfig {
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -&gt; csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            )
+            .authorizeHttpRequests(auth -&gt; auth
+                .requestMatchers("/public/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .formLogin();
+        
+        return http.build();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. REST API를 위한 CSRF 설정</h2>
+        <div class="code-block">
+          <pre><code class="java">@Configuration
+public class SecurityConfig {
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -&gt; csrf
+                .ignoringRequestMatchers(
+                    AntPathRequestMatcher.antMatcher("/api/**")
+                )
+            )
+            .authorizeHttpRequests(auth -&gt; auth
+                .requestMatchers("/public/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .httpBasic();
+        
+        return http.build();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. 커스텀 CSRF 토큰 저장소</h2>
+        <div class="code-block">
+          <pre><code class="java">@Component
+public class CustomCsrfTokenRepository implements CsrfTokenRepository {
+    
+    @Override
+    public CsrfToken generateToken(HttpServletRequest request) {
+        String token = UUID.randomUUID().toString();
+        return new DefaultCsrfToken("_csrf", "_csrf", token);
+    }
+
+    @Override
+    public void saveToken(CsrfToken token, HttpServletRequest request, HttpServletResponse response) {
+        if (token != null) {
+            Cookie cookie = new Cookie("XSRF-TOKEN", token.getToken());
+            cookie.setHttpOnly(false);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        }
+    }
+
+    @Override
+    public CsrfToken loadToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("XSRF-TOKEN".equals(cookie.getName())) {
+                    return new DefaultCsrfToken(
+                        "_csrf",
+                        "_csrf",
+                        cookie.getValue()
+                    );
+                }
+            }
+        }
+        return null;
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 다음 단계</h2>
+        <p>이제 CSRF 보호의 기본적인 구현을 배웠습니다. 다음으로는 다음과 같은 주제들을 배우게 됩니다:</p>
+        <ul>
+          <li><a href="spring_boot_jwt.html">JWT 인증</a></li>
+          <li><a href="spring_boot_oauth2.html">OAuth2 연동</a></li>
+          <li><a href="spring_boot_security.html">스프링 시큐리티</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎨 MVC 패턴 이해 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .mvc-diagram {
+      max-width: 100%;
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .mvc-diagram img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #444;
+      border-radius: 8px;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎨 MVC 패턴 이해</h1>
+      <p class="intro-text">스프링 MVC의 구조와 동작 방식을 이해하고 효과적으로 활용하는 방법을 배웁니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. MVC 패턴이란?</h2>
+        <p>MVC(Model-View-Controller)는 소프트웨어 디자인 패턴 중 하나로, 애플리케이션을 세 가지 주요 구성 요소로 분리합니다.</p>
+        
+        <div class="mvc-diagram">
+          <svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+            <!-- Controller -->
+            <rect x="50" y="100" width="120" height="80" rx="10" ry="10" fill="#4EC9B0" opacity="0.8" />
+            <text x="110" y="145" text-anchor="middle" fill="white" font-weight="bold">Controller</text>
+            
+            <!-- Model -->
+            <rect x="240" y="100" width="120" height="80" rx="10" ry="10" fill="#569CD6" opacity="0.8" />
+            <text x="300" y="145" text-anchor="middle" fill="white" font-weight="bold">Model</text>
+            
+            <!-- View -->
+            <rect x="430" y="100" width="120" height="80" rx="10" ry="10" fill="#CE9178" opacity="0.8" />
+            <text x="490" y="145" text-anchor="middle" fill="white" font-weight="bold">View</text>
+            
+            <!-- Arrows -->
+            <line x1="170" y1="140" x2="240" y2="140" stroke="white" stroke-width="2" marker-end="url(#arrowhead)" />
+            <line x1="360" y1="140" x2="430" y2="140" stroke="white" stroke-width="2" marker-end="url(#arrowhead)" />
+            <line x1="300" y1="180" x2="300" y2="220" stroke="white" stroke-width="2" stroke-dasharray="5,5" />
+            <line x1="300" y1="220" x2="110" y2="220" stroke="white" stroke-width="2" stroke-dasharray="5,5" />
+            <line x1="110" y1="220" x1="110" y2="180" stroke="white" stroke-width="2" stroke-dasharray="5,5" />
+            
+            <!-- Arrowhead definition -->
+            <defs>
+              <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="white" />
+              </marker>
+            </defs>
+            
+            <!-- Labels -->
+            <text x="205" y="135" text-anchor="middle" fill="white" font-size="12">요청</text>
+            <text x="395" y="135" text-anchor="middle" fill="white" font-size="12">응답</text>
+            <text x="200" y="250" text-anchor="middle" fill="white" font-size="12">업데이트</text>
+          </svg>
+        </div>
+        
+        <h3>1.1 모델(Model)</h3>
+        <ul>
+          <li>애플리케이션의 데이터와 비즈니스 로직을 담당</li>
+          <li>데이터베이스와의 상호작용 처리</li>
+          <li>도메인 모델, 서비스, 리포지토리 등이 여기에 해당</li>
+        </ul>
+        
+        <h3>1.2 뷰(View)</h3>
+        <ul>
+          <li>사용자 인터페이스를 담당</li>
+          <li>모델의 데이터를 시각적으로 표현</li>
+          <li>HTML, Thymeleaf, JSP, JSON/XML 응답 등이 여기에 해당</li>
+        </ul>
+        
+        <h3>1.3 컨트롤러(Controller)</h3>
+       ul>
+          <li>사용자의 입력을 받아 모델과 뷰 사이의 상호작용을 조정</li>
+          <li>요청을 처리하고 적절한 응답을 반환</li>
+          <li>Spring의 <code>@Controller</code> 또는 <code>@RestController</code>가 이 역할을 담당</li>
+        </ul>
+      </div>
+      
+      <div class="section">
+        <h2>2. 스프링 MVC의 요청 처리 흐름</h2>
+        <p>스프링 MVC는 클라이언트의 요청을 처리하는 일련의 과정을 거칩니다.</p>
+        
+        <ol>
+          <li><strong>DispatcherServlet</strong>이 요청을 수신</li>
+          <li>HandlerMapping을 통해 요청을 처리할 컨트롤러 메서드 결정</li>
+          <li>HandlerAdapter를 사용하여 컨트롤러 메서드 호출</li>
+          <li>컨트롤러는 서비스 레이어를 호출하여 비즈니스 로직 처리</li>
+          <li>서비스는 리포지토리를 통해 데이터 접근</li>
+          <li>컨트롤러는 처리 결과를 Model에 담아 View 이름 반환</li>
+          <li>ViewResolver를 통해 실제 View를 찾음</li>
+          <li>View가 Model을 사용하여 응답 생성</li>
+          <li>DispatcherServlet이 클라이언트에 응답 전송</li>
+        </ol>
+        
+        <div class="code-block">
+          <pre><code>// 컨트롤러 예시
+@Controller
+@RequestMapping("/products")
+public class ProductController {
+    
+    private final ProductService productService;
+    
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+    
+    @GetMapping
+    public String listProducts(Model model) {
+        model.addAttribute("products", productService.findAllProducts());
+        return "products/list"; // 뷰 이름 반환
+    }
+    
+    @GetMapping("/{id}")
+    public String viewProduct(@PathVariable Long id, Model model) {
+        Product product = productService.findProductById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        model.addAttribute("product", product);
+        return "products/view";
+    }
+    
+    @GetMapping("/new")
+    public String showProductForm(Model model) {
+        model.addAttribute("product", new Product());
+        return "products/form";
+    }
+    
+    @PostMapping
+    public String saveProduct(@Valid Product product, BindingResult result) {
+        if (result.hasErrors()) {
+            return "products/form";
+        }
+        productService.saveProduct(product);
+        return "redirect:/products";
+    }
+}</code></pre>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>3. 스프링 MVC의 주요 컴포넌트</h2>
+        
+        <h3>3.1 DispatcherServlet</h3>
+        <p>프론트 컨트롤러 패턴을 구현한 서블릿으로, 모든 요청을 먼저 받아 적절한 핸들러에 위임합니다.</p>
+        
+        <h3>3.2 HandlerMapping</h3>
+        <p>요청을 처리할 컨트롤러 메서드를 찾아주는 인터페이스입니다.</p>
+        
+        <h3>3.3 HandlerAdapter</h3>
+        <p>핸들러 메서드를 실행하고 ModelAndView를 반환하는 역할을 합니다.</p>
+        
+        <h3>3.4 ViewResolver</h3>
+        <p>뷰 이름을 실제 뷰 객체로 변환해주는 인터페이스입니다.</p>
+        
+        <h3>3.5 View</h3>
+        <p>클라이언트에 응답을 생성하는 컴포넌트입니다.</p>
+        
+        <div class="code-block">
+          <pre><code>// WebMvcConfigurer를 구현하여 MVC 설정 커스터마이징
+@Configuration
+@EnableWebMvc
+public class WebConfig implements WebMvcConfigurer {
+    
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        // 뷰 컨트롤러 등록
+        registry.addViewController("/").setViewName("home");
+        registry.addViewController("/login").setViewName("login");
+    }
+    
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+        // 뷰 리졸버 설정
+        registry.jsp("/WEB-INF/views/", ".jsp");
+    }
+    
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 정적 리소스 핸들러 설정
+        registry.addResourceHandler("/resources/**")
+                .addResourceLocations("/resources/");
+    }
+    
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // 인터셉터 등록
+        registry.addInterceptor(new LoggingInterceptor());
+    }
+}</code></pre>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>4. 모델 속성과 데이터 바인딩</h2>
+        
+        <h3>4.1 @ModelAttribute</h3>
+        <p>메서드 매개변수나 메서드 수준에서 사용되어 모델에 속성을 추가하거나 바인딩할 수 있습니다.</p>
+        
+        <div class="code-block">
+          <pre><code>// 컨트롤러 클래스에 공통 모델 속성 추가
+@ModelAttribute("categories")
+public List&lt;String&gt; populateCategories() {
+    return Arrays.asList("전자제품", "의류", "도서", "생활용품");
+}
+
+// 폼 제출 시 데이터 바인딩
+@PostMapping("/products")
+public String createProduct(@ModelAttribute Product product, BindingResult result) {
+    if (result.hasErrors()) {
+        return "products/form";
+    }
+    productService.save(product);
+    return "redirect:/products/" + product.getId();
+}</code></pre>
+        </div>
+        
+        <h3>4.2 @SessionAttributes</h3>
+        <p>모델 속성을 세션에 저장하여 여러 요청에 걸쳐 유지할 수 있습니다.</p>
+        
+        <div class="code-block">
+          <pre><code>@Controller
+@SessionAttributes("shoppingCart")
+@RequestMapping("/cart")
+public class ShoppingCartController {
+    
+    @ModelAttribute("shoppingCart")
+    public ShoppingCart initializeCart() {
+        return new ShoppingCart();
+    }
+    
+    @PostMapping("/add")
+    public String addToCart(@ModelAttribute ShoppingCart cart, @RequestParam Long productId) {
+        // 장바구니에 상품 추가 로직
+        return "redirect:/products";
+    }
+}</code></pre>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>5. 예외 처리</h2>
+        <p>컨트롤러 계층에서 발생하는 예외를 처리하는 방법을 알아봅니다.</p>
+        
+        <h3>5.1 @ExceptionHandler</h3>
+        <p>특정 컨트롤러 내에서 발생하는 예외를 처리합니다.</p>
+        
+        <div class="code-block">
+          <pre><code>@Controller
+public class ProductController {
+    
+    @ExceptionHandler(ProductNotFoundException.class)
+    public String handleProductNotFound() {
+        return "errors/not-found";
+    }
+    
+    @ExceptionHandler({InvalidPriceException.class, EmptyProductException.class})
+    public String handleInvalidProduct(RuntimeException ex, Model model) {
+        model.addAttribute("error", ex.getMessage());
+        return "errors/bad-request";
+    }
+}</code></pre>
+        </div>
+        
+        <h3>5.2 @ControllerAdvice</h3>
+        <p>전역 예외 처리를 위한 클래스를 정의할 수 있습니다.</p>
+        
+        <div class="code-block">
+          <pre><code>@ControllerAdvice
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleResourceNotFound(ResourceNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(
+            ex.getMessage(), 
+            HttpStatus.NOT_FOUND.value()
+        );
+        return new ResponseEntity&lt;&gt;(response, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleValidationExceptions(MethodArgumentNotValidException ex) {
+        List&lt;String&gt; errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.toList());
+                
+        ErrorResponse response = new ErrorResponse(
+            "유효성 검사 실패",
+            HttpStatus.BAD_REQUEST.value(),
+            errors
+        );
+        
+        return new ResponseEntity&lt;&gt;(response, HttpStatus.BAD_REQUEST);
+    }
+}</code></pre>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>© 2025 스프링 부트 완전 정복. 모든 권리 보유.</p>
+    </footer>
+  </div>
+</body>
+</html>

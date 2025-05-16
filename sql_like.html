@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔍 LIKE - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    .syntax-box {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      font-family: 'Consolas', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔍 LIKE 연산자</h1>
+      <p>문자열 패턴을 사용하여 데이터를 검색하는 방법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. LIKE 기본 구문</h2>
+        <p>LIKE 연산자는 문자열 패턴 매칭을 위해 사용됩니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: 이름이 '김'으로 시작하는 학생 조회</h3>
+          <div class="code-block">
+            SELECT * FROM students<br>
+            WHERE name LIKE '김%';
+          </div>
+        </div>
+
+        <h2>2. 패턴 매칭 기호</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>기호</th>
+              <th>설명</th>
+              <th>예시</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>%</td>
+              <td>0개 이상의 임의의 문자</td>
+              <td>김%</td>
+            </tr>
+            <tr>
+              <td>_</td>
+              <td>정확히 한 글자</td>
+              <td>김_</td>
+            </tr>
+            <tr>
+              <td>[]</td>
+              <td>대괄호 안의 한 글자</td>
+              <td>김[A-Z]</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="example">
+          <h3>📝 예제: 이름이 두 글자인 학생 조회</h3>
+          <div class="code-block">
+            SELECT * FROM students<br>
+            WHERE name LIKE '__';
+          </div>
+        </div>
+
+        <div class="example">
+          <h3>📝 예제: 이름이 '김'으로 시작하고 두 글자인 학생 조회</h3>
+          <div class="code-block">
+            SELECT * FROM students<br>
+            WHERE name LIKE '김_';
+          </div>
+        </div>
+
+        <div class="tip">
+          <h3>💡 팁: LIKE 성능 최적화</h3>
+          <p>LIKE 연산자는 성능에 영향을 줄 수 있습니다. 가능하면 정확한 검색을 사용하는 것이 좋습니다.</p>
+        </div>
+
+        <h2>3. ESCAPE 키워드</h2>
+        <p>특수 문자를 그대로 사용하려면 ESCAPE 키워드를 사용합니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: 이름에 '%'가 포함된 학생 조회</h3>
+          <div class="code-block">
+            SELECT * FROM students<br>
+            WHERE name LIKE '%\%%' ESCAPE '\\';
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_orderby.html" class="nav-button">이전: ORDER BY</a>
+        <a href="sql_aggregate.html" class="nav-button">다음: 집계 함수</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

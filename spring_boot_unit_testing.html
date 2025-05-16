@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧪 단위 테스트 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 기존 스타일 재사용 */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🧪 단위 테스트</h1>
+      <p class="intro-text">스프링 부트 애플리케이션의 단위 테스트 방법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. JUnit 5 기초</h2>
+        <div class="code-block">
+          <pre><code class="java">@SpringBootTest
+public class ProductServiceTest {
+    
+    @Autowired
+    private ProductService productService;
+
+    @MockBean
+    private ProductRepository productRepository;
+
+    @Test
+    void shouldCreateProduct() {
+        // given
+        Product product = new Product("Test Product", 100.0);
+        
+        // when
+        Product result = productService.createProduct(product);
+        
+        // then
+        verify(productRepository).save(product);
+        assertEquals("Test Product", result.getName());
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. Mocking (Mockito)</h2>
+        <div class="code-block">
+          <pre><code class="java">@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
+    
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
+    private UserService userService;
+
+    @Test
+    void shouldFindUser() {
+        // given
+        User user = new User("test", "password");
+        when(userRepository.findByUsername("test"))
+            .thenReturn(Optional.of(user));
+
+        // when
+        User result = userService.getUser("test");
+
+        // then
+        verify(userRepository).findByUsername("test");
+        assertEquals("test", result.getUsername());
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. TestContainers</h2>
+        <div class="code-block">
+          <pre><code class="java">@SpringBootTest
+@ActiveProfiles("test")
+public class ProductServiceIntegrationTest {
+    
+    @Container
+    private static PostgreSQLContainer&lt;?&gt; postgres = new PostgreSQLContainer&lt;&gt;("postgres:13");
+
+    @DynamicPropertySource
+    static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
+
+    @Test
+    void shouldSaveProduct() {
+        // given
+        Product product = new Product("Test Product", 100.0);
+        
+        // when
+        Product saved = productService.save(product);
+        
+        // then
+        assertNotNull(saved.getId());
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 다음 단계</h2>
+        <p>이제 단위 테스트의 기본적인 개념을 배웠습니다. 다음으로는 다음과 같은 주제들을 배우게 됩니다:</p>
+        <ul>
+          <li><a href="spring_boot_integration_testing.html">통합 테스트</a></li>
+          <li><a href="spring_boot_performance.html">성능 테스트</a></li>
+          <li><a href="spring_boot_monitoring.html">모니터링</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

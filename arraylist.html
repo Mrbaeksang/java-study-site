@@ -362,6 +362,156 @@ System.out.println(list.isEmpty()); // false
       </div>
     </section>
 
+    <!-- 🔑 주요 메서드별 상세 사용법 & 실전 예시 -->
+    <section class="section">
+      <h2>🔑 주요 메서드별 상세 사용법 & 실전 예시</h2>
+      <!-- add() -->
+      <div class="example-box">
+        <h3>add() - 값 추가</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트 끝에 값을 추가할 때(동적 크기 확장)</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+ArrayList<String> list = new ArrayList<>();
+list.add("A");
+list.add("B");
+System.out.println(list); // [A, B]
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 데이터 누적, 입력값 저장, 동적 배열</li>
+          <li><b>자주 하는 실수:</b> 인덱스 지정 안 하면 맨 뒤에 추가됨</li>
+        </ul>
+        <div class="tip">미션: "A", "B"를 add한 후 list의 크기는?</div>
+        <details><summary>정답 보기</summary><div class="note">2</div></details>
+      </div>
+      <!-- get() -->
+      <div class="example-box">
+        <h3>get() - 값 조회</h3>
+        <ul>
+          <li><b>언제/왜?</b> 특정 인덱스의 값을 조회할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+ArrayList<String> list = new ArrayList<>();
+list.add("A");
+System.out.println(list.get(0)); // "A"
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 반복문과 조합, 데이터 검색</li>
+          <li><b>자주 하는 실수:</b> 인덱스 범위 벗어나면 예외 발생</li>
+        </ul>
+        <div class="tip">미션: list가 비어있을 때 get(0)은?</div>
+        <details><summary>정답 보기</summary><div class="note">예외 발생(IndexOutOfBoundsException)</div></details>
+      </div>
+      <!-- set() -->
+      <div class="example-box">
+        <h3>set() - 값 변경</h3>
+        <ul>
+          <li><b>언제/왜?</b> 특정 인덱스의 값을 새 값으로 변경할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+ArrayList<String> list = new ArrayList<>();
+list.add("A");
+list.set(0, "B");
+System.out.println(list); // [B]
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 값 갱신, 수정, 입력값 보정</li>
+        </ul>
+        <div class="tip">미션: [A]에서 set(0, "B") 후 결과는?</div>
+        <details><summary>정답 보기</summary><div class="note">[B]</div></details>
+      </div>
+      <!-- remove() -->
+      <div class="example-box">
+        <h3>remove() - 값 삭제</h3>
+        <ul>
+          <li><b>언제/왜?</b> 특정 인덱스/값을 삭제할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+ArrayList<String> list = new ArrayList<>();
+list.add("A"); list.add("B");
+list.remove("A");
+System.out.println(list); // [B]
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 조건부 삭제, 반복문 내 안전 삭제(Iterator와 조합)</li>
+          <li><b>자주 하는 실수:</b> 인덱스/값 혼동, 없는 값 삭제 시 변화 없음</li>
+        </ul>
+        <div class="tip">미션: [A, B]에서 remove("A") 후 결과는?</div>
+        <details><summary>정답 보기</summary><div class="note">[B]</div></details>
+      </div>
+      <!-- contains() -->
+      <div class="example-box">
+        <h3>contains() - 값 포함 여부 확인</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트에 특정 값이 들어있는지 확인할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+ArrayList<String> list = new ArrayList<>();
+list.add("A");
+System.out.println(list.contains("A")); // true
+System.out.println(list.contains("B")); // false
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 값 중복 체크, 조건 분기</li>
+        </ul>
+        <div class="tip">미션: "B"가 없을 때 contains("B")의 결과는?</div>
+        <details><summary>정답 보기</summary><div class="note">false</div></details>
+      </div>
+      <!-- size() -->
+      <div class="example-box">
+        <h3>size() - 크기 확인</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트에 저장된 값의 개수 확인</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+ArrayList<Integer> list = new ArrayList<>();
+list.add(1); list.add(2);
+System.out.println(list.size()); // 2
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 입력값 개수 제한, 반복문 조건</li>
+        </ul>
+        <div class="tip">미션: 1, 2를 add한 후 size()는?</div>
+        <details><summary>정답 보기</summary><div class="note">2</div></details>
+      </div>
+      <!-- clear() -->
+      <div class="example-box">
+        <h3>clear() - 전체 삭제</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트의 모든 값 삭제(초기화)</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+ArrayList<String> list = new ArrayList<>();
+list.add("A");
+list.clear();
+System.out.println(list); // []
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 상태 초기화, 재사용</li>
+        </ul>
+        <div class="tip">미션: clear() 후 isEmpty()는?</div>
+        <details><summary>정답 보기</summary><div class="note">true</div></details>
+      </div>
+      <!-- isEmpty() -->
+      <div class="example-box">
+        <h3>isEmpty() - 비어있는지 확인</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트가 비었는지 확인할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+ArrayList<String> list = new ArrayList<>();
+System.out.println(list.isEmpty()); // true
+list.add("A");
+System.out.println(list.isEmpty()); // false
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 반복문 조건, 입력/출력 제어</li>
+        </ul>
+        <div class="tip">미션: 아무 값도 없으면 isEmpty()는?</div>
+        <details><summary>정답 보기</summary><div class="note">true</div></details>
+      </div>
+    </section>
+
     <!-- 👶 따라해보세요! 기본 사용법 -->
     <section class="section">
       <h2>👶 따라해보세요! 기본 사용법</h2>

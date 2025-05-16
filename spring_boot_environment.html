@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚙️ 개발 환경 설정 - Spring Boot 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      line-height: 1.5;
+    }
+    .note {
+      border-left: 4px solid #4ec9b0;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(78, 201, 176, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    .java-keyword { color: #569cd6; font-weight: bold; }
+    .java-string { color: #ce9178; }
+    .java-number { color: #b5cea8; }
+    .java-comment { color: #6a9955; font-style: italic; }
+    .java-annotation { color: #9cdcfe; }
+    .java-class { color: #4ec9b0; }
+    .java-method { color: #dcdcaa; }
+    .java-interface { color: #b8d7a3; }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    h2 {
+      color: #4ec9b0;
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      color: #9cdcfe;
+      margin-top: 2rem;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .step {
+      margin-bottom: 2rem;
+    }
+    .step-number {
+      display: inline-block;
+      background: #4ec9b0;
+      color: #1e1e1e;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⚙️ 스프링 부트 개발 환경 설정</h1>
+      <p class="intro-text">스프링 부트 개발을 위한 필수 도구들을 설치하고 설정하는 방법을 안내합니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 필수 도구 설치</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> JDK 설치</h3>
+          <p>스프링 부트 3.x는 Java 17 이상을 요구합니다. OpenJDK나 Oracle JDK 중 선택하여 설치하세요.</p>
+          
+          <div class="note">
+            <h4>📌 권장 JDK 버전</h4>
+            <ul>
+              <li>Java 17 (LTS) - 안정적인 버전 추천</li>
+              <li>Java 21 (LTS) - 최신 LTS 버전</li>
+            </ul>
+          </div>
+          
+          <p><strong>설치 확인:</strong></p>
+          <pre class="code-block"><code>java -version
+javac -version</code></pre>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 빌드 도구 선택</h3>
+          <p>Maven이나 Gradle 중 선택하세요. 최신 스프링 부트 프로젝트는 Gradle을 권장합니다.</p>
+          
+          <div class="method-grid">
+            <div class="toc-card">
+              <h4>Maven (pom.xml)</h4>
+              <pre class="code-block"><code class="language-xml">&lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;3.2.0&lt;/version&gt;
+&lt;/parent&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+            </div>
+            
+            <div class="toc-card">
+              <h4>Gradle (build.gradle)</h4>
+              <pre class="code-block"><code class="language-groovy">plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}</code></pre>
+            </div>
+          </div>
+          
+          <p><strong>설치 확인:</strong></p>
+          <pre class="code-block"><code># Maven 확인
+mvn -v
+
+# Gradle 확인
+gradle -v</code></pre>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">3</span> IDE 선택 및 설정</h3>
+          <p>다음 IDE 중 하나를 선택하세요. IntelliJ IDEA를 가장 추천합니다.</p>
+          
+          <ul>
+            <li><strong>IntelliJ IDEA (Ultimate/Community)</strong> - <a href="https://www.jetbrains.com/idea/" target="_blank">다운로드</a></li>
+            <li><strong>Eclipse IDE</strong> - <a href="https://www.eclipse.org/downloads/" target="_blank">다운로드</a></li>
+            <li><strong>VS Code</strong> - <a href="https://code.visualstudio.com/" target="_blank">다운로드</a> (Extension Pack for Java 설치 필요)</li>
+          </ul>
+          
+          <div class="tip">
+            <h4>💡 IntelliJ IDEA 플러그인 추천</h4>
+            <ul>
+              <li>Lombok</li>
+              <li>Spring Boot Tools</li>
+              <li>Spring Initializr and Assistant</li>
+              <li>MapStruct Support</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. 프로젝트 생성하기</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> Spring Initializr 사용하기</h3>
+          <p><a href="https://start.spring.io/" target="_blank">start.spring.io</a>에서 프로젝트를 생성하거나, IDE에서 Spring Initializr를 사용하세요.</p>
+          
+          <div class="note">
+            <h4>📌 권장 설정</h4>
+            <ul>
+              <li>Project: Gradle (Kotlin) or Maven</li>
+              <li>Language: Java</li>
+              <li>Spring Boot: 3.2.x (최신 안정 버전)</li>
+              <li>Packaging: Jar (기본값)</li>
+              <li>Java: 17 or 21</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 의존성 추가</h3>
+          <p>필요한 스타터 의존성을 선택하세요. 예시:</p>
+          
+          <ul>
+            <li><strong>Spring Web</strong> - 웹 애플리케이션 개발</li>
+            <li><strong>Spring Data JPA</strong> - 데이터베이스 연동</li>
+            <li><strong>Lombok</strong> - 보일러플레이트 코드 감소</li>
+            <li><strong>Spring Boot DevTools</strong> - 개발자 도구</li>
+            <li><strong>Spring Security</strong> - 인증/인가</li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">3</span> 프로젝트 가져오기</h3>
+          <p>생성된 프로젝트를 IDE로 가져옵니다.</p>
+          
+          <div class="method-grid">
+            <div class="toc-card">
+              <h4>IntelliJ IDEA</h4>
+              <ol>
+                <li>File > Open</li>
+                <li>생성된 프로젝트 폴더 선택</li>
+                <li>Trust Project 선택</li>
+              </ol>
+            </div>
+            
+            <div class="toc-card">
+              <h4>VS Code</h4>
+              <ol>
+                <li>File > Open Folder</li>
+                <li>생성된 프로젝트 폴더 선택</li>
+                <li>필요한 확장 프로그램 설치 안내가 표시되면 설치</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. 애플리케이션 실행 및 확인</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> 메인 클래스 실행</h3>
+          <p>기본 애플리케이션 클래스(<code>@SpringBootApplication</code>이 붙은 클래스)를 실행하세요.</p>
+          
+          <pre class="code-block"><code class="language-java">@SpringBootApplication
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+}</code></pre>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 실행 확인</h3>
+          <p>애플리케이셔니 정상적으로 실행되면 다음 로그가 표시됩니다:</p>
+          
+          <pre class="code-block"><code>  .   ____          _            __ _ _
+ /\\\\ / ___'_ __ _ _(_)_ __   __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \\/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+...
+Started MyApplication in 1.5 seconds (process running for 2.1)</code></pre>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">3</span> 테스트 엔드포인트 추가</h3>
+          <p>간단한 REST 컨트롤러를 추가하여 테스트해보세요.</p>
+          
+          <pre class="code-block"><code class="language-java">@RestController
+public class HelloController {
+    
+    @GetMapping("/")
+    public String hello() {
+        return "Hello, Spring Boot!";
+    }
+}</code></pre>
+          
+          <p>브라우저에서 <a href="http://localhost:8080" target="_blank">http://localhost:8080</a>에 접속하여 확인하세요.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 문제 해결</h2>
+        
+        <div class="warning">
+          <h4>⚠️ 포트 충돌 문제</h4>
+          <p>기본 포트(8080)가 이미 사용 중이라면 <code>application.properties</code>에서 포트를 변경하세요:</p>
+          <pre class="code-block"><code>server.port=8081</code></pre>
+        </div>
+        
+        <div class="warning">
+          <h4>⚠️ 의존성 문제</h4>
+          <p>의존성 문제가 발생하면 다음 명령어로 의존성을 새로 고치세요:</p>
+          <pre class="code-block"><code># Maven
+mvn clean install
+
+# Gradle
+gradle --refresh-dependencies</code></pre>
+        </div>
+        
+        <div class="tip">
+          <h4>💡 개발자 도구 (DevTools)</h4>
+          <p>개발 중 자동 재시작과 같은 기능을 사용하려면 <code>spring-boot-devtools</code> 의존성을 추가하세요.</p>
+          <pre class="code-block"><code class="language-xml">&lt;!-- Maven --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="spring_boot_introduction.html" class="nav-button">← 이전: 스프링 부트 소개</a>
+        <a href="spring_boot_first_app.html" class="nav-button">다음: 첫 번째 애플리케이션 →</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

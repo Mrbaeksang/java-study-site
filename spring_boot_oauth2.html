@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔒 OAuth2 연동 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 기존 스타일 재사용 */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔒 OAuth2 연동</h1>
+      <p class="intro-text">OAuth2를 활용한 외부 서비스 연동 방법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. OAuth2 설정</h2>
+        <div class="code-block">
+          <pre><code class="yaml">spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: your-client-id
+            client-secret: your-client-secret
+            scope: profile,email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. OAuth2 Security Config</h2>
+        <div class="code-block">
+          <pre><code class="java">@Configuration
+public class SecurityConfig {
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -&gt; auth
+                .requestMatchers("/public/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth2 -&gt; oauth2
+                .loginPage("/login")
+                .defaultSuccessUrl("/home")
+                .userInfoEndpoint(userInfo -&gt; userInfo
+                    .userService(customOAuth2UserService()))
+            );
+        
+        return http.build();
+    }
+
+    @Bean
+    public OAuth2UserService&lt;OAuth2UserRequest, OAuth2User&gt; customOAuth2UserService() {
+        return new CustomOAuth2UserService();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. 사용자 서비스 구현</h2>
+        <div class="code-block">
+          <pre><code class="java">@Service
+public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+    
+    @Override
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        OAuth2User oAuth2User = super.loadUser(userRequest);
+        
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        String userNameAttributeName = userRequest.getClientRegistration()
+            .getProviderDetails()
+            .getUserInfoEndpoint()
+            .getUserNameAttributeName();
+
+        Map&lt;String, Object&gt; attributes = oAuth2User.getAttributes();
+        
+        return new CustomOAuth2User(
+            registrationId,
+            userNameAttributeName,
+            attributes
+        );
+    }
+}
+
+public class CustomOAuth2User implements OAuth2User {
+    private final String registrationId;
+    private final String userNameAttributeName;
+    private final Map&lt;String, Object&gt; attributes;
+
+    public CustomOAuth2User(String registrationId, String userNameAttributeName, Map&lt;String, Object&gt; attributes) {
+        this.registrationId = registrationId;
+        this.userNameAttributeName = userNameAttributeName;
+        this.attributes = attributes;
+    }
+
+    @Override
+    public Map&lt;String, Object&gt; getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public Collection&lt;? extends GrantedAuthority&gt; getAuthorities() {
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    public String getName() {
+        return (String) attributes.get(userNameAttributeName);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 다음 단계</h2>
+        <p>이제 OAuth2 연동의 기본적인 구현을 배웠습니다. 다음으로는 다음과 같은 주제들을 배우게 됩니다:</p>
+        <ul>
+          <li><a href="spring_boot_jwt.html">JWT 인증</a></li>
+          <li><a href="spring_boot_csrf.html">CSRF 보호</a></li>
+          <li><a href="spring_boot_security.html">스프링 시큐리티</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 SQL WHERE 절 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+      line-height: 1.5;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    .sql-keyword { color: #569cd6; font-weight: bold; }
+    .sql-string { color: #ce9178; }
+    .sql-number { color: #b5cea8; }
+    .sql-comment { color: #6a9955; font-style: italic; }
+    .sql-operator { color: #d4d4d4; font-weight: bold; }
+    .practice {
+      background: rgba(0, 0, 0, 0.2);
+      border-left: 4px solid #ffd700;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .practice-title {
+      color: #ffd700;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+    .operator-table {
+      width: 100%;
+      margin: 1.5rem 0;
+    }
+    .operator-table th, .operator-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--vscode-highlight);
+    }
+    .operator-table th {
+      background: var(--vscode-bg);
+      text-align: center;
+    }
+    .operator-table code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📚 SQL WHERE 절 완전 정복</h1>
+    <p>원하는 데이터만 정확하게 필터링하는 방법</p>
+  </header>
+
+  <div class="section">
+    <h2>1. WHERE 절이란?</h2>
+    <p>WHERE 절은 테이블에서 특정 조건을 만족하는 행만 선택할 때 사용합니다. 마치 쇼핑몰에서 원하는 가격대나 브랜드의 상품만 필터링하는 것과 같아요.</p>
+    
+    <div class="tip">
+      <h3>💡 실생활 비유: 서점에서 책 찾기</h3>
+      <p>서점에 가서 "IT 분야에서 3만원 미만인 책만 보여주세요"라고 말하는 것과 같습니다. 
+      이때 서점 직원(데이터베이스)은 여러분의 조건(WHERE 절)에 맞는 책(행)만 찾아서 보여줍니다.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>2. 기본 문법</h2>
+    <div class="code-block">
+      <span class="sql-keyword">SELECT</span> column1, column2, ...<br>
+      <span class="sql-keyword">FROM</span> table_name<br>
+      <span class="sql-keyword">WHERE</span> condition;
+    </div>
+
+    <div class="example-box">
+      <h3>예제 1: 기본적인 WHERE 절 사용</h3>
+      <div class="code-block">
+        <span class="sql-comment">-- 연봉이 5000 이상인 직원 조회</span><br>
+        <span class="sql-keyword">SELECT</span> first_name, last_name, salary<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> salary <span class="sql-operator">>=</span> <span class="sql-number">5000</span>;
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>3. 비교 연산자</h2>
+    <p>WHERE 절에서 사용할 수 있는 주요 비교 연산자들입니다.</p>
+    
+    <table class="operator-table">
+      <tr>
+        <th>연산자</th>
+        <th>설명</th>
+        <th>예시</th>
+      </tr>
+      <tr>
+        <td><code>=</code></td>
+        <td>같음</td>
+        <td><code>salary = 5000</code></td>
+      </tr>
+      <tr>
+        <td><code>></code></td>
+        <td>보다 큼</td>
+        <td><code>salary > 5000</code></td>
+      </tr>
+      <tr>
+        <td><code><</code></td>
+        <td>보다 작음</td>
+        <td><code>salary < 5000</code></td>
+      </tr>
+      <tr>
+        <td><code>>=</code></td>
+        <td>크거나 같음</td>
+        <td><code>salary >= 5000</code></td>
+      </tr>
+      <tr>
+        <td><code><=</code></td>
+        <td>작거나 같음</td>
+        <td><code>salary <= 5000</code></td>
+      </tr>
+      <tr>
+        <td><code><></code> 또는 <code>!=</code></td>
+        <td>같지 않음</td>
+        <td><code>department_id <> 10</code></td>
+      </tr>
+    </table>
+
+    <div class="example-box">
+      <h3>예제 2: 다양한 비교 연산자 사용</h3>
+      <div class="code-block">
+        <span class="sql-comment">-- 10번 부서가 아닌 직원 조회</span><br>
+        <span class="sql-keyword">SELECT</span> first_name, last_name, department_id<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> department_id <span class="sql-operator"><></span> <span class="sql-number">10</span>;
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>4. 논리 연산자 (AND, OR, NOT)</h2>
+    <p>여러 조건을 조합할 때 사용합니다.</p>
+    
+    <div class="example-box">
+      <h3>예제 3: AND 연산자</h3>
+      <div class="code-block">
+        <span class="sql-comment">-- 50번 부서에서 연봉이 5000 이상인 직원 조회</span><br>
+        <span class="sql-keyword">SELECT</span> first_name, last_name, department_id, salary<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> department_id <span class="sql-operator">=</span> <span class="sql-number">50</span>
+        <span class="sql-keyword">AND</span> salary <span class="sql-operator">>=</span> <span class="sql-number">5000</span>;
+      </div>
+    </div>
+
+    <div class="example-box">
+      <h3>예제 4: OR 연산자</h3>
+      <div class="code-block">
+        <span class="sql-comment">-- 10번 또는 20번 부서의 직원 조회</span><br>
+        <span class="sql-keyword">SELECT</span> first_name, last_name, department_id<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> department_id <span class="sql-operator">=</span> <span class="sql-number">10</span>
+        <span class="sql-keyword">OR</span> department_id <span class="sql-operator">=</span> <span class="sql-number">20</span>;
+      </div>
+    </div>
+
+    <div class="example-box">
+      <h3>예제 5: NOT 연산자</h3>
+      <div class="code-block">
+        <span class="sql-comment">-- 10번 부서가 아닌 직원 조회 (앞서 본 !=, <>와 동일한 결과)</span><br>
+        <span class="sql-keyword">SELECT</span> first_name, last_name, department_id<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> <span class="sql-keyword">NOT</span> department_id <span class="sql-operator">=</span> <span class="sql-number">10</span>;
+      </div>
+    </div>
+
+    <div class="tip">
+      <h3>💡 연산자 우선순위</h3>
+      <p>여러 연산자가 함께 사용될 때는 <code>NOT</code> > <code>AND</code> > <code>OR</code> 순으로 처리됩니다. <br>
+      혼동을 피하기 위해 괄호를 사용하는 것이 좋습니다.</p>
+      <div class="code-block">
+        <span class="sql-comment">-- 괄호를 사용한 명확한 표현</span><br>
+        <span class="sql-keyword">WHERE</span> (department_id <span class="sql-operator">=</span> <span class="sql-number">10</span> <span class="sql-keyword">OR</span> department_id <span class="sql-operator">=</span> <span class="sql-number">20</span>)
+        <span class="sql-keyword">AND</span> salary <span class="sql-operator">></span> <span class="sql-number">5000</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>5. 특수 연산자 (BETWEEN, IN, LIKE, IS NULL)</h2>
+    
+    <div class="example-box">
+      <h3>예제 6: BETWEEN - 범위 검색</h3>
+      <div class="code-block">
+        <span class="sql-comment">-- 연봉이 5000에서 10000 사이인 직원 조회 (경계값 포함)</span><br>
+        <span class="sql-keyword">SELECT</span> first_name, last_name, salary<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> salary <span class="sql-keyword">BETWEEN</span> <span class="sql-number">5000</span> <span class="sql-keyword">AND</span> <span class="sql-number">10000</span>;
+      </div>
+    </div>
+
+    <div class="example-box">
+      <h3>예제 7: IN - 여러 값 중 하나와 일치하는지 확인</h3>
+      <div class="code-block">
+        <span class="sql-comment">-- 10번, 20번, 30번 부서의 직원 조회</span><br>
+        <span class="sql-keyword">SELECT</span> first_name, last_name, department_id<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> department_id <span class="sql-keyword">IN</span> (<span class="sql-number">10</span>, <span class="sql-number">20</span>, <span class="sql-number">30</span>);
+      </div>
+    </div>
+
+    <div class="example-box">
+      <h3>예제 8: LIKE - 패턴 매칭</h3>
+      <div class="code-block">
+        <span class="sql-comment">-- 성이 'S'로 시작하는 직원 조회</span><br>
+        <span class="sql-keyword">SELECT</span> first_name, last_name<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> last_name <span class="sql-keyword">LIKE</span> <span class="sql-string">'S%'</span>;<br><br>
+        
+        <span class="sql-comment">-- 이름에 'a'가 포함된 직원 조회 (대소문자 구분 없음)</span><br>
+        <span class="sql-keyword">SELECT</span> first_name, last_name<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> <span class="sql-keyword">LOWER</span>(first_name) <span class="sql-keyword">LIKE</span> <span class="sql-string">'%a%'</span>;
+      </div>
+      <div class="tip">
+        <p><strong>와일드카드 문자:</strong></p>
+        <ul>
+          <li><code>%</code>: 0개 이상의 어떤 문자</li>
+          <li><code>_</code>: 정확히 한 개의 문자</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="example-box">
+      <h3>예제 9: IS NULL - NULL 값 확인</h3>
+      <div class="code-block">
+        <span class="sql-comment">-- 매니저가 없는 직원 조회 (CEO 등)</span><br>
+        <span class="sql-keyword">SELECT</span> first_name, last_name, manager_id<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> manager_id <span class="sql-keyword">IS</span> <span class="sql-keyword">NULL</span>;
+      </div>
+      <div class="warning">
+        <p><strong>주의:</strong> NULL 값은 <code>=</code> 연산자로 비교할 수 없습니다. 반드시 <code>IS NULL</code>을 사용해야 합니다.</p>
+        <div class="code-block">
+          <span class="sql-comment">-- 잘못된 사용법</span><br>
+          <span class="sql-keyword">WHERE</span> manager_id <span class="sql-operator">=</span> <span class="sql-keyword">NULL</span>;  <span class="sql-comment">-- 작동하지 않음</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>6. 실습 문제</h2>
+    
+    <div class="practice">
+      <div class="practice-title">🧪 실습 1: 기본 조건</div>
+      <p>employees 테이블에서 2005년 이후에 입사한 직원의 이름, 입사일을 조회하세요.</p>
+      <div class="code-block">
+        <span class="sql-comment">-- 여기에 코드를 작성하세요</span>
+      </div>
+    </div>
+
+    <div class="practice">
+      <div class="practice-title">🧪 실습 2: 복합 조건</div>
+      <p>IT 부서(부서번호 60)에서 근무하면서 연봉이 8000 이상인 직원의 이름, 부서번호, 연봉을 조회하세요.</p>
+      <div class="code-block">
+        <span class="sql-comment">-- 여기에 코드를 작성하세요</span>
+      </div>
+    </div>
+
+    <div class="practice">
+      <div class="practice-title">🧪 실습 3: LIKE와 와일드카드</div>
+      <p>이메일이 'S'로 시작하고 'G'로 끝나는 직원의 이름과 이메일을 조회하세요.</p>
+      <div class="code-block">
+        <span class="sql-comment">-- 여기에 코드를 작성하세요</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>7. 정답</h2>
+    
+    <details>
+      <summary>실습 1 정답 보기</summary>
+      <div class="code-block">
+        <span class="sql-keyword">SELECT</span> first_name, last_name, hire_date<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> hire_date <span class="sql-operator">>=</span> <span class="sql-string">'2005-01-01'</span>;
+      </div>
+    </details>
+
+    <details>
+      <summary>실습 2 정답 보기</summary>
+      <div class="code-block">
+        <span class="sql-keyword">SELECT</span> first_name, last_name, department_id, salary<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> department_id <span class="sql-operator">=</span> <span class="sql-number">60</span>
+        <span class="sql-keyword">AND</span> salary <span class="sql-operator">>=</span> <span class="sql-number">8000</span>;
+      </div>
+    </details>
+
+    <details>
+      <summary>실습 3 정답 보기</summary>
+      <div class="code-block">
+        <span class="sql-keyword">SELECT</span> first_name, last_name, email<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> email <span class="sql-keyword">LIKE</span> <span class="sql-string">'S%G%'</span>;
+        <span class="sql-comment">-- 또는 더 정확하게는</span><br>
+        <span class="sql-keyword">SELECT</span> first_name, last_name, email<br>
+        <span class="sql-keyword">FROM</span> employees<br>
+        <span class="sql-keyword">WHERE</span> email <span class="sql-keyword">LIKE</span> <span class="sql-string">'S%'</span> <span class="sql-keyword">AND</span> email <span class="sql-keyword">LIKE</span> <span class="sql-string">'%G'</span>;
+      </div>
+    </details>
+  </div>
+
+  <div class="section">
+    <h2>8. 요약</h2>
+    <table>
+      <tr>
+        <th>연산자/키워드</th>
+        <th>설명</th>
+        <th>예시</th>
+      </tr>
+      <tr>
+        <td>비교 연산자</td>
+        <td>=, >, <, >=, <=, <></td>
+        <td><code>salary > 5000</code></td>
+      </tr>
+      <tr>
+        <td>논리 연산자</td>
+        <td>AND, OR, NOT</td>
+        <td><code>dept=10 AND salary>5000</code></td>
+      </tr>
+      <tr>
+        <td>BETWEEN</td>
+        <td>범위 검색 (경계값 포함)</td>
+        <td><code>BETWEEN 5000 AND 10000</code></td>
+      </tr>
+      <tr>
+        <td>IN</td>
+        <td>여러 값 중 하나와 일치</td>
+        <td><code>IN (10, 20, 30)</code></td>
+      </tr>
+      <tr>
+        <td>LIKE</td>
+        <td>패턴 매칭</td>
+        <td><code>LIKE 'S%'</code></td>
+      </tr>
+      <tr>
+        <td>IS NULL</td>
+        <td>NULL 값 확인</td>
+        <td><code>IS NULL</code></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>9. 다음 단계</h2>
+    <p>이제 ORDER BY를 사용해 결과를 원하는 순서로 정렬하는 방법을 배워볼까요?</p>
+    <a href="sql_orderby.html" class="button">ORDER BY 배우기 →</a>
+  </div>
+
+  <script>
+    // 코드 블록에 구문 강조 적용
+    document.addEventListener('DOMContentLoaded', function() {
+      const codeBlocks = document.querySelectorAll('.code-block');
+      codeBlocks.forEach(block => {
+        let html = block.innerHTML;
+        // SQL 키워드 강조
+        const keywords = ['SELECT', 'FROM', 'WHERE', 'AS', 'DISTINCT', 'CONCAT', 'AND', 'OR', 'NOT', 'GROUP BY', 'ORDER BY', 'HAVING', 'LIMIT', 'OFFSET', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'OUTER', 'ON', 'UNION', 'ALL', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE', 'TABLE', 'ALTER', 'DROP', 'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'UNIQUE', 'INDEX', 'VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'BEGIN', 'END', 'IF', 'THEN', 'ELSE', 'WHILE', 'FOR', 'FOREACH', 'CASE', 'WHEN', 'ELSE', 'THEN', 'END', 'LOOP', 'EXIT', 'CONTINUE', 'RETURN', 'DECLARE', 'DEFAULT', 'NOT NULL', 'NULL', 'TRUE', 'FALSE', 'IS', 'BETWEEN', 'LIKE', 'IN', 'ANY', 'SOME', 'ALL', 'EXISTS', 'UNIQUE', 'DISTINCT', 'ASC', 'DESC', 'BY', 'HAVING', 'WITH', 'RECURSIVE', 'WINDOW', 'PARTITION', 'OVER', 'FILTER', 'INTERSECT', 'EXCEPT', 'CROSS', 'NATURAL', 'USING', 'LATERAL'];
+        
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`\\b(${keyword})\\b`, 'gi');
+          html = html.replace(regex, '<span class="sql-keyword">$1</span>');
+        });
+
+        // 숫자 강조
+        html = html.replace(/(\b\d+\b)/g, '<span class="sql-number">$1</span>');
+        
+        // 문자열 강조
+        html = html.replace(/'([^']*?)'/g, '<span class="sql-string">\'$1\'</span>');
+        
+        // 주석 강조
+        html = html.replace(/--(.*?)(?=<br>|$)/g, '<span class="sql-comment">--$1</span>');
+        
+        block.innerHTML = html;
+      });
+    });
+  </script>
+</body>
+</html>

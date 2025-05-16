@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌐 RESTful API 개발 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🌐 RESTful API 개발</h1>
+      <p class="intro-text">스프링 부트를 사용하여 RESTful API를 개발하는 방법을 배웁니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. RESTful API 기본 개념</h2>
+        <p>REST(Representational State Transfer)는 웹 표준을 기반으로 하는 아키텍처 스타일입니다.</p>
+        
+        <h3>REST의 주요 원칙</h3>
+        <ul>
+          <li>자원(Resource) 기반</li>
+          <li>HTTP 메서드(GET, POST, PUT, DELETE 등) 활용</li>
+          <li>무상태성(Stateless)</li>
+          <li>캐시 가능(Cacheable)</li>
+          <li>일관된 인터페이스</li>
+        </ul>
+      </div>
+      
+      <div class="section">
+        <h2>2. REST 컨트롤러 구현</h2>
+        <p>스프링 부트에서는 <code>@RestController</code> 어노테이션을 사용하여 RESTful API를 쉽게 구현할 수 있습니다.</p>
+        
+        <div class="code-block">
+          <pre><code>@RestController
+@RequestMapping("/api/books")
+public class BookController {
+    
+    private final BookService bookService;
+    
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
+    
+    @GetMapping
+    public ResponseEntity&lt;List&lt;Book&gt;&gt; getAllBooks() {
+        return ResponseEntity.ok(bookService.findAllBooks());
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity&lt;Book&gt; getBookById(@PathVariable Long id) {
+        return bookService.findBookById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @PostMapping
+    public ResponseEntity&lt;Book&gt; createBook(@Valid @RequestBody Book book) {
+        Book savedBook = bookService.saveBook(book);
+        return ResponseEntity.created(
+            ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedBook.getId())
+                .toUri()
+        ).body(savedBook);
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity&lt;Book&gt; updateBook(@PathVariable Long id, @Valid @RequestBody Book book) {
+        return bookService.findBookById(id)
+                .map(existingBook -> {
+                    book.setId(id);
+                    return ResponseEntity.ok(bookService.saveBook(book));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity&lt;Void&gt; deleteBook(@PathVariable Long id) {
+        return bookService.findBookById(id)
+                .map(book -> {
+                    bookService.deleteBook(id);
+                    return ResponseEntity.noContent().&lt;Void&gt;build();
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+}</code></pre>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>3. DTO(Data Transfer Object) 사용</h2>
+        <p>도메인 모델 대신 DTO를 사용하여 API 요청/응답을 처리하면 더 안전하고 유연한 API를 구현할 수 있습니다.</p>
+        
+        <div class="code-block">
+          <pre><code>@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class BookDto {
+    private Long id;
+    
+    @NotBlank(message = "제목은 필수 입력 항목입니다.")
+    private String title;
+    
+    @NotBlank(message = "저자는 필수 입력 항목입니다.")
+    private String author;
+    
+    @NotNull(message = "출판 연도는 필수 입력 항목입니다.")
+    @Min(value = 1000, message = "출판 연도는 1000년 이후여야 합니다.")
+    private Integer publicationYear;
+    
+    @NotBlank(message = "ISBN은 필수 입력 항목입니다.")
+    @Pattern(regexp = "^[0-9-]+$", message = "ISBN은 숫자와 하이픈(-)만 포함할 수 있습니다.")
+    private String isbn;
+    
+    public static BookDto from(Book book) {
+        return new BookDto(
+            book.getId(),
+            book.getTitle(),
+            book.getAuthor(),
+            book.getPublicationYear(),
+            book.getIsbn()
+        );
+    }
+    
+    public Book toEntity() {
+        return Book.builder()
+                .id(this.id)
+                .title(this.title)
+                .author(this.author)
+                .publicationYear(this.publicationYear)
+                .isbn(this.isbn)
+                .build();
+    }
+}</code></pre>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>4. 예외 처리</h2>
+        <p>전역 예외 처리를 통해 일관된 에러 응답을 제공할 수 있습니다.</p>
+        
+        <div class="code-block">
+          <pre><code>@ControllerAdvice
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleValidationExceptions(MethodArgumentNotValidException ex) {
+        List&lt;String&gt; errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.toList());
+                
+        ErrorResponse response = new ErrorResponse(
+            "유효성 검사 실패",
+            HttpStatus.BAD_REQUEST.value(),
+            errors
+        );
+        
+        return new ResponseEntity&lt;&gt;(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleResourceNotFound(ResourceNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(
+            ex.getMessage(),
+            HttpStatus.NOT_FOUND.value()
+        );
+        return new ResponseEntity&lt;&gt;(response, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleAllExceptions(Exception ex) {
+        ErrorResponse response = new ErrorResponse(
+            "서버 오류가 발생했습니다: " + ex.getMessage(),
+            HttpStatus.INTERNAL_SERVER_ERROR.value()
+        );
+        return new ResponseEntity&lt;&gt;(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+class ErrorResponse {
+    private String message;
+    private int status;
+    private List&lt;String&gt; errors;
+    
+    public ErrorResponse(String message, int status) {
+        this.message = message;
+        this.status = status;
+        this.errors = new ArrayList&lt;&gt;();
+    }
+}</code></pre>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>5. API 문서화 (SpringDoc OpenAPI)</h2>
+        <p>SpringDoc OpenAPI를 사용하여 API 문서를 자동으로 생성할 수 있습니다.</p>
+        
+        <div class="code-block">
+          <pre><code>// build.gradle에 의존성 추가
+implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
+
+// application.yml 설정
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    docExpansion: none
+
+// 컨트롤러 예시
+@Tag(name = "도서 관리", description = "도서 정보를 관리하는 API")
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+    
+    @Operation(summary = "도서 목록 조회", description = "모든 도서 목록을 조회합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "성공적으로 조회되었습니다.")
+    })
+    @GetMapping
+    public ResponseEntity&lt;List&lt;BookDto&gt;&gt; getAllBooks() {
+        // 구현 내용
+    }
+    
+    @Operation(summary = "도서 상세 조회", description = "ID로 도서 상세 정보를 조회합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "성공적으로 조회되었습니다."),
+        @ApiResponse(responseCode = "404", description = "해당 ID의 도서를 찾을 수 없습니다.")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity&lt;BookDto&gt; getBookById(
+            @Parameter(description = "도서 ID", required = true, example = "1") 
+            @PathVariable Long id) {
+        // 구현 내용
+    }
+}</code></pre>
+        </div>
+        
+        <div class="tip">
+          💡 <strong>팁</strong>: 애플리케이션 실행 후 <code>http://localhost:8080/swagger-ui.html</code>에서 API 문서를 확인할 수 있습니다.
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>© 2025 스프링 부트 완전 정복. 모든 권리 보유.</p>
+    </footer>
+  </div>
+</body>
+</html>

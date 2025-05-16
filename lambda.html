@@ -32,18 +32,11 @@
   <header>
     <h1>⚡ Lambda API 완벽 가이드</h1>
     <nav class="api-nav">
-      <a href="index.html" class="api-nav-link">홈</a>
+      <a href="index.html" class="api-nav-link">Home</a>
       <a href="string.html" class="api-nav-link">String</a>
-      <a href="stringbuilder.html" class="api-nav-link">StringBuilder</a>
-      <a href="arraylist.html" class="api-nav-link">ArrayList</a>
       <a href="collections.html" class="api-nav-link">Collections</a>
-      <a href="comparator.html" class="api-nav-link">Comparator</a>
-      <a href="hashset.html" class="api-nav-link">HashSet</a>
-      <a href="hashmap.html" class="api-nav-link">HashMap</a>
       <a href="stream.html" class="api-nav-link">Stream</a>
-      <a href="iterator.html" class="api-nav-link">Iterator</a>
-      <a href="lambda.html" class="api-nav-link active">Lambda</a>
-      <a href="stream.html" class="api-nav-next">다음장 ➡️</a>
+      <a href="random.html" class="api-nav-link">Random</a>
     </nav>
   </header>
   <main>
@@ -121,6 +114,190 @@ printTwice.accept("hi"); // hi\nhi
         </ul>
         <div class="tip">미션: 위 코드에서 printTwice.accept("bye")의 결과는?</div>
         <details><summary>정답 보기</summary><div class="note">bye\nbye</div></details>
+      </div>
+    </section>
+    <section class="section">
+      <h2>🎯 Lambda API 완벽 가이드</h2>
+      <div class="example-box">
+        <h3>개요</h3>
+        <ul>
+          <li>함수형 인터페이스</li>
+          <li>람다 표현식</li>
+          <li>메소드 참조</li>
+          <li>성능 최적화</li>
+        </ul>
+
+        <h3>주요 특징</h3>
+        <div class="ascii-art">
+          +-------------------+
+          |     Lambda API    |
+          |-------------------|
+          | - 함수형 인터페이스|
+          | - 람다 표현식    |
+          | - 메소드 참조    |
+          | - 성능 최적화    |
+          +-------------------+
+        </div>
+        <ul>
+          <li>함수형 인터페이스</li>
+          <li>람다 표현식 지원</li>
+          <li>메소드 참조 기능</li>
+          <li>성능 최적화</li>
+        </ul>
+
+        <h3>실제 사용 예시</h3>
+        <div class="code-block">
+// 간단한 람다 표현식
+List<String> list = Arrays.asList("apple", "banana", "orange");
+list.forEach(fruit -> System.out.println(fruit));
+
+// 복잡한 람다 표현식
+Comparator<String> byLength = (s1, s2) -> s1.length() - s2.length();
+
+// 메소드 참조
+list.forEach(System.out::println);
+        </div>
+
+        <h3>주의사항</h3>
+        <div class="warning">
+          <ul>
+            <li>타입 추론 주의</li>
+            <li>성능 고려</li>
+            <li>예외 처리</li>
+            <li>함수형 인터페이스 이해</li>
+          </ul>
+        </div>
+
+        <h3>성능 특성</h3>
+        <ul>
+          <li>함수형 인터페이스: O(1)</li>
+          <li>람다 표현식: O(1)</li>
+          <li>메소드 참조: O(1)</li>
+          <li>성능 최적화</li>
+        </ul>
+
+        <h3>관련 메서드 상세 설명</h3>
+        <div class="method-box">
+          <h4>Function<T,R> apply(T t)</h4>
+          <div class="code-block">
+// 예시
+Function<String, Integer> length = s -> s.length();
+int result = length.apply("hello");
+          </div>
+          <ul>
+            <li><b>사용처:</b> 데이터 변환, 값 계산</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 데이터 변환, 값 처리</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>타입 추론 주의</li>
+                <li>성능 고려</li>
+                <li>예외 처리</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="method-box">
+          <h4>Consumer<T> accept(T t)</h4>
+          <div class="code-block">
+// 예시
+Consumer<String> print = s -> System.out.println(s);
+print.accept("hello");
+          </div>
+          <ul>
+            <li><b>사용처:</b> 데이터 처리, 값 출력</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 데이터 처리, 값 저장</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>타입 추론 주의</li>
+                <li>성능 고려</li>
+                <li>예외 처리</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="method-box">
+          <h4>Predicate<T> test(T t)</h4>
+          <div class="code-block">
+// 예시
+Predicate<String> isLong = s -> s.length() > 5;
+boolean result = isLong.test("hello");
+          </div>
+          <ul>
+            <li><b>사용처:</b> 조건 검사, 필터링</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 조건 검사, 검증</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>타입 추론 주의</li>
+                <li>성능 고려</li>
+                <li>예외 처리</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <h3>예외 처리</h3>
+        <div class="warning">
+          <ul>
+            <li>NullPointerException: null 처리</li>
+            <li>ClassCastException: 타입 변환</li>
+            <li>OutOfMemoryError: 메모리 부족</li>
+          </ul>
+        </div>
+
+        <h3>동시성 고려사항</h3>
+        <div class="note">
+          <ul>
+            <li>함수형 인터페이스 동시성 고려</li>
+            <li>성능 고려</li>
+            <li>메모리 사용량</li>
+            <li>예외 처리</li>
+          </ul>
+        </div>
+
+        <h3>메모리 사용량</h3>
+        <div class="tip">
+          <ul>
+            <li>람다 표현식 메모리 효율적</li>
+            <li>메모리 사용량 최적화</li>
+            <li>성능 최적화</li>
+            <li>예외 처리 최적화</li>
+          </ul>
+        </div>
+
+        <h3>최적화 팁</h3>
+        <div class="tip">
+          <ul>
+            <li>타입 추론 최적화</li>
+            <li>성능 측정</li>
+            <li>메모리 사용량 최적화</li>
+            <li>예외 처리 최적화</li>
+            <li>함수형 인터페이스 선택</li>
+          </ul>
+        </div>
+
+        <h3>관련 API 링크</h3>
+        <ul>
+          <li><a href="stream.html">Stream API</a></li>
+          <li><a href="collections.html">Collections API</a></li>
+          <li><a href="comparator.html">Comparator API</a></li>
+          <li><a href="function.html">Function API</a></li>
+        </ul>
+
+        <h3>실전 활용 팁</h3>
+        <div class="note">
+          <ul>
+            <li>함수형 인터페이스</li>
+            <li>람다 표현식</li>
+            <li>메소드 참조</li>
+            <li>성능 최적화</li>
+            <li>예외 처리</li>
+          </ul>
+        </div>
       </div>
     </section>
     <section class="section">

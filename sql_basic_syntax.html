@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 SQL 기본 문법 - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 공통 스타일 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    .syntax-box {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      font-family: 'Consolas', monospace;
+    }
+    .example {
+      background: #1e1e1e;
+      border-left: 4px solid #4ec9b0;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .example h4 {
+      margin-top: 0;
+      color: #4ec9b0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📝 SQL 기본 문법</h1>
+      <p>SQL의 기본적인 문법 구조와 사용법을 배워봅시다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. SQL 문법 개요</h2>
+        <p>SQL은 데이터베이스와 상호작용하기 위한 선언적 언어로, 특정 작업을 수행하기 위한 명령어로 구성됩니다.</p>
+        
+        <div class="syntax-box">
+          <strong>기본 SQL 문법 구조:</strong>
+          <div class="code-block">
+            <span class="sql-keyword">SELECT</span> column1, column2, ...<br>
+            <span class="sql-keyword">FROM</span> table_name<br>
+            <span class="sql-keyword">WHERE</span> condition<br>
+            <span class="sql-keyword">GROUP BY</span> column_name<br>
+            <span class="sql-keyword">HAVING</span> condition<br>
+            <span class="sql-keyword">ORDER BY</span> column_name <span class="sql-keyword">ASC</span>|<span class="sql-keyword">DESC</span>;
+          </div>
+        </div>
+        
+        <div class="note">
+          <h3>📌 SQL 문법 특징</h3>
+          <ul>
+            <li>SQL 키워드는 대소문자를 구분하지 않지만, 가독성을 위해 대문자로 작성하는 것이 관례입니다.</li>
+            <li>각 SQL 문장은 세미콜론(;)으로 종료됩니다.</li>
+            <li>여러 줄에 걸쳐 작성할 수 있습니다.</li>
+            <li>주석은 -- 또는 /* */를 사용합니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section" id="datatypes">
+        <h2>2. 데이터 타입</h2>
+        <p>SQL에서는 다양한 데이터 타입을 지원합니다. 주요 데이터 타입은 다음과 같습니다.</p>
+        
+        <h3>2.1 숫자형</h3>
+        <table>
+          <tr>
+            <th>데이터 타입</th>
+            <th>설명</th>
+            <th>예시</th>
+          </tr>
+          <tr>
+            <td>INT/INTEGER</td>
+            <td>정수</td>
+            <td>42, -7, 0</td>
+          </tr>
+          <tr>
+            <td>DECIMAL(p,s)</td>
+            <td>고정 소수점 (전체 자릿수, 소수점 이하 자릿수)</td>
+            <td>DECIMAL(5,2) → 123.45</td>
+          </tr>
+          <tr>
+            <td>FLOAT/REAL</td>
+            <td>부동 소수점</td>
+            <td>3.14, -0.001</td>
+          </tr>
+        </table>
+
+        <h3>2.2 문자형</h3>
+        <table>
+          <tr>
+            <th>데이터 타입</th>
+            <th>설명</th>
+            <th>예시</th>
+          </tr>
+          <tr>
+            <td>CHAR(n)</td>
+            <td>고정 길이 문자열 (최대 255자)</td>
+            <td>CHAR(10) → 'Hello     '</td>
+          </tr>
+          <tr>
+            <td>VARCHAR(n)</td>
+            <td>가변 길이 문자열 (최대 65,535자)</td>
+            <td>VARCHAR(100) → 'Hello'</td>
+          </tr>
+          <tr>
+            <td>TEXT</td>
+            <td>긴 텍스트 (최대 65,535자)</td>
+            <td>게시물 내용 등</td>
+          </tr>
+        </table>
+
+        <h3>2.3 날짜/시간형</h3>
+        <table>
+          <tr>
+            <th>데이터 타입</th>
+            <th>설명</th>
+            <th>형식</th>
+          </tr>
+          <tr>
+            <td>DATE</td>
+            <td>날짜</td>
+            <td>YYYY-MM-DD</td>
+          </tr>
+          <tr>
+            <td>TIME</td>
+            <td>시간</td>
+            <td>HH:MM:SS</td>
+          </tr>
+          <tr>
+            <td>DATETIME</td>
+            <td>날짜와 시간</td>
+            <td>YYYY-MM-DD HH:MM:SS</td>
+          </tr>
+          <tr>
+            <td>TIMESTAMP</td>
+            <td>타임스탬프 (1970-01-01 이후 초)</td>
+            <td>UNIX 타임스탬프</td>
+          </tr>
+        </table>
+
+        <div class="tip">
+          <h3>💡 데이터베이스별 차이점</h3>
+          <p>데이터 타입은 데이터베이스 제품별로 차이가 있을 수 있습니다. 예를 들어, MySQL의 VARCHAR는 최대 65,535자까지 지원하지만, SQL Server에서는 VARCHAR(MAX)로 더 큰 크기를 저장할 수 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="section" id="operators">
+        <h2>3. 연산자</h2>
+        <p>SQL에서는 다양한 연산자를 사용하여 데이터를 비교하고 조작할 수 있습니다.</p>
+        
+        <h3>3.1 산술 연산자</h3>
+        <table>
+          <tr>
+            <th>연산자</th>
+            <th>설명</th>
+            <th>예시</th>
+          </tr>
+          <tr>
+            <td>+</td>
+            <td>덧셈</td>
+            <td>price + 10</td>
+          </tr>
+          <tr>
+            <td>-</td>
+            <td>뺄셈</td>
+            <td>price - 5</td>
+          </tr>
+          <tr>
+            <td>*</td>
+            <td>곱셈</td>
+            <td>quantity * price</td>
+          </tr>
+          <tr>
+            <td>/</td>
+            <td>나눗셈</td>
+            <td>total / quantity</td>
+          </tr>
+          <tr>
+            <td>%</td>
+            <td>나머지</td>
+            <td>count % 2</td>
+          </tr>
+        </table>
+
+        <h3>3.2 비교 연산자</h3>
+        <table>
+          <tr>
+            <th>연산자</th>
+            <th>설명</th>
+            <th>예시</th>
+          </tr>
+          <tr>
+            <td>=</td>
+            <td>같음</td>
+            <td>age = 25</td>
+          </tr>
+          <tr>
+            <td>&lt;&gt; 또는 !=</td>
+            <td>같지 않음</td>
+            <td>status &lt;&gt; 'inactive'</td>
+          </tr>
+          <tr>
+            <td>&gt;</td>
+            <td>보다 큼</td>
+            <td>price &gt; 1000</td>
+          </tr>
+          <tr>
+            <td>&lt;</td>
+            <td>보다 작음</td>
+            <td>age &lt; 18</td>
+          </tr>
+          <tr>
+            <td>&gt;=</td>
+            <td>크거나 같음</td>
+            <td>score &gt;= 60</td>
+          </tr>
+          <tr>
+            <td>&lt;=</td>
+            <td>작거나 같음</td>
+            <td>quantity &lt;= 10</td>
+          </tr>
+        </table>
+
+        <h3>3.3 논리 연산자</h3>
+        <table>
+          <tr>
+            <th>연산자</th>
+            <th>설명</th>
+            <th>예시</th>
+          </tr>
+          <tr>
+            <td>AND</td>
+            <td>모든 조건이 참일 때 참</td>
+            <td>age &gt; 18 AND status = 'active'</td>
+          </tr>
+          <tr>
+            <td>OR</td>
+            <td>하나라도 참이면 참</td>
+            <td>status = 'active' OR status = 'pending'</td>
+          </tr>
+          <tr>
+            <td>NOT</td>
+            <td>조건이 거짓일 때 참</td>
+            <td>NOT status = 'deleted'</td>
+          </tr>
+        </table>
+
+        <div class="example">
+          <h4>📝 연산자 사용 예제</h4>
+          <div class="code-block">
+            -- 급여가 50000 이상이고 부서가 'IT'인 직원 조회<br>
+            <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees<br>
+            <span class="sql-keyword">WHERE</span> salary &gt;= 50000 <span class="sql-keyword">AND</span> department = 'IT';
+            
+            -- 가격이 1000원에서 5000원 사이인 상품 조회 (두 가지 방법)<br>
+            <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> products<br>
+            <span class="sql-keyword">WHERE</span> price &gt;= 1000 <span class="sql-keyword">AND</span> price &lt;= 5000;
+            
+            <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> products<br>
+            <span class="sql-keyword">WHERE</span> price <span class="sql-keyword">BETWEEN</span> 1000 <span class="sql-keyword">AND</span> 5000;
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="functions">
+        <h2>4. SQL 함수</h2>
+        <p>SQL은 데이터를 조작하고 변환하기 위한 다양한 내장 함수를 제공합니다.</p>
+        
+        <h3>4.1 문자열 함수</h3>
+        <table>
+          <tr>
+            <th>함수</th>
+            <th>설명</th>
+            <th>예시</th>
+            <th>결과</th>
+          </tr>
+          <tr>
+            <td>CONCAT(str1, str2, ...)</td>
+            <td>문자열 연결</td>
+            <td>CONCAT('Hello', ' ', 'World')</td>
+            <td>'Hello World'</td>
+          </tr>
+          <tr>
+            <td>LENGTH(str)</td>
+            <td>문자열 길이</td>
+            <td>LENGTH('SQL')</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td>UPPER(str), LOWER(str)</td>
+            <td>대문자/소문자 변환</td>
+            <td>UPPER('sql')</td>
+            <td>'SQL'</td>
+          </tr>
+          <tr>
+            <td>TRIM(str)</td>
+            <td>양쪽 공백 제거</td>
+            <td>TRIM('  SQL  ')</td>
+            <td>'SQL'</td>
+          </tr>
+          <tr>
+            <td>SUBSTRING(str, pos, len)</td>
+            <td>부분 문자열 추출</td>
+            <td>SUBSTRING('Hello', 2, 3)</td>
+            <td>'ell'</td>
+          </tr>
+        </table>
+
+        <h3>4.2 숫자 함수</h3>
+        <table>
+          <tr>
+            <th>함수</th>
+            <th>설명</th>
+            <th>예시</th>
+            <th>결과</th>
+          </tr>
+          <tr>
+            <td>ROUND(num, d)</td>
+            <td>반올림</td>
+            <td>ROUND(3.14159, 2)</td>
+            <td>3.14</td>
+          </tr>
+          <tr>
+            <td>FLOOR(num)</td>
+            <td>버림</td>
+            <td>FLOOR(3.7)</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td>CEILING(num)</td>
+            <td>올림</td>
+            <td>CEILING(3.2)</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>ABS(num)</td>
+            <td>절대값</td>
+            <td>ABS(-10)</td>
+            <td>10</td>
+          </tr>
+          <tr>
+            <td>RAND()</td>
+            <td>0~1 사이의 난수</td>
+            <td>RAND()</td>
+            <td>0.1234...</td>
+          </tr>
+        </table>
+
+        <h3>4.3 날짜/시간 함수</h3>
+        <table>
+          <tr>
+            <th>함수</th>
+            <th>설명</th>
+            <th>예시</th>
+            <th>결과</th>
+          </tr>
+          <tr>
+            <td>NOW()</td>
+            <td>현재 날짜와 시간</td>
+            <td>NOW()</td>
+            <td>2023-04-15 14:30:45</td>
+          </tr>
+          <tr>
+            <td>CURDATE()</td>
+            <td>현재 날짜</td>
+            <td>CURDATE()</td>
+            <td>2023-04-15</td>
+          </tr>
+          <tr>
+            <td>DATE_ADD(date, INTERVAL n type)</td>
+            <td>날짜 더하기</td>
+            <td>DATE_ADD('2023-01-01', INTERVAL 1 MONTH)</td>
+            <td>2023-02-01</td>
+          </tr>
+          <tr>
+            <td>DATEDIFF(date1, date2)</td>
+            <td>날짜 차이(일)</td>
+            <td>DATEDIFF('2023-12-31', '2023-01-01')</td>
+            <td>364</td>
+          </tr>
+        </table>
+
+        <div class="example">
+          <h4>📝 함수 사용 예제</h4>
+          <div class="code-block">
+            -- 고객의 전체 이름을 성과 이름으로 합치기<br>
+            <span class="sql-keyword">SELECT</span> CONCAT(last_name, ' ', first_name) <span class="sql-keyword">AS</span> full_name<br>
+            <span class="sql-keyword">FROM</span> customers;
+            
+            -- 제품 가격에 10% 할인된 가격 계산 (소수점 둘째자리에서 반올림)<br>
+            <span class="sql-keyword">SELECT</span> 
+              product_name, 
+              price <span class="sql-keyword">AS</span> original_price,
+              ROUND(price * 0.9, 2) <span class="sql-keyword">AS</span> discounted_price<br>
+            <span class="sql-keyword">FROM</span> products;
+            
+            -- 오늘부터 30일 후의 날짜 계산<br>
+            <span class="sql-keyword">SELECT</span> DATE_ADD(CURDATE(), <span class="sql-keyword">INTERVAL</span> 30 <span class="sql-keyword">DAY</span>) <span class="sql-keyword">AS</span> due_date;
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>5. NULL 값 다루기</h2>
+        <p>SQL에서 NULL은 '값이 없음'을 의미하는 특별한 값입니다. NULL과의 비교는 일반적인 비교 연산자로는 불가능하며, IS NULL 또는 IS NOT NULL을 사용해야 합니다.</p>
+        
+        <div class="code-block">
+          -- NULL 값 확인<br>
+          <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <br>
+          <span class="sql-keyword">WHERE</span> department_id <span class="sql-keyword">IS</span> <span class="sql-keyword">NULL</span>;
+          
+          -- NULL이 아닌 값 확인<br>
+          <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees <br>
+          <span class="sql-keyword">WHERE</span> department_id <span class="sql-keyword">IS</span> <span class="sql-keyword">NOT</span> <span class="sql-keyword">NULL</span>;
+          
+          -- NULL 값을 대체값으로 변경 (COALESCE 함수)<br>
+          <span class="sql-keyword">SELECT</span> 
+            product_name, 
+            COALESCE(description, '설명 없음') <span class="sql-keyword">AS</span> description<br>
+          <span class="sql-keyword">FROM</span> products;
+        </div>
+
+        <div class="warning">
+          <h3>⚠️ 주의사항</h3>
+          <p>NULL 값과의 산술 연산 결과는 항상 NULL이 됩니다. 예를 들어, 10 + NULL의 결과는 NULL입니다.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>6. SQL 작성 시 주의사항</h2>
+        <ul>
+          <li>SQL 키워드는 대문자로, 테이블명과 컬럼명은 소문자로 작성하는 것이 가독성에 좋습니다.</li>
+          <li>여러 줄에 걸쳐 작성할 때는 들여쓰기를 일관되게 유지하세요.</n          <li>테이블과 컬럼에 의미 있는 이름을 사용하세요.</li>
+          <li>주석을 적절히 활용하여 복잡한 쿼리의 의도를 설명하세요.</li>
+          <li>SQL 인젝션 공격을 방지하기 위해 항상 파라미터화된 쿼리를 사용하세요.</li>
+        </ul>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_intro.html" class="nav-button">◀️ 이전 강의: SQL 소개</a>
+        <a href="sql_select.html" class="nav-button">다음 강의: SELECT 문 ▶️</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // SQL 구문 강조
+    document.addEventListener('DOMContentLoaded', function() {
+      const codeBlocks = document.querySelectorAll('.code-block');
+      codeBlocks.forEach(block => {
+        let html = block.innerHTML;
+        // SQL 키워드 강조
+        const keywords = ['SELECT', 'FROM', 'WHERE', 'AS', 'DISTINCT', 'CONCAT', 'AND', 'OR', 'NOT', 'GROUP BY', 'ORDER BY', 'HAVING', 'LIMIT', 'OFFSET', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'OUTER', 'ON', 'UNION', 'ALL', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE', 'TABLE', 'ALTER', 'DROP', 'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'UNIQUE', 'INDEX', 'VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'BEGIN', 'END', 'IF', 'THEN', 'ELSE', 'WHILE', 'FOR', 'FOREACH', 'CASE', 'WHEN', 'ELSE', 'THEN', 'END', 'LOOP', 'EXIT', 'CONTINUE', 'RETURN', 'DECLARE', 'DEFAULT', 'NOT NULL', 'NULL', 'TRUE', 'FALSE', 'IS', 'BETWEEN', 'LIKE', 'IN', 'ANY', 'SOME', 'ALL', 'EXISTS', 'UNIQUE', 'DISTINCT', 'ASC', 'DESC', 'BY', 'HAVING', 'WITH', 'RECURSIVE', 'WINDOW', 'PARTITION', 'OVER', 'FILTER', 'INTERSECT', 'EXCEPT', 'CROSS', 'NATURAL', 'USING', 'LATERAL'];
+        
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`\\b(${keyword})\\b`, 'gi');
+          html = html.replace(regex, '<span class="sql-keyword">$1</span>');
+        });
+
+        // 숫자 강조
+        html = html.replace(/(\b\d+\b)/g, '<span class="sql-number">$1</span>');
+        
+        // 문자열 강조
+        html = html.replace(/'([^']*?)'/g, '<span class="sql-string">\'$1\'</span>');
+        
+        // 주석 강조
+        html = html.replace(/--(.*?)(?=<br>|$)/g, '<span class="sql-comment">--$1</span>');
+        
+        block.innerHTML = html;
+      });
+    });
+  </script>
+</body>
+</html>

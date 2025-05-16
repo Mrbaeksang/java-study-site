@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📊 SQL 집계 함수 - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    h4 {
+      margin-top: 1.5rem;
+      color: #ce9178;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    code {
+      background: var(--vscode-textCodeBlock-background);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    pre {
+      background: var(--vscode-textCodeBlock-background);
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .note {
+      border-left: 4px solid #4ec9b0;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(78, 201, 176, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #ff9800;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(255, 152, 0, 0.1);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background-color: var(--vscode-editor-lineHighlightBorder);
+      color: var(--vscode-text);
+    }
+    .function-table {
+      width: 100%;
+      margin: 1.5rem 0;
+    }
+    .function-table th, .function-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--vscode-highlight);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📊 SQL 집계 함수</h1>
+      <p class="intro-text">데이터를 요약하고 분석하는 SQL 집계 함수에 대해 학습합니다. 그룹화, 필터링, 정렬과 함께 사용하는 방법을 알아봅니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>🔍 집계 함수 개요</h2>
+        <p>집계 함수는 여러 행의 데이터를 그룹화하여 단일 값을 반환하는 함수입니다. 주로 GROUP BY 절과 함께 사용됩니다.</p>
+        
+        <div class="note">
+          <h3>📌 주요 집계 함수</h3>
+          <table class="function-table">
+            <tr>
+              <th>함수</th>
+              <th>설명</th>
+              <th>지원 데이터 타입</th>
+              <th>NULL 처리</th>
+            </tr>
+            <tr>
+              <td>COUNT()</td>
+              <td>행의 개수를 반환</td>
+              <td>모든 타입</td>
+              <td>NULL 제외</td>
+            </tr>
+            <tr>
+              <td>SUM()</td>
+              <td>합계를 계산</td>
+              <td>숫자 타입</td>
+              <td>NULL 제외</td>
+            </tr>
+            <tr>
+              <td>AVG()</td>
+              <td>평균을 계산</td>
+              <td>숫자 타입</td>
+              <td>NULL 제외</td>
+            </tr>
+            <tr>
+              <td>MAX()</td>
+              <td>최대값 반환</td>
+              <td>모든 비교 가능한 타입</td>
+              <td>NULL 제외</td>
+            </tr>
+            <tr>
+              <td>MIN()</td>
+              <td>최소값 반환</td>
+              <td>모든 비교 가능한 타입</td>
+              <td>NULL 제외</td>
+            </tr>
+            <tr>
+              <td>GROUP_CONCAT()</td>
+              <td>문자열 연결 (MySQL)</td>
+              <td>문자열</td>
+              <td>NULL 제외</td>
+            </tr>
+            <tr>
+              <td>STRING_AGG()</td>
+              <td>문자열 연결 (SQL Server, PostgreSQL)</td>
+              <td>문자열</td>
+              <td>NULL 제외</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>📊 기본 집계 함수</h2>
+        
+        <h3>1. COUNT() - 행의 개수 세기</h3>
+        <pre><code>-- 전체 행 수
+SELECT COUNT(*) FROM Orders;
+
+-- 특정 컬럼의 NULL이 아닌 값의 수
+SELECT COUNT(CustomerID) FROM Orders;
+
+-- 고유한 값의 수
+SELECT COUNT(DISTINCT CustomerID) FROM Orders;</code></pre>
+
+        <h3>2. SUM() - 합계 계산</h3>
+        <pre><code>-- 주문 총액 합계
+SELECT SUM(Amount) AS TotalAmount FROM Orders;
+
+-- 조건에 맞는 주문의 합계
+SELECT SUM(Amount) AS HighValueOrders 
+FROM Orders 
+WHERE Amount > 1000;</code></pre>
+
+        <h3>3. AVG() - 평균 계산</h3>
+        <pre><code>-- 평균 주문 금액
+SELECT AVG(Amount) AS AvgOrderAmount FROM Orders;
+
+-- NULL 값이 있는 경우의 평균 (NULL은 제외됨)
+SELECT AVG(COALESCE(Amount, 0)) AS AvgWithNulls FROM Orders;</code></pre>
+
+        <h3>4. MAX() / MIN() - 최대값/최소값</h3>
+        <pre><code>-- 가장 비싼 주문 금액
+SELECT MAX(Amount) AS MaxOrderAmount FROM Orders;
+
+-- 가장 오래된 주문일
+SELECT MIN(OrderDate) AS FirstOrderDate FROM Orders;
+
+-- 가장 비싼 상품의 정보
+SELECT * FROM Products 
+WHERE Price = (SELECT MAX(Price) FROM Products);</code></pre>
+      </div>
+
+      <div class="section">
+        <h2>📈 GROUP BY - 그룹화</h2>
+        <p>지정한 컬럼을 기준으로 그룹을 만들어 각 그룹별로 집계를 수행합니다.</p>
+        
+        <h3>기본 사용법</h3>
+        <pre><code>-- 고객별 주문 건수
+SELECT CustomerID, COUNT(*) AS OrderCount
+FROM Orders
+GROUP BY CustomerID
+ORDER BY OrderCount DESC;</code></pre>
+
+        <h3>여러 컬럼으로 그룹화</h3>
+        <pre><code>-- 연도별, 월별 매출 합계
+SELECT 
+    YEAR(OrderDate) AS OrderYear,
+    MONTH(OrderDate) AS OrderMonth,
+    SUM(Amount) AS MonthlySales
+FROM Orders
+GROUP BY YEAR(OrderDate), MONTH(OrderDate)
+ORDER BY OrderYear, OrderMonth;</code></pre>
+
+        <h3>HAVING 절로 그룹 필터링</h3>
+        <pre><code>-- 10건 이상 주문한 고객
+SELECT CustomerID, COUNT(*) AS OrderCount
+FROM Orders
+GROUP BY CustomerID
+HAVING COUNT(*) >= 10
+ORDER BY OrderCount DESC;</code></pre>
+
+        <div class="note">
+          <h3>📝 WHERE vs HAVING</h3>
+          <ul>
+            <li><strong>WHERE</strong>: 그룹화 전에 행을 필터링 (집계 함수 사용 불가)</li>
+            <li><strong>HAVING</strong>: 그룹화 후에 그룹을 필터링 (집계 함수 사용 가능)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>📊 고급 집계 기법</h2>
+        
+        <h3>1. ROLLUP - 소계/총계 생성</h3>
+        <pre><code>-- 연도별, 분기별 매출 소계 및 총계
+SELECT 
+    YEAR(OrderDate) AS OrderYear,
+    QUARTER(OrderDate) AS OrderQuarter,
+    SUM(Amount) AS TotalAmount
+FROM Orders
+GROUP BY ROLLUP(YEAR(OrderDate), QUARTER(OrderDate))
+ORDER BY OrderYear, OrderQuarter;</code></pre>
+
+        <h3>2. CUBE - 모든 조합의 소계 생성</h3>
+        <pre><code>-- 연도, 분기, 지역별 모든 조합의 소계
+SELECT 
+    YEAR(OrderDate) AS OrderYear,
+    QUARTER(OrderDate) AS OrderQuarter,
+    Region,
+    SUM(Amount) AS TotalAmount
+FROM Orders
+GROUP BY CUBE(YEAR(OrderDate), QUARTER(OrderDate), Region)
+ORDER BY OrderYear, OrderQuarter, Region;</code></pre>
+
+        <h3>3. GROUPING SETS - 사용자 정의 그룹화</h3>
+        <pre><code>-- 연도별, 분기별, 연도+분기별 그룹화
+SELECT 
+    YEAR(OrderDate) AS OrderYear,
+    QUARTER(OrderDate) AS OrderQuarter,
+    SUM(Amount) AS TotalAmount
+FROM Orders
+GROUP BY GROUPING SETS (
+    (YEAR(OrderDate)),
+    (QUARTER(OrderDate)),
+    (YEAR(OrderDate), QUARTER(OrderDate))
+)
+ORDER BY OrderYear, OrderQuarter;</code></pre>
+
+        <h3>4. 윈도우 함수와 함께 사용</h3>
+        <pre><code>-- 고객별 누적 주문 금액
+SELECT 
+    CustomerID,
+    OrderDate,
+    Amount,
+    SUM(Amount) OVER (PARTITION BY CustomerID ORDER BY OrderDate) AS RunningTotal
+FROM Orders
+ORDER BY CustomerID, OrderDate;</code></pre>
+      </div>
+
+      <div class="section">
+        <h2>📝 집계 함수 주의사항</h2>
+        
+        <div class="warning">
+          <h3>⚠️ NULL 값 처리</h3>
+          <p>집계 함수는 기본적으로 NULL 값을 무시합니다. NULL을 0으로 처리하려면 COALESCE나 CASE 문을 사용하세요.</p>
+          <pre><code>-- NULL을 0으로 처리한 평균
+SELECT AVG(COALESCE(Amount, 0)) AS AvgWithZeros FROM Orders;</code></pre>
+        </div>
+
+        <div class="warning">
+          <h3>⚠️ GROUP BY와 SELECT 컬럼</h3>
+          <p>GROUP BY를 사용할 때 SELECT 절에는 그룹화 컬럼이나 집계 함수만 올 수 있습니다.</p>
+          <pre><code>-- 잘못된 예 (ProductName이 GROUP BY에 없음)
+SELECT CategoryID, ProductName, AVG(Price)
+FROM Products
+GROUP BY CategoryID;
+
+-- 올바른 예 1: ProductName을 GROUP BY에 추가
+SELECT CategoryID, ProductName, AVG(Price)
+FROM Products
+GROUP BY CategoryID, ProductName;
+
+-- 올바른 예 2: ProductName 제거
+SELECT CategoryID, AVG(Price)
+FROM Products
+GROUP BY CategoryID;</code></pre>
+        </div>
+
+        <div class="warning">
+          <h3>⚠️ 성능 고려사항</h3>
+          <ul>
+            <li>대용량 테이블에서 집계를 자주 수행해야 하는 경우, 요약 테이블을 생성하는 것을 고려하세요.</li>
+            <li>GROUP BY 절에 인덱스가 없는 컬럼을 사용하면 성능이 저하될 수 있습니다.</li>
+            <li>DISTINCT는 성능에 큰 영향을 줄 수 있으니 신중하게 사용하세요.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>📊 실전 예제: 영업 보고서 생성</h2>
+        <p>다양한 집계 함수를 활용한 실전 예제를 살펴봅시다.</p>
+        
+        <h3>1. 카테고리별 매출 분석</h3>
+        <pre><code>SELECT 
+    c.CategoryName,
+    COUNT(o.OrderID) AS OrderCount,
+    SUM(od.Quantity * od.UnitPrice) AS TotalRevenue,
+    AVG(od.Quantity * od.UnitPrice) AS AvgOrderValue,
+    MAX(od.Quantity * od.UnitPrice) AS MaxOrderValue,
+    MIN(od.Quantity * od.UnitPrice) AS MinOrderValue
+FROM Categories c
+JOIN Products p ON c.CategoryID = p.CategoryID
+JOIN OrderDetails od ON p.ProductID = od.ProductID
+JOIN Orders o ON od.OrderID = o.OrderID
+WHERE o.OrderDate BETWEEN '2023-01-01' AND '2023-12-31'
+GROUP BY c.CategoryID, c.CategoryName
+ORDER BY TotalRevenue DESC;</code></pre>
+
+        <h3>2. 월별 매출 추이 분석 (피벗 테이블)</h3>
+        <pre><code>-- MySQL
+SELECT 
+    p.ProductName,
+    SUM(CASE WHEN MONTH(o.OrderDate) = 1 THEN od.Quantity * od.UnitPrice ELSE 0 END) AS Jan,
+    SUM(CASE WHEN MONTH(o.OrderDate) = 2 THEN od.Quantity * od.UnitPrice ELSE 0 END) AS Feb,
+    -- ... 12월까지 반복
+    SUM(CASE WHEN MONTH(o.OrderDate) = 12 THEN od.Quantity * od.UnitPrice ELSE 0 END) AS Dec,
+    SUM(od.Quantity * od.UnitPrice) AS YearTotal
+FROM Products p
+JOIN OrderDetails od ON p.ProductID = od.ProductID
+JOIN Orders o ON od.OrderID = o.OrderID
+WHERE YEAR(o.OrderDate) = 2023
+GROUP BY p.ProductID, p.ProductName
+ORDER BY YearTotal DESC
+LIMIT 10;</code></pre>
+
+        <h3>3. 고객 구매 패턴 분석</h3>
+        <pre><code>WITH CustomerStats AS (
+    SELECT 
+        c.CustomerID,
+        c.CompanyName,
+        COUNT(DISTINCT o.OrderID) AS OrderCount,
+        SUM(od.Quantity * od.UnitPrice) AS TotalSpent,
+        MAX(o.OrderDate) AS LastOrderDate,
+        AVG(od.Quantity * od.UnitPrice) AS AvgOrderValue
+    FROM Customers c
+    JOIN Orders o ON c.CustomerID = o.CustomerID
+    JOIN OrderDetails od ON o.OrderID = od.OrderID
+    WHERE o.OrderDate >= DATE_SUB(CURRENT_DATE, INTERVAL 1 YEAR)
+    GROUP BY c.CustomerID, c.CompanyName
+    HAVING COUNT(DISTINCT o.OrderID) >= 3
+)
+SELECT 
+    CustomerID,
+    CompanyName,
+    OrderCount,
+    TotalSpent,
+    LastOrderDate,
+    AvgOrderValue,
+    NTILE(5) OVER (ORDER BY TotalSpent DESC) AS SpendingSegment
+FROM CustomerStats
+ORDER BY TotalSpent DESC;</code></pre>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_joins.html" class="nav-button">이전: 조인 (JOIN)</a>
+        <a href="sql_advanced.html" class="nav-button">다음: SQL 고급 기능</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

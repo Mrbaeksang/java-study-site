@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random API 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* math.html과 동일한 스타일 적용 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    /* ... (나머지 스타일은 math.html과 동일) ... */
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎯 Random API 완벽 가이드</h1>
+    <nav class="api-nav">
+      <a href="string.html" class="api-nav-link">String</a>
+      <a href="math.html" class="api-nav-link">Math</a>
+      <a href="collections.html" class="api-nav-link">Collections</a>
+      <a href="stream.html" class="api-nav-link">Stream</a>
+      <a href="index.html" class="api-nav-link">Home</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section">
+      <h2>🎯 Random API 완벽 가이드</h2>
+      <div class="example-box">
+        <h3>개요</h3>
+        <ul>
+          <li>난수 생성</li>
+          <li>확률 계산</li>
+          <li>랜덤 선택</li>
+          <li>성능 최적화</li>
+        </ul>
+
+        <h3>주요 특징</h3>
+        <div class="ascii-art">
+          +-------------------+
+          |     Random API    |
+          |-------------------|
+          | - 난수 생성      |
+          | - 확률 계산      |
+          | - 랜덤 선택      |
+          | - 성능 최적화    |
+          +-------------------+
+        </div>
+        <ul>
+          <li>난수 생성 기능</li>
+          <li>확률 계산 지원</li>
+          <li>랜덤 선택 기능</li>
+          <li>성능 최적화</li>
+        </ul>
+
+        <h3>실제 사용 예시</h3>
+        <div class="code-block">
+// 기본 난수 생성
+Random random = new Random();
+int number = random.nextInt(100);
+
+// 확률 계산
+boolean chance = random.nextBoolean();
+
+// 랜덤 선택
+String[] fruits = {"Apple", "Banana", "Orange"};
+String randomFruit = fruits[random.nextInt(fruits.length)];
+        </div>
+
+        <h3>주의사항</h3>
+        <div class="warning">
+          <ul>
+            <li>시드값 고려</li>
+            <li>성능 고려</li>
+            <li> 동시성 고려</li>
+            <li>난수 품질</li>
+          </ul>
+        </div>
+
+        <h3>성능 특성</h3>
+        <ul>
+          <li>난수 생성: O(1)</li>
+          <li>확률 계산: O(1)</li>
+          <li>랜덤 선택: O(1)</li>
+          <li>성능 최적화</li>
+        </ul>
+
+        <h3>관련 메서드 상세 설명</h3>
+        <div class="method-box">
+          <h4>nextInt(int bound)</h4>
+          <div class="code-block">
+// 예시
+Random random = new Random();
+int number = random.nextInt(100);
+          </div>
+          <ul>
+            <li><b>사용처:</b> 범위 내 난수 생성</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 게임, 테스트 데이터 생성</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>bound 범위 주의</li>
+                <li>성능 고려</li>
+                <li>시드값 고려</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="method-box">
+          <h4>nextDouble()</h4>
+          <div class="code-block">
+// 예시
+Random random = new Random();
+double number = random.nextDouble();
+          </div>
+          <ul>
+            <li><b>사용처:</b> 실수 난수 생성</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 확률 계산, 시뮬레이션</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>정밀도 주의</li>
+                <li>성능 고려</li>
+                <li>시드값 고려</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <h3>예외 처리</h3>
+        <div class="warning">
+          <ul>
+            <li>IllegalStateException: 상태 관련 오류</li>
+            <li>OutOfMemoryError: 메모리 부족</li>
+          </ul>
+        </div>
+
+        <h3>동시성 고려사항</h3>
+        <div class="note">
+          <ul>
+            <li>ThreadLocalRandom 사용 고려</li>
+            <li>성능 고려</li>
+            <li>메모리 사용량</li>
+            <li>예외 처리</li>
+          </ul>
+        </div>
+
+        <h3>메모리 사용량</h3>
+        <div class="tip">
+          <ul>
+            <li>난수 생성 메모리 효율적</li>
+            <li>메모리 사용량 최적화</li>
+            <li>성능 최적화</li>
+            <li>예외 처리 최적화</li>
+          </ul>
+        </div>
+
+        <h3>최적화 팁</h3>
+        <div class="tip">
+          <ul>
+            <li>ThreadLocalRandom 사용</li>
+            <li>성능 측정</li>
+            <li>메모리 사용량 최적화</li>
+            <li>예외 처리 최적화</li>
+            <li>난수 품질 고려</li>
+          </ul>
+        </div>
+
+        <h3>관련 API 링크</h3>
+        <ul>
+          <li><a href="math.html">Math API</a></li>
+          <li><a href="collections.html">Collections API</a></li>
+          <li><a href="stream.html">Stream API</a></li>
+          <li><a href="thread.html">Thread API</a></li>
+        </ul>
+
+        <h3>실전 활용 팁</h3>
+        <div class="note">
+          <ul>
+            <li>난수 생성</li>
+            <li>확률 계산</li>
+            <li>랜덤 선택</li>
+            <li>성능 최적화</li>
+            <li>예외 처리</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

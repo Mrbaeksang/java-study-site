@@ -398,6 +398,114 @@ System.out.println(words);
         </ul>
       </div>
     </section>
+
+    <!-- 🔑 주요 메서드별 상세 사용법 & 실전 예시 -->
+    <section class="section">
+      <h2>🔑 주요 메서드별 상세 사용법 & 실전 예시</h2>
+      <!-- sort() -->
+      <div class="example-box">
+        <h3>sort() - 정렬</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트를 오름차순/내림차순 정렬할 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+List<Integer> list = Arrays.asList(3, 1, 2);
+Collections.sort(list);
+System.out.println(list); // [1, 2, 3]
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 데이터 정렬, Comparator와 조합</li>
+          <li><b>자주 하는 실수:</b> 기본은 오름차순, 내림차순은 Comparator 필요</li>
+        </ul>
+        <div class="tip">미션: [3,1,2]를 sort하면?</div>
+        <details><summary>정답 보기</summary><div class="note">[1, 2, 3]</div></details>
+      </div>
+      <!-- reverse() -->
+      <div class="example-box">
+        <h3>reverse() - 역순 정렬</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트의 순서를 뒤집을 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+List<Integer> list = Arrays.asList(1, 2, 3);
+Collections.reverse(list);
+System.out.println(list); // [3, 2, 1]
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 내림차순, 순서 변경</li>
+        </ul>
+        <div class="tip">미션: [1,2,3]을 reverse하면?</div>
+        <details><summary>정답 보기</summary><div class="note">[3, 2, 1]</div></details>
+      </div>
+      <!-- shuffle() -->
+      <div class="example-box">
+        <h3>shuffle() - 무작위 섞기</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트의 요소 순서를 무작위로 섞을 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+List<Integer> list = Arrays.asList(1, 2, 3);
+Collections.shuffle(list);
+System.out.println(list); // 예: [2, 3, 1]
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 랜덤 추출, 게임, 샘플링</li>
+        </ul>
+        <div class="tip">미션: [1,2,3]을 shuffle하면?</div>
+        <details><summary>정답 보기</summary><div class="note">결과는 매번 다름 (예: [2,3,1])</div></details>
+      </div>
+      <!-- max()/min() -->
+      <div class="example-box">
+        <h3>max()/min() - 최댓값/최솟값</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트에서 최댓값/최솟값을 찾을 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+List<Integer> list = Arrays.asList(1, 5, 3);
+System.out.println(Collections.max(list)); // 5
+System.out.println(Collections.min(list)); // 1
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 통계, 점수 계산, 랭킹</li>
+        </ul>
+        <div class="tip">미션: [1,5,3]의 max와 min은?</div>
+        <details><summary>정답 보기</summary><div class="note">max: 5, min: 1</div></details>
+      </div>
+      <!-- frequency() -->
+      <div class="example-box">
+        <h3>frequency() - 값 빈도수 세기</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트에서 특정 값의 등장 횟수를 셀 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+List<String> list = Arrays.asList("a", "b", "a");
+System.out.println(Collections.frequency(list, "a")); // 2
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 빈도수 세기, 데이터 분석</li>
+        </ul>
+        <div class="tip">미션: ["a","b","a"]에서 "a"의 빈도는?</div>
+        <details><summary>정답 보기</summary><div class="note">2</div></details>
+      </div>
+      <!-- unmodifiableList() -->
+      <div class="example-box">
+        <h3>unmodifiableList() - 불변 리스트 만들기</h3>
+        <ul>
+          <li><b>언제/왜?</b> 리스트를 수정 불가하게 만들 때</li>
+          <li><b>코드 예시:</b>
+            <div class="code-block">
+List<String> list = new ArrayList<>();
+list.add("A");
+List<String> readOnly = Collections.unmodifiableList(list);
+// readOnly.add("B"); // 예외 발생!
+            </div>
+          </li>
+          <li><b>실전 활용:</b> 데이터 보호, 외부 변경 방지</li>
+        </ul>
+        <div class="tip">미션: unmodifiableList에 add하면?</div>
+        <details><summary>정답 보기</summary><div class="note">UnsupportedOperationException 예외</div></details>
+      </div>
+    </section>
   </main>
 </body>
 </html>

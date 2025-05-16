@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 스프링 부트 소개 - Spring Boot 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      line-height: 1.5;
+    }
+    .note {
+      border-left: 4px solid #4ec9b0;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(78, 201, 176, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    .java-keyword { color: #569cd6; font-weight: bold; }
+    .java-string { color: #ce9178; }
+    .java-number { color: #b5cea8; }
+    .java-comment { color: #6a9955; font-style: italic; }
+    .java-annotation { color: #9cdcfe; }
+    .java-class { color: #4ec9b0; }
+    .java-method { color: #dcdcaa; }
+    .java-interface { color: #b8d7a3; }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    h2 {
+      color: #4ec9b0;
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      color: #9cdcfe;
+      margin-top: 2rem;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📚 스프링 부트(Spring Boot) 소개</h1>
+      <p class="intro-text">스프링 부트의 기본 개념과 핵심 기능을 소개합니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 스프링 부트란?</h2>
+        <p>스프링 부트(Spring Boot)는 스프링 프레임워크를 기반으로 한 애플리케이션을 빠르고 쉽게 개발할 수 있도록 도와주는 도구입니다. 복잡한 설정을 자동화하고, 내장 서버를 제공하여 개발 생산성을 크게 향상시킵니다.</p>
+        
+        <div class="note">
+          <h3>📌 스프링 부트의 주요 특징</h3>
+          <ul>
+            <li>자동 구성(Auto-Configuration): 필요한 빈을 자동으로 등록</li>
+            <li>독립 실행형(Standalone): 내장 톰캣, 제티, 언더토우 등의 서버 포함</li>
+            <li>의존성 관리: 스타터 의존성을 통한 간편한 의존성 관리</li>
+            <li>운영 모니터링: 액추에이터를 통한 애플리케이션 모니터링</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. 스프링 부트의 장점</h2>
+        
+        <h3>2.1 빠른 개발 시작</h3>
+        <p>Spring Initializr(<a href="https://start.spring.io/" target="_blank">start.spring.io</a>)를 통해 몇 분 만에 프로젝트를 생성하고 실행할 수 있습니다.</p>
+        
+        <h3>2.2 의존성 관리의 용이성</h3>
+        <p>스프링 부트 스타터 의존성은 관련 라이브러리들을 자동으로 관리해줍니다.</p>
+        <pre class="code-block"><code class="language-xml">&lt;!-- 예: 웹 애플리케이션 개발을 위한 스타터 --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+
+        <h3>2.3 내장 서버</h3>
+        <p>별도의 웹 서버 설치 없이도 내장 톰캣, 제티, 언더토우 등을 사용할 수 있습니다.</p>
+        
+        <h3>2.4 프로덕션 준비 기능</h3>
+        <p>액추에이터를 통해 애플리케이션 상태, 메트릭, 상태 점검 등을 모니터링할 수 있습니다.</p>
+      </div>
+
+      <div class="section">
+        <h2>3. 스프링 부트 애플리케이션 구조</h2>
+        
+        <pre class="code-block">
+<code>src/main/java/
+  └── com/example/demo/
+      ├── DemoApplication.java     # 메인 애플리케이션 클래스
+      ├── controller/             # 컨트롤러 클래스
+      ├── service/                # 서비스 레이어
+      ├── repository/             # 데이터 접근 레이어
+      └── model/                  # 도메인 모델
+src/main/resources/
+  ├── static/                 # 정적 리소스 (css, js, 이미지)
+  ├── templates/               # 템플릿 파일 (Thymeleaf, Mustache 등)
+  ├── application.properties    # 애플리케이션 설정
+  └── application-{profile}.properties  # 프로필별 설정</code>
+        </pre>
+
+
+        <div class="tip">
+          <h3>💡 팁: 기본 애플리케이션 클래스</h3>
+          <p>스프링 부트 애플리케이션의 진입점은 <code>@SpringBootApplication</code> 어노테이션이 붙은 메인 클래스입니다.</p>
+          <pre class="code-block"><code class="language-java">@SpringBootApplication
+public class DemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 간단한 REST API 예제</h2>
+        <p>스프링 부트로 간단한 REST API를 만들어보겠습니다.</p>
+        
+        <h3>4.1 컨트롤러 생성</h3>
+        <pre class="code-block"><code class="language-java">@RestController
+@RequestMapping("/api")
+public class HelloController {
+    
+    @GetMapping("/hello")
+    public String sayHello(@RequestParam(defaultValue = "World") String name) {
+        return String.format("Hello, %s!", name);
+    }
+    
+    @GetMapping("/greeting")
+    public Greeting getGreeting(@RequestParam(defaultValue = "World") String name) {
+        return new Greeting(1, String.format("Hello, %s!", name));
+    }
+}
+
+// 간단한 DTO 클래스
+class Greeting {
+    private final long id;
+    private final String content;
+    
+    // 생성자, getter 생략
+}</code></pre>
+
+        <h3>4.2 애플리케이션 실행</h3>
+        <p>메인 클래스를 실행하면 내장 톰캣 서버가 시작됩니다. 다음 엔드포인트로 접속해보세요:</p>
+        <ul>
+          <li><code>http://localhost:8080/api/hello</code></li>
+          <li><code>http://localhost:8080/api/hello?name=Spring</code></li>
+          <li><code>http://localhost:8080/api/greeting</code></li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>5. 다음 단계</h2>
+        <p>이제 스프링 부트의 기본적인 개념을 이해하셨습니다. 다음 주제들을 계속 학습해보세요:</p>
+        <ul>
+          <li>스프링 부트 설정 방법 (<code>application.properties</code>/<code>application.yml</code>)</li>
+          <li>데이터베이스 연동 (JPA, JDBC)</li>
+          <li>스프링 시큐리티를 이용한 인증/인가</li>
+          <li>RESTful API 개발</li>
+          <li>테스트 작성 (JUnit, MockMvc)</li>
+        </ul>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="spring_boot_index.html" class="nav-button">목차로 돌아가기</a>
+        <a href="spring_boot_environment.html" class="nav-button">다음: 개발 환경 설정 →</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

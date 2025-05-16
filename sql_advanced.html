@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚀 고급 SQL 요소 - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚀 고급 SQL 요소</h1>
+      <p>VIEW, FUNCTION, TRIGGER 등 고급 SQL 요소의 이해와 활용법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. VIEW (뷰)</h2>
+        <p>뷰는 가상 테이블로, 기존 테이블의 데이터를 특정 조건으로 조회한 결과를 저장합니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: VIEW 생성</h3>
+          <div class="code-block">
+            -- 학생들의 이름과 학과만 포함하는 뷰 생성<br>
+            CREATE VIEW student_info AS<br>
+            SELECT name, department<br>
+            FROM students;<br>
+
+            -- 뷰 조회<br>
+            SELECT * FROM student_info;
+          </div>
+        </div>
+
+        <h2>2. FUNCTION (함수)</h2>
+        <p>함수는 반복적으로 사용되는 작업을 모듈화하여 재사용성을 높입니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: 사용자 정의 함수</h3>
+          <div class="code-block">
+            -- 학생의 나이를 계산하는 함수<br>
+            CREATE FUNCTION calculate_age(birth_date DATE)<br>
+            RETURNS INT<br>
+            BEGIN<br>
+              RETURN YEAR(CURRENT_DATE) - YEAR(birth_date);<br>
+            END;<br>
+
+            -- 함수 사용<br>
+            SELECT name, calculate_age(birth_date) AS age<br>
+            FROM students;
+          </div>
+        </div>
+
+        <h2>3. TRIGGER (트리거)</h2>
+        <p>트리거는 특정 이벤트가 발생할 때 자동으로 실행되는 저장 프로시저입니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: 트리거 생성</h3>
+          <div class="code-block">
+            -- 학생이 추가될 때 자동으로 로그 기록<br>
+            CREATE TRIGGER student_insert_log<br>
+            AFTER INSERT ON students<br>
+            FOR EACH ROW<br>
+            BEGIN<br>
+              INSERT INTO student_logs (student_id, action, log_date)<br>
+              VALUES (NEW.student_id, 'INSERT', CURRENT_TIMESTAMP);<br>
+            END;
+          </div>
+        </div>
+
+        <div class="note">
+          <h3>🎯 고급 SQL 요소 주의사항</h3>
+          <ul>
+            <li>VIEW는 실제 데이터를 저장하지 않으므로 성능에 주의가 필요합니다.</li>
+            <li>FUNCTION은 복잡한 계산이나 반복 작업을 모듈화하는 데 유용합니다.</li>
+            <li>TRIGGER는 데이터 무결성을 보장하는 데 사용되지만, 성능에 영향을 줄 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <h2>4. 고급 SQL 요소 활용 예시</h2>
+        <div class="example">
+          <h3>📝 예제: 복잡한 데이터 처리</h3>
+          <div class="code-block">
+            -- 학생들의 성적 통계를 저장하는 뷰<br>
+            CREATE VIEW student_statistics AS<br>
+            SELECT<br>
+              s.student_id,<br>
+              s.name,<br>
+              AVG(g.score) AS average_score,<br>
+              MAX(g.score) AS highest_score,<br>
+              MIN(g.score) AS lowest_score<br>
+            FROM students s<br>
+            JOIN grades g ON s.student_id = g.student_id<br>
+            GROUP BY s.student_id, s.name;<br>
+
+            -- 성적 통계 조회<br>
+            SELECT * FROM student_statistics;
+          </div>
+        </div>
+
+        <div class="warning">
+          <h3>⚠️ 성능 최적화 팁</h3>
+          <ul>
+            <li>VIEW는 필요한 열만 선택하여 생성하는 것이 좋습니다.</li>
+            <li>FUNCTION은 복잡한 계산을 최소화하는 것이 좋습니다.</li>
+            <li>TRIGGER는 필요한 경우에만 사용하고, 성능을 고려해야 합니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_transaction.html" class="nav-button">이전: 트랜잭션</a>
+        <a href="sql_erd_jdbc.html" class="nav-button">다음: ERD 설계 + JDBC 연동</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

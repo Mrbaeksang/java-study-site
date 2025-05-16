@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚀 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+      line-height: 1.5;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    .java-keyword { color: #569cd6; font-weight: bold; }
+    .java-string { color: #ce9178; }
+    .java-number { color: #b5cea8; }
+    .java-comment { color: #6a9955; font-style: italic; }
+    .java-annotation { color: #9cdcfe; }
+    .java-class { color: #4ec9b0; }
+    .java-method { color: #dcdcaa; }
+    .java-interface { color: #b8d7a3; }
+    
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .toc-card {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: transform 0.2s;
+    }
+    
+    .toc-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .toc-card h3 {
+      color: #4ec9b0;
+      margin-top: 0;
+      border-bottom: 1px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .toc-card ul {
+      padding-left: 1.2rem;
+      margin: 1rem 0 0 0;
+    }
+    
+    .toc-card li {
+      margin: 0.8rem 0;
+      line-height: 1.6;
+      list-style-type: none;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+    
+    .toc-card li:before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #4ec9b0;
+    }
+    
+    .toc-card a {
+      color: var(--vscode-text);
+      text-decoration: none;
+      transition: color 0.2s;
+      display: block;
+    }
+    
+    .toc-card a:hover {
+      color: #4ec9b0;
+      text-decoration: none;
+    }
+    
+    .difficulty {
+      display: inline-block;
+      font-size: 0.8rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      font-weight: normal;
+    }
+    
+    .difficulty-beginner { 
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
+    }
+    
+    .difficulty-intermediate { 
+      background: rgba(255, 152, 0, 0.2);
+      color: #ff9800;
+    }
+    
+    .difficulty-advanced { 
+      background: rgba(244, 67, 54, 0.2);
+      color: #f44336;
+    }
+    
+    .intro-text {
+      color: var(--vscode-text);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    
+    .chapter {
+      margin-bottom: 3rem;
+    }
+    
+    .chapter-title {
+      color: #4ec9b0;
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 3rem;
+    }
+    
+    .example-box {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .example-box h3 {
+      margin-top: 0;
+      color: #4ec9b0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚀 스프링 부트(Spring Boot) 완전 정복</h1>
+      <p class="intro-text">스프링 부트를 체계적으로 배우기 위한 종합 가이드입니다. 초보자부터 고급 사용자까지 단계별로 학습할 수 있습니다.</p>
+      
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="progress-text">진행률: <span id="progressText">0</span>%</div>
+    </header>
+
+    <main>
+      <div class="chapter">
+        <h2 class="chapter-title">🔰 스프링 부트 기초</h2>
+        <div class="method-grid">
+          <div class="toc-card">
+            <h3><span class="icon">1️⃣</span> 시작하기</h3>
+            <ul>
+              <li><a href="spring_boot_first_app.html">첫 번째 애플리케이션 <span class="difficulty difficulty-beginner">초급</span></a></li>
+              <li><a href="spring_boot_essentials.html">핵심 개념 이해하기 <span class="difficulty difficulty-beginner">초급</span></a></li>
+              <li><a href="spring_boot_environment.html">개발 환경 설정 <span class="difficulty difficulty-beginner">초급</span></a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">2️⃣</span> 웹 개발 기초</h3>
+            <ul>
+              <li><a href="spring_boot_rest_api.html">RESTful API 개발 <span class="difficulty difficulty-beginner">초급</span></a></li>
+              <li><a href="spring_boot_mvc_pattern.html">MVC 패턴 이해하기 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_static_content.html">정적 리소스 처리 <span class="difficulty difficulty-beginner">초급</span></a></li>
+              <li><a href="spring_boot_templates.html">템플릿 엔진 (Thymeleaf) <span class="difficulty difficulty-intermediate">중급</span></a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">3️⃣</span> 데이터베이스 연동</h3>
+            <ul>
+              <li><a href="spring_boot_jpa.html">Spring Data JPA 소개 <span class="difficulty difficulty-beginner">초급</span></a></li>
+              <li><a href="spring_boot_entity_mapping.html">엔티티 매핑 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_repository.html">레포지토리 패턴 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_query_methods.html">쿼리 메소드 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">4️⃣</span> 보안</h3>
+            <ul>
+              <li><a href="spring_boot_security.html">스프링 시큐리티 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_jwt.html">JWT 인증 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_oauth2.html">OAuth2 연동 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_csrf.html">CSRF 보호 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">5️⃣</span> 테스팅</h3>
+            <ul>
+              <li><a href="spring_boot_unit_testing.html">단위 테스트 <span class="difficulty difficulty-beginner">초급</span></a></li>
+              <li><a href="spring_boot_integration_testing.html">통합 테스트 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_testcontainers.html">TestContainers <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_mockito.html">모킹 (Mockito) <span class="difficulty difficulty-intermediate">중급</span></a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">6️⃣</span> 예외 처리</h3>
+            <ul>
+              <li><a href="spring_boot_exception_handling.html">전역 예외 처리 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_custom_exceptions.html">커스텀 예외 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_validation.html">유효성 검사 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_error_response.html">에러 응답 표준화 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">7️⃣</span> 성능 최적화</h3>
+            <ul>
+              <li><a href="spring_boot_performance.html">성능 최적화 전략 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_monitoring.html">모니터링과 트레이싱 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_caching.html">캐싱 전략 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_database_optimization.html">데이터베이스 최적화 <span class="difficulty difficulty-advanced">고급</span></a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">8️⃣</span> 클라우드 네이티브</h3>
+            <ul>
+              <li><a href="spring_boot_aws.html">AWS 개발 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_kubernetes.html">Kubernetes <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_serverless.html">서버리스 개발 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_ci_cd.html">CI/CD 파이프라인 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">9️⃣</span> 마이크로서비스</h3>
+            <ul>
+              <li><a href="spring_boot_microservices_architecture.html">마이크로서비스 아키텍처 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_service_communication.html">서비스 간 통신 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_api_gateway.html">API Gateway <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_microservices_monitoring.html">모니터링 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter">
+        <h2 class="chapter-title">📊 스프링 부트 중급</h2>
+        <div class="method-grid">
+          <div class="toc-card">
+            <h3><span class="icon">4️⃣</span> 보안</h3>
+            <ul>
+              <li><a href="spring_boot_security.html">Spring Security 소개 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_authentication.html">인증 구현</a></li>
+              <li><a href="spring_boot_authorization.html">인가 구현</a></li>
+              <li><a href="spring_boot_oauth2.html">OAuth2 연동</a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">5️⃣</span> 테스트</h3>
+            <ul>
+              <li><a href="spring_boot_unit_test.html">단위 테스트 <span class="difficulty difficulty-beginner">초급</span></a></li>
+              <li><a href="spring_boot_integration_test.html">통합 테스트</a></li>
+              <li><a href="spring_boot_test_containers.html">TestContainers</a></li>
+              <li><a href="spring_boot_mocking.html">모킹 (Mockito)</a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">6️⃣</span> 예외 처리</h3>
+            <ul>
+              <li><a href="spring_boot_exception_handling.html">전역 예외 처리 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_custom_exceptions.html">커스텀 예외</a></li>
+              <li><a href="spring_boot_validation.html">유효성 검사</a></li>
+              <li><a href="spring_boot_error_responses.html">에러 응답 표준화</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapter">
+        <h2 class="chapter-title">⚡ 스프링 부트 고급</h2>
+        <div class="method-grid">
+          <div class="toc-card">
+            <h3><span class="icon">7️⃣</span> 성능 최적화</h3>
+            <ul>
+              <li><a href="spring_boot_performance.html">성능 최적화 전략 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_performance.html#monitoring">모니터링과 트레이싱 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_performance.html#caching">캐싱 전략 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+              <li><a href="spring_boot_performance.html#database">데이터베이스 최적화 <span class="difficulty difficulty-advanced">고급</span></a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">8️⃣</span> 클라우드 네이티브</h3>
+            <ul>
+              <li><a href="spring_boot_cloud.html">AWS 개발 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_cloud.html#kubernetes">Kubernetes <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_cloud.html#serverless">서버리스 개발 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_cloud.html#ci-cd">CI/CD 파이프라인 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+            </ul>
+          </div>
+
+          <div class="toc-card">
+            <h3><span class="icon">9️⃣</span> 마이크로서비스</h3>
+            <ul>
+              <li><a href="spring_boot_microservices.html">마이크로서비스 아키텍처 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_microservices.html#communication">서비스 간 통신 <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_microservices.html#api-gateway">API Gateway <span class="difficulty difficulty-advanced">고급</span></a></li>
+              <li><a href="spring_boot_microservices.html#monitoring">모니터링 <span class="difficulty difficulty-intermediate">중급</span></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="environment-setup" class="section">
+        <h2>2. 개발 환경 설정</h2>
+        
+        <div class="example-box">
+          <h3>필요한 도구</h3>
+          <ul>
+            <li><strong>JDK 11+</strong> (권장: JDK 17 LTS)</li>
+            <li><strong>IDE</strong>: IntelliJ IDEA, Eclipse, VS Code</li>
+            <li><strong>빌드 도구</strong>: Maven 또는 Gradle</li>
+          </ul>
+          
+          <div class="tip">
+            💡 <strong>팁</strong>: Spring Initializr(<a href="https://start.spring.io/" target="_blank">start.spring.io</a>)를 사용하면 쉽게 프로젝트를 생성할 수 있습니다.
+          </div>
+        </div>
+        
+        <h3>권장 의존성</h3>
+        <div class="code-block">
+          <pre><code>&lt;dependencies&gt;
+  <span class="java-comment"><!-- 웹 애플리케이션 개발 --&gt;</span>
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+  &lt;/dependency&gt;
+  
+  <span class="java-comment"><!-- 데이터베이스 연동 --&gt;</span>
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+  &lt;/dependency&gt;
+  
+  <span class="java-comment"><!-- 인메모리 데이터베이스 (개발용) --&gt;</span>
+  &lt;dependency&gt;
+    &lt;groupId&gt;com.h2database&lt;/groupId&gt;
+    &lt;artifactId&gt;h2&lt;/artifactId&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+  &lt;/dependency&gt;
+  
+  <span class="java-comment"><!-- 개발 생산성 향상 --&gt;</span>
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+    &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+  &lt;/dependency&gt;
+  
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+  &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+        </div>
+      </div>
+      
+      <div id="first-application" class="section">
+        <h2>3. 첫 번째 애플리케이션</h2>
+        
+        <h3>1. 컨트롤러 생성</h3>
+        <p><code>src/main/java/com/example/demo/HelloController.java</code> 파일을 생성합니다:</p>
+        
+        <div class="code-block">
+          <pre><code><span class="java-keyword">package</span> com.example.demo;
+
+<span class="java-keyword">import</span> org.springframework.web.bind.annotation.GetMapping;
+<span class="java-keyword">import</span> org.springframework.web.bind.annotation.RestController;
+
+<span class="java-annotation">@RestController</span>
+<span class="java-keyword">public class</span> <span class="java-class">HelloController</span> {
+
+    <span class="java-annotation">@GetMapping</span>(<span class="java-string">"/hello"</span>)
+    <span class="java-keyword">public</span> String <span class="java-method">hello</span>() {
+        <span class="java-keyword">return</span> <span class="java-string">"안녕하세요! 스프링 부트에 오신 것을 환영합니다! 🎉"</span>;
+    }
+}</code></pre>
+        </div>
+        
+        <h3>2. 애플리케이션 실행</h3>
+        <p>메인 애플리케이션 클래스(<code>@SpringBootApplication</code>이 붙은 클래스)를 실행합니다.</p>
+        
+        <h3>3. 테스트</h3>
+        <p>웹 브라우저나 Postman에서 다음 주소로 접속해보세요:</p>
+        <div class="code-block">
+          <pre><code>http://localhost:8080/hello</code></pre>
+        </div>
+        <p>"안녕하세요! 스프링 부트에 오신 것을 환영합니다! 🎉" 메시지가 표시되면 성공입니다!</p>
+      </div>
+      
+      <div id="spring-boot-intro" class="section">
+        <h2>4. 학습 로드맵</h2>
+        
+        <div class="method-grid">
+          <div class="toc-card">
+            <h3><span class="icon">1️⃣</span>기초</h3>
+            <ul>
+              <li>스프링 부트 기본 구조 이해</li>
+              <li>의존성 주입(DI)과 제어의 역전(IoC)</li>
+              <li>RESTful API 개발</li>
+              <li>예외 처리</li>
+              <li>유효성 검사</li>
+            </ul>
+          </div>
+          
+          <div class="toc-card">
+            <h3><span class="icon">2️⃣</span>중급</h3>
+            <ul>
+              <li>Spring Data JPA</li>
+              <li>Spring Security</li>
+              <li>테스트 작성 (JUnit, MockMvc)</li>
+              <li>로깅 및 프로파일링</li>
+              <li>캐싱 전략</li>
+            </ul>
+          </div>
+          
+          <div class="toc-card">
+            <h3><span class="icon">3️⃣</span>고급</h3>
+            <ul>
+              <li>마이크로서비스 아키텍처</li>
+              <li>Spring Cloud</li>
+              <li>도커와 쿠버네티스 연동</li>
+              <li>성능 최적화</li>
+              <li>모니터링 (Actuator, Prometheus)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <footer style="text-align: center; margin: 3rem 0; color: #888;">
+      <p>© 2025 백상의 Java Study - 스프링 부트 가이드</p>
+    </footer>
+  </div>
+</body>
+</html>

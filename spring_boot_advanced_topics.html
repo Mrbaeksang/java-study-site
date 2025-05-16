@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎓 스프링 부트 고급 주제들 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .note {
+      border-left: 4px solid #4ec9b0;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(78, 201, 176, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎓 고급 주제들</h1>
+      <p class="intro-text">스프링 부트의 고급 기능과 최신 트렌드를 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 리액티브 프로그래밍</h2>
+        <h3>1.1. WebFlux 소개</h3>
+        <div class="code-block">
+          <pre><code class="java">@RestController
+public class ReactiveController {
+    
+    @GetMapping("/reactive")
+    public Flux&lt;Product&gt; getProducts() {
+        return productRepository.findAll()
+            .doOnNext(product -&gt; 
+                log.info("Processing product: {}", product.getName()))
+            .map(product -&gt; product.withPrice(product.getPrice() * 1.1));
+    }
+}</code></pre>
+        </div>
+
+        <h3>1.2. 리액티브 스트림</h3>
+        <div class="code-block">
+          <pre><code class="java">@Service
+public class ReactiveService {
+    
+    public Mono&lt;Product&gt; processProduct(Mono&lt;Product&gt; productMono) {
+        return productMono
+            .flatMap(product -&gt; validateProduct(product))
+            .flatMap(product -&gt; processPayment(product))
+            .flatMap(product -&gt; updateInventory(product));
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. 클라우드 네이티브</h2>
+        <h3>2.1. Spring Cloud Gateway</h3>
+        <div class="code-block">
+          <pre><code class="yaml">spring:
+  cloud:
+    gateway:
+      routes:
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - CircuitBreaker=name=productService
+            - Retry=gatewayRetry</code></pre>
+        </div>
+
+        <h3>2.2. Spring Cloud Config</h3>
+        <div class="code-block">
+          <pre><code class="yaml">spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/your-repo/config-repo
+          clone-on-start: true
+          search-paths: config-files
+          username: ${GIT_USERNAME}
+          password: ${GIT_PASSWORD}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. 마이크로서비스</h2>
+        <h3>3.1. Spring Cloud Sleuth</h3>
+        <div class="code-block">
+          <pre><code class="java">@RestController
+public class TraceController {
+    
+    @Autowired
+    private Tracer tracer;
+
+    @GetMapping("/trace")
+    public String getTrace() {
+        Span span = tracer.nextSpan().name("process-request").start();
+        try (Tracer.SpanInScope ws = tracer.withSpan(span.start())) {
+            // 비즈니스 로직
+            return "Traced request";
+        } finally {
+            span.end();
+        }
+    }
+}</code></pre>
+        </div>
+
+        <h3>3.2. Spring Cloud Stream</h3>
+        <div class="code-block">
+          <pre><code class="java">@Service
+public class MessageProcessor {
+    
+    @StreamListener(Processor.INPUT)
+    public void process(Message&lt;Order&gt; message) {
+        Order order = message.getPayload();
+        // 주문 처리 로직
+    }
+
+    @Bean
+    public MessageChannel outputChannel() {
+        return MessageChannels.direct().get();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 데이터베이스 최적화</h2>
+        <h3>4.1. JPA 최적화</h3>
+        <div class="code-block">
+          <pre><code class="java">@Entity
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Category category;
+    
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List&lt;OrderItem&gt; orderItems;
+
+    @QueryHints({
+        @QueryHint(name = "org.hibernate.cacheable", value = "true")
+    })
+    public List&lt;Product&gt; findAll() {
+        return productRepository.findAll();
+    }
+}</code></pre>
+        </div>
+
+        <h3>4.2. QueryDSL 사용</h3>
+        <div class="code-block">
+          <pre><code class="java">@Service
+public class ProductService {
+    
+    @Autowired
+    private JPAQueryFactory queryFactory;
+
+    public List&lt;Product&gt; findProductsByCategory(Long categoryId) {
+        return queryFactory
+            .selectFrom(QProduct.product)
+            .where(QProduct.product.category.id.eq(categoryId))
+            .fetch();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>5. 모니터링과 관리</h2>
+        <h3>5.1. Micrometer</h3>
+        <div class="code-block">
+          <pre><code class="java">@RestController
+public class MetricsController {
+    
+    @Autowired
+    private MeterRegistry registry;
+
+    @GetMapping("/metrics")
+    public Map&lt;String, Object&gt; getMetrics() {
+        return registry.getMeters()
+            .stream()
+            .collect(Collectors.toMap(
+                Meter::getId,
+                meter -&gt; meter.measure()
+                    .stream()
+                    .findFirst()
+                    .map(Measurement::getValue)
+                    .orElse(0.0)
+            ));
+    }
+}</code></pre>
+        </div>
+
+        <h3>5.2. Spring Boot Actuator</h3>
+        <div class="code-block">
+          <pre><code class="yaml">management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,env"
+  endpoint:
+    health:
+      show-details: always
+    info:
+      show-details: always
+    metrics:
+      enabled: true
+      tags:
+        application: ${spring.application.name}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>6. 보안 강화</h2>
+        <h3>6.1. JWT 인증</h3>
+        <div class="code-block">
+          <pre><code class="java">@Service
+public class JwtService {
+    private final String SECRET_KEY = "secretkey";
+    private final long EXPIRATION = 1000 * 60 * 60 * 24;
+
+    public String generateToken(UserDetails userDetails) {
+        return Jwts.builder()
+            .setSubject(userDetails.getUsername())
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+            .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+            .compact();
+    }
+
+    private Key getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+}</code></pre>
+        </div>
+
+        <h3>6.2. OAuth2 인증</h3>
+        <div class="code-block">
+          <pre><code class="java">@Configuration
+public class SecurityConfig {
+    
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -&gt; auth
+                .requestMatchers("/public/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth2 -&gt; oauth2
+                .loginPage("/login")
+                .defaultSuccessUrl("/home")
+            )
+            .oauth2ResourceServer(oauth2 -&gt; oauth2
+                .jwt(jwt -&gt; jwt
+                    .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+            );
+        
+        return http.build();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>7. 다음 단계</h2>
+        <p>이제 스프링 부트의 고급 주제들을 배웠습니다. 다음으로는 다음과 같은 주제들을 배우게 됩니다:</p>
+        <ul>
+          <li><a href="spring_boot_microservices.html">마이크로서비스 아키텍처</a></li>
+          <li><a href="spring_boot_cloud.html">클라우드 네이티브 개발</a></li>
+          <li><a href="spring_boot_performance.html">성능 최적화</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

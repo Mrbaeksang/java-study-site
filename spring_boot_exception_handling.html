@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>❌ 예외 처리 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 기존 스타일 재사용 */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>❌ 예외 처리</h1>
+      <p class="intro-text">스프링 부트 애플리케이션의 예외 처리 방법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 전역 예외 처리</h2>
+        <div class="code-block">
+          <pre><code class="java">@ControllerAdvice
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleResourceNotFoundException(
+        ResourceNotFoundException ex) {
+        return new ResponseEntity&lt;&gt;(
+            new ErrorResponse("NOT_FOUND", ex.getMessage()),
+            HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleValidationException(
+        MethodArgumentNotValidException ex) {
+        BindingResult result = ex.getBindingResult();
+        List&lt;String&gt; errors = result.getFieldErrors()
+            .stream()
+            .map(error -&gt; error.getField() + ": " + error.getDefaultMessage())
+            .collect(Collectors.toList());
+        
+        return new ResponseEntity&lt;&gt;(
+            new ErrorResponse("VALIDATION_ERROR", errors),
+            HttpStatus.BAD_REQUEST
+        );
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. 커스텀 예외</h2>
+        <div class="code-block">
+          <pre><code class="java">@ResponseStatus(HttpStatus.NOT_FOUND)
+public class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+}
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class InvalidRequestException extends RuntimeException {
+    public InvalidRequestException(String message) {
+        super(message);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. 유효성 검사</h2>
+        <div class="code-block">
+          <pre><code class="java">@RestController
+public class UserController {
+    
+    @PostMapping("/users")
+    public ResponseEntity&lt;User&gt; createUser(@Valid @RequestBody UserRequest request) {
+        User user = userService.createUser(request);
+        return ResponseEntity.ok(user);
+    }
+}
+
+public class UserRequest {
+    @NotBlank(message = "이름은 필수입니다")
+    private String name;
+    
+    @Email(message = "올바른 이메일 형식이 아닙니다")
+    private String email;
+    
+    @Min(value = 18, message = "최소 나이는 18세입니다")
+    private int age;
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 에러 응답 표준화</h2>
+        <div class="code-block">
+          <pre><code class="java">public class ErrorResponse {
+    private String code;
+    private String message;
+    private List&lt;String&gt; details;
+    private LocalDateTime timestamp;
+
+    public ErrorResponse(String code, String message) {
+        this.code = code;
+        this.message = message;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public ErrorResponse(String code, List&lt;String&gt; details) {
+        this.code = code;
+        this.details = details;
+        this.timestamp = LocalDateTime.now();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>5. 다음 단계</h2>
+        <p>이제 예외 처리의 기본적인 개념을 배웠습니다. 다음으로는 다음과 같은 주제들을 배우게 됩니다:</p>
+        <ul>
+          <li><a href="spring_boot_security.html">보안 구현</a></li>
+          <li><a href="spring_boot_logging.html">로깅</a></li>
+          <li><a href="spring_boot_monitoring.html">모니터링</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

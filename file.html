@@ -163,19 +163,205 @@ Files.move(source, target);
             
             <div class="method-grid">
                 <!-- 텍스트 파일 읽기 -->
-                <div class="card">
-                    <h3>텍스트 파일 읽기</h3>
-                    <div class="code-block">
-try (BufferedReader reader = 
-        new BufferedReader(
-            new FileReader("input.txt"))) {
-    String line;
-    while ((line = reader.readLine()) != null) {
-        System.out.println(line);
+                <section class="section">
+      <h2>🎯 File API 완벽 가이드</h2>
+      <div class="example-box">
+        <h3>개요</h3>
+        <ul>
+          <li>파일/디렉토리 처리</li>
+          <li>경로 관련 메서드</li>
+          <li>파일 속성 조회</li>
+          <li>권한 관리</li>
+        </ul>
+
+        <h3>주요 특징</h3>
+        <div class="ascii-art">
+          +-------------------+
+          |      File API     |
+          |-------------------|
+          | - 파일 처리      |
+          | - 경로 관리      |
+          | - 속성 조회      |
+          | - 권한 관리      |
+          +-------------------+
+        </div>
+        <ul>
+          <li>파일/디렉토리 처리</li>
+          <li>경로 관련 메서드</li>
+          <li>파일 속성 조회</li>
+          <li>권한 관리</li>
+        </ul>
+
+        <h3>실제 사용 예시</h3>
+        <div class="code-block">
+// 기본 사용법
+File file = new File("example.txt");
+if (file.exists()) {
+    System.out.println("파일이 존재합니다.");
+}
+
+// 복잡한 파일 처리
+File dir = new File("data/backup");
+if (!dir.exists()) {
+    dir.mkdirs();
+}
+File[] files = dir.listFiles();
+for (File f : files) {
+    if (f.isFile() && f.getName().endsWith(".txt")) {
+        // 처리 로직
     }
 }
-                    </div>
-                </div>
+        </div>
+
+        <h3>주의사항</h3>
+        <div class="warning">
+          <ul>
+            <li>권한 확인 필요</li>
+            <li>경로 처리 주의</li>
+            <li>성능 고려</li>
+            <li>예외 처리 필수</li>
+          </ul>
+        </div>
+
+        <h3>성능 특성</h3>
+        <ul>
+          <li>파일 존재 확인: O(1)</li>
+          <li>디렉토리 생성: O(1)</li>
+          <li>파일 삭제: O(1)</li>
+          <li>메모리 사용량 최적화</li>
+        </ul>
+
+        <h3>관련 메서드 상세 설명</h3>
+        <div class="method-box">
+          <h4>exists()</h4>
+          <div class="code-block">
+// 예시
+File file = new File("example.txt");
+if (file.exists()) {
+    System.out.println("파일이 존재합니다.");
+}
+          </div>
+          <ul>
+            <li><b>사용처:</b> 파일 존재 확인, 디렉토리 존재 확인</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 파일 처리 전 검사, 디렉토리 확인</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>상대 경로 주의</li>
+                <li>권한 확인</li>
+                <li>성능 고려</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="method-box">
+          <h4>mkdir()</h4>
+          <div class="code-block">
+// 예시
+File dir = new File("data/backup");
+if (!dir.exists()) {
+    dir.mkdirs();
+}
+          </div>
+          <ul>
+            <li><b>사용처:</b> 디렉토리 생성, 프로젝트 구조</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 파일 저장, 디렉토리 생성</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>상위 디렉토리 확인</li>
+                <li>권한 확인</li>
+                <li>이미 존재하는지 확인</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="method-box">
+          <h4>delete()</h4>
+          <div class="code-block">
+// 예시
+File file = new File("temp.txt");
+if (file.exists()) {
+    file.delete();
+}
+          </div>
+          <ul>
+            <li><b>사용처:</b> 파일 삭제, 디렉토리 삭제</li>
+            <li><b>성능:</b> O(1)</li>
+            <li><b>실전 활용:</b> 정리 작업, 파일 삭제</li>
+            <li><b>주의사항:</b>
+              <ul>
+                <li>권한 확인</li>
+                <li>비어있는지 확인</li>
+                <li>성공 여부 확인</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <h3>예외 처리</h3>
+        <div class="warning">
+          <ul>
+            <li>SecurityException: 권한 문제</li>
+            <li>IOException: 입출력 오류</li>
+            <li>NullPointerException: null 처리</li>
+          </ul>
+        </div>
+
+        <h3>동시성 고려사항</h3>
+        <div class="note">
+          <ul>
+            <li>파일 접근 동시성 고려</li>
+            <li>권한 확인</li>
+            <li>성능 고려</li>
+            <li>예외 처리</li>
+          </ul>
+        </div>
+
+        <h3>메모리 사용량</h3>
+        <div class="tip">
+          <ul>
+            <li>파일 처리 메모리 효율적</li>
+            <li>메모리 사용량 최적화</li>
+            <li>성능 최적화</li>
+            <li>예외 처리 최적화</li>
+          </ul>
+        </div>
+
+        <h3>최적화 팁</h3>
+        <div class="tip">
+          <ul>
+            <li>권한 확인 최적화</li>
+            <li>성능 측정</li>
+            <li>메모리 사용량 최적화</li>
+            <li>예외 처리 최적화</li>
+            <li>동시성 고려</li>
+          </ul>
+        </div>
+
+        <h3>관련 API 링크</h3>
+        <nav class="api-nav">
+      <a href="index.html" class="api-nav-link">Home</a>
+      <a href="string.html" class="api-nav-link">String</a>
+      <a href="collections.html" class="api-nav-link">Collections</a>
+      <a href="stream.html" class="api-nav-link">Stream</a>
+      <a href="random.html" class="api-nav-link">Random</a>
+    </nav>
+
+        <h3>실전 활용 팁</h3>
+        <div class="note">
+          <ul>
+            <li>파일 처리</li>
+            <li>경로 관리</li>
+            <li>속성 조회</li>
+            <li>권한 관리</li>
+            <li>성능 최적화</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
                 <!-- 텍스트 파일 쓰기 -->
                 <div class="card">

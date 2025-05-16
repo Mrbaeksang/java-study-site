@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 SQL 소개 - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 공통 스타일 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📚 SQL 소개</h1>
+      <p>SQL(Structured Query Language)의 기본 개념과 역사에 대해 알아봅시다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. SQL이란 무엇인가요?</h2>
+        <p>SQL(Structured Query Language)은 관계형 데이터베이스 관리 시스템(RDBMS)에서 데이터를 관리하고 조작하기 위해 사용되는 표준 프로그래밍 언어입니다.</p>
+        
+        <div class="tip">
+          <h3>💡 핵심 특징</h3>
+          <ul>
+            <li>데이터베이스와 상호작용하기 위한 표준 언어</li>
+            <li>데이터 정의, 조작, 제어를 위한 다양한 명령어 제공</li>
+            <li>선언적 언어로 '무엇을' 할지에 초점을 맞춤</li>
+            <li>ANSI/ISO 표준을 따르지만, 각 DBMS마다 약간의 차이가 있음</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section" id="history">
+        <h2>2. SQL의 역사</h2>
+        <p>SQL은 1970년대 초 IBM 연구소에서 개발된 SEQUEL(Structured English Query Language)에서 시작되었습니다.</p>
+        
+        <h3>주요 연혁</h3>
+        <table>
+          <tr>
+            <th>연도</th>
+            <th>사건</th>
+          </tr>
+          <tr>
+            <td>1970년</td>
+            <td>E.F. Codd가 관계형 데이터베이스 모델 제안</td>
+          </tr>
+          <tr>
+            <td>1974년</td>
+            <td>IBM에서 SEQUEL 개발 시작</td>
+          </tr>
+          <tr>
+            <td>1979년</td>
+            <td>Oracle에서 최초의 상용 RDBMS 출시</td>
+          </tr>
+          <tr>
+            <td>1986년</td>
+            <td>ANSI SQL 표준 채택 (SQL-86)</td>
+          </tr>
+          <tr>
+            <td>1992년</td>
+            <td>SQL-92 (SQL2) 표준화</td>
+          </tr>
+          <tr>
+            <td>1999년</td>
+            <td>SQL:1999 (SQL3) - 재귀 쿼리, 트리거 등 추가</td>
+          </tr>
+          <tr>
+            <td>2003년~현재</td>
+            <td>XML 지원, 윈도우 함수, JSON 지원 등 지속적인 확장</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="section" id="rdbms">
+        <h2>3. RDBMS 이해하기</h2>
+        <p>관계형 데이터베이스 관리 시스템(RDBMS)은 테이블 형태로 데이터를 저장하고, 이들 간의 관계를 정의하여 데이터를 관리하는 시스템입니다.</p>
+        
+        <h3>주요 RDBMS 제품</h3>
+        <ul>
+          <li><strong>MySQL</strong>: 오픈 소스 RDBMS로 웹 애플리케이션에 널리 사용</li>
+          <li><strong>Oracle Database</strong>: 기업용 고성능 데이터베이스</li>
+          <li><strong>Microsoft SQL Server</strong>: 마이크로소프트의 통합 데이터 플랫폼</li>
+          <li><strong>PostgreSQL</strong>: 고급 기능을 갖춘 오픈 소스 RDBMS</li>
+          <li><strong>SQLite</strong>: 임베디드 데이터베이스로 가볍고 사용이 간편</li>
+        </ul>
+
+        <div class="note">
+          <h3>📌 RDBMS의 주요 특징</h3>
+          <ul>
+            <li>데이터는 테이블 형태로 구성됨</li>
+            <li>테이블 간의 관계를 통해 데이터 중복 최소화</li>
+            <li>ACID(원자성, 일관성, 고립성, 지속성) 트랜잭션 지원</li>
+            <li>SQL을 사용한 데이터 조회 및 조작</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section" id="tools">
+        <h2>4. SQL 개발 도구</h2>
+        <p>SQL을 작성하고 실행하기 위한 다양한 도구들이 있습니다.</p>
+        
+        <h3>주요 SQL 클라이언트 도구</h3>
+        <table>
+          <tr>
+            <th>도구명</th>
+            <th>설명</th>
+            <th>지원 DBMS</th>
+          </tr>
+          <tr>
+            <td>MySQL Workbench</td>
+            <td>MySQL 공식 GUI 도구</td>
+            <td>MySQL</td>
+          </tr>
+          <tr>
+            <td>DBeaver</td>
+            <td>다양한 DBMS를 지원하는 범용 데이터베이스 툴</td>
+            <td>다양한 DBMS</td>
+          </tr>
+          <tr>
+            <td>SQL Server Management Studio (SSMS)</td>
+            <td>Microsoft SQL Server 관리 도구</td>
+            <td>SQL Server</td>
+          </tr>
+          <tr>
+            <td>pgAdmin</td>
+            <td>PostgreSQL을 위한 관리 도구</td>
+            <td>PostgreSQL</td>
+          </tr>
+          <tr>
+            <td>Oracle SQL Developer</td>
+            <td>Oracle 데이터베이스 개발 도구</td>
+            <td>Oracle</td>
+          </tr>
+        </table>
+
+        <div class="tip">
+          <h3>💡 초보자를 위한 추천 도구</h3>
+          <p>처음 SQL을 배우시는 분들에게는 <strong>DBeaver</strong>를 추천합니다. 무료이며 다양한 데이터베이스를 지원하고, 사용자 친화적인 인터페이스를 제공합니다.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>5. SQL의 기본 구성 요소</h2>
+        <p>SQL은 크게 세 가지 유형의 언어로 구성되어 있습니다.</p>
+        
+        <h3>5.1 DDL (Data Definition Language)</h3>
+        <p>데이터베이스 구조를 정의하고 변경하는 명령어</p>
+        <div class="code-block">
+          <span class="sql-keyword">CREATE</span> - 데이터베이스 객체 생성<br>
+          <span class="sql-keyword">ALTER</span> - 기존 객체 구조 변경<br>
+          <span class="sql-keyword">DROP</span> - 객체 삭제<br>
+          <span class="sql-keyword">TRUNCATE</span> - 테이블의 모든 행 삭제
+        </div>
+
+        <h3>5.2 DML (Data Manipulation Language)</h3>
+        <p>데이터를 조작하는 명령어</p>
+        <div class="code-block">
+          <span class="sql-keyword">SELECT</span> - 데이터 조회<br>
+          <span class="sql-keyword">INSERT</span> - 데이터 추가<br>
+          <span class="sql-keyword">UPDATE</span> - 데이터 수정<br>
+          <span class="sql-keyword">DELETE</span> - 데이터 삭제
+        </div>
+
+        <h3>5.3 DCL (Data Control Language)</h3>
+        <p>데이터베이스 접근 권한을 제어하는 명령어</p>
+        <div class="code-block">
+          <span class="sql-keyword">GRANT</span> - 사용자 권한 부여<br>
+          <span class="sql-keyword">REVOKE</span> - 사용자 권한 회수
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>6. SQL 실습 환경 준비</h2>
+        <p>SQL을 연습하기 위한 무료 환경을 소개합니다.</p>
+        
+        <h3>6.1 온라인 SQL 연습장</h3>
+        <ul>
+          <li><a href="https://www.w3schools.com/sql/trysql.asp?filename=trysql_select_all" target="_blank">W3Schools SQL Editor</a></li>
+          <li><a href="https://sqliteonline.com/" target="_blank">SQLite Online</a></li>
+          <li><a href="https://www.db-fiddle.com/" target="_blank">DB Fiddle</a> - 다양한 DBMS 지원</li>
+        </ul>
+
+        <h3>6.2 로컬에 설치하는 방법</h3>
+        <ol>
+          <li>MySQL 또는 SQLite 설치</li>
+          <li>DBeaver 또는 MySQL Workbench 설치</li>
+          <li>샘플 데이터베이스 다운로드 및 설치</li>
+        </ol>
+
+        <div class="warning">
+          <h3>⚠️ 주의사항</h3>
+          <p>이 튜토리얼의 예제는 표준 SQL을 기반으로 하지만, 일부 데이터베이스 제품에서는 약간의 문법 차이가 있을 수 있습니다. 사용 중인 데이터베이스의 공식 문서를 참조하세요.</p>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_main.html" class="nav-button">◀️ 목차로 돌아가기</a>
+        <a href="sql_basic_syntax.html" class="nav-button">다음 강의: 기본 문법 ▶️</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // SQL 구문 강조
+    document.addEventListener('DOMContentLoaded', function() {
+      const codeBlocks = document.querySelectorAll('.code-block');
+      codeBlocks.forEach(block => {
+        let html = block.innerHTML;
+        // SQL 키워드 강조
+        const keywords = ['SELECT', 'FROM', 'WHERE', 'AS', 'DISTINCT', 'CONCAT', 'AND', 'OR', 'NOT', 'GROUP BY', 'ORDER BY', 'HAVING', 'LIMIT', 'OFFSET', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'OUTER', 'ON', 'UNION', 'ALL', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE', 'TABLE', 'ALTER', 'DROP', 'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'UNIQUE', 'INDEX', 'VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'BEGIN', 'END', 'IF', 'THEN', 'ELSE', 'WHILE', 'FOR', 'FOREACH', 'CASE', 'WHEN', 'ELSE', 'THEN', 'END', 'LOOP', 'EXIT', 'CONTINUE', 'RETURN', 'DECLARE', 'DEFAULT', 'NOT NULL', 'NULL', 'TRUE', 'FALSE', 'IS', 'BETWEEN', 'LIKE', 'IN', 'ANY', 'SOME', 'ALL', 'EXISTS', 'UNIQUE', 'DISTINCT', 'ASC', 'DESC', 'BY', 'HAVING', 'WITH', 'RECURSIVE', 'WINDOW', 'PARTITION', 'OVER', 'FILTER', 'INTERSECT', 'EXCEPT', 'CROSS', 'NATURAL', 'USING', 'LATERAL'];
+        
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`\\b(${keyword})\\b`, 'gi');
+          html = html.replace(regex, '<span class="sql-keyword">$1</span>');
+        });
+
+        // 숫자 강조
+        html = html.replace(/(\b\d+\b)/g, '<span class="sql-number">$1</span>');
+        
+        // 문자열 강조
+        html = html.replace(/'([^']*?)'/g, '<span class="sql-string">\'$1\'</span>');
+        
+        // 주석 강조
+        html = html.replace(/--(.*?)(?=<br>|$)/g, '<span class="sql-comment">--$1</span>');
+        
+        block.innerHTML = html;
+      });
+    });
+  </script>
+</body>
+</html>

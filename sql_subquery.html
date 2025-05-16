@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 SQL U09 – 서브쿼리(Subquery), IN, EXISTS</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .method-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    .method-table th,
+    .method-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--vscode-highlight);
+      text-align: left;
+    }
+    .method-table th {
+      background: var(--vscode-bg);
+    }
+    .example-box {
+      background: var(--vscode-bg);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+      line-height: 1.5;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 0.5rem;
+      background: var(--vscode-highlight);
+    }
+    h2 {
+      color: var(--vscode-blue);
+      border-bottom: 1px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin: 2rem 0 1rem;
+    }
+    h3 {
+      color: var(--vscode-text);
+      margin: 1.5rem 0 1rem;
+    }
+    .sql-keyword {
+      color: #569cd6;
+      font-weight: bold;
+    }
+    .sql-string {
+      color: #ce9178;
+    }
+    .sql-number {
+      color: #b5cea8;
+    }
+    .sql-comment {
+      color: #6a9955;
+      font-style: italic;
+    }
+    .sql-operator {
+      color: #d4d4d4;
+      font-weight: bold;
+    }
+    .practice {
+      background: rgba(0, 0, 0, 0.2);
+      border-left: 4px solid #ffd700;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .practice-title {
+      color: #ffd700;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📚 SQL U09 – 서브쿼리(Subquery), IN, EXISTS</h1>
+  </header>
+
+  <div class="section">
+    <h2>1. ❓ 등장 배경 – 왜 필요한가?</h2>
+    <p>"조건을 줘야 하는데, <strong>그 조건값이 동적으로 정해져야 해.</strong>"</p>
+    <p>예를 들어:</p>
+    <ul>
+      <li>"가장 비싼 상품을 주문한 사용자들만 보고 싶어"</li>
+      <li>"상품을 2개 이상 주문한 사용자만 조회하고 싶어"</li>
+    </ul>
+    <p>👉 이럴 땐 서브쿼리가 필요해요.<br>서브쿼리는 쿼리 내부에서 또 다른 쿼리를 실행한 결과를 조건으로 삼는 방식이에요.</p>
+  </div>
+
+  <div class="section">
+    <h2>2. 🚫 기존 방식의 한계</h2>
+    <table class="method-table">
+      <tr>
+        <th>방식</th>
+        <th>한계</th>
+      </tr>
+      <tr>
+        <td>정적인 값만 조건으로 가능</td>
+        <td><code class="sql-keyword">WHERE</code> price = 1000000 ← 고정된 숫자만</td>
+      </tr>
+      <tr>
+        <td>다단계 관계 표현 어려움</td>
+        <td>특정 조건을 만족하는 행을 찾아서 또 다른 테이블에서 연결하는 식이 어려움</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>3. 🧠 핵심 개념 요약</h2>
+    <table class="method-table">
+      <tr>
+        <th>문법</th>
+        <th>설명</th>
+      </tr>
+      <tr>
+        <td><code class="sql-keyword">(SELECT</code> ...<code class="sql-keyword">)</code></td>
+        <td>서브쿼리 기본형</td>
+      </tr>
+      <tr>
+        <td><code class="sql-keyword">IN (</code>서브쿼리<code class="sql-keyword">)</code></td>
+        <td>결과 목록 중 포함되는 값이면 참</td>
+      </tr>
+      <tr>
+        <td><code class="sql-keyword">EXISTS (</code>서브쿼리<code class="sql-keyword">)</code></td>
+        <td>결과가 존재하면 참</td>
+      </tr>
+      <tr>
+        <td><code class="sql-operator">= (</code>서브쿼리<code class="sql-operator">)</code></td>
+        <td>서브쿼리 결과가 단일값일 때</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>4. ⚙️ 실행 흐름 도식화</h2>
+    <div class="code-block">
+      <span class="sql-keyword">SELECT</span> name<br>
+      <span class="sql-keyword">FROM</span> users<br>
+      <span class="sql-keyword">WHERE</span> id <span class="sql-keyword">IN</span> (<br>
+      &nbsp;&nbsp;<span class="sql-keyword">SELECT</span> user_id<br>
+      &nbsp;&nbsp;<span class="sql-keyword">FROM</span> orders<br>
+      &nbsp;&nbsp;<span class="sql-keyword">WHERE</span> product_id = <span class="sql-number">500</span><br>
+      );
+    </div>
+    <ol>
+      <li>1️⃣ 내부 쿼리 실행 → orders에서 product_id = 500인 user_id만 추출</li>
+      <li>2️⃣ 그 결과에 users의 id가 포함되면 출력</li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <h2>5. 🏠 실생활 비유</h2>
+    <p>📂 "이 목록에 있는 사람만 따로 서류 뽑기"</p>
+    <p>내부에서 먼저 조건에 맞는 목록을 만듦 → 그 결과로 메인 필터링</p>
+    <p>예: "최고점 받은 학생의 이름을 보고 싶다" → 점수 테이블 먼저 조회 → 그 사람만 이름표 추출</p>
+  </div>
+
+  <div class="section">
+    <h2>6. 🧪 예제</h2>
+    
+    <div class="example-box">
+      <h3>✅ 예제 1: 맥북(500번) 상품을 주문한 사용자만 조회</h3>
+      <div class="code-block">
+        <span class="sql-keyword">SELECT</span> name<br>
+        <span class="sql-keyword">FROM</span> users<br>
+        <span class="sql-keyword">WHERE</span> id <span class="sql-keyword">IN</span> (<br>
+        &nbsp;&nbsp;<span class="sql-keyword">SELECT</span> user_id<br>
+        &nbsp;&nbsp;<span class="sql-keyword">FROM</span> orders<br>
+        &nbsp;&nbsp;<span class="sql-keyword">WHERE</span> product_id = <span class="sql-number">500</span><br>
+        );
+      </div>
+    </div>
+
+    <div class="example-box">
+      <h3>✅ 예제 2: 가장 비싼 상품 조회</h3>
+      <div class="code-block">
+        <span class="sql-keyword">SELECT</span> *<br>
+        <span class="sql-keyword">FROM</span> products<br>
+        <span class="sql-keyword">WHERE</span> price = (<br>
+        &nbsp;&nbsp;<span class="sql-keyword">SELECT</span> <span class="sql-keyword">MAX</span>(price)<br>
+        &nbsp;&nbsp;<span class="sql-keyword">FROM</span> products<br>
+        );
+      </div>
+      <p class="tip">= 연산자는 서브쿼리 결과가 1개일 때만 사용 가능합니다.</p>
+    </div>
+
+    <div class="example-box">
+      <h3>✅ 예제 3: 주문한 적 있는 사용자만 조회 (EXISTS)</h3>
+      <div class="code-block">
+        <span class="sql-keyword">SELECT</span> *<br>
+        <span class="sql-keyword">FROM</span> users u<br>
+        <span class="sql-keyword">WHERE</span> <span class="sql-keyword">EXISTS</span> (<br>
+        &nbsp;&nbsp;<span class="sql-keyword">SELECT</span> <span class="sql-number">1</span><br>
+        &nbsp;&nbsp;<span class="sql-keyword">FROM</span> orders o<br>
+        &nbsp;&nbsp;<span class="sql-keyword">WHERE</span> o.user_id = u.id<br>
+        );
+      </div>
+      <p class="tip">EXISTS는 존재 여부만 판단하므로 SELECT 절에 1이나 * 등 아무 값이나 넣어도 됩니다. 성능상으로도 효율적입니다.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>7. 🛠️ TODO 실습</h2>
+    
+    <div class="practice">
+      <div class="practice-title">🧪 실습 1</div>
+      <p>맥북(500)을 주문한 사용자 이름을 서브쿼리로 조회하라</p>
+      <div class="code-block">
+        <span class="sql-comment">-- TODO 1</span><br>
+        <span class="sql-keyword">SELECT</span> name<br>
+        <span class="sql-keyword">FROM</span> users<br>
+        <span class="sql-keyword">WHERE</span> id <span class="sql-keyword">IN</span> (<nobr><span class="sql-comment">/* 여기에 작성 */</span></nobr>);
+      </div>
+    </div>
+
+    <div class="practice">
+      <div class="practice-title">🧪 실습 2</div>
+      <p>가장 비싼 상품 이름과 가격을 조회하라</p>
+      <div class="code-block">
+        <span class="sql-comment">-- TODO 2</span><br>
+        <span class="sql-keyword">SELECT</span> name, price<br>
+        <span class="sql-keyword">FROM</span> products<br>
+        <span class="sql-keyword">WHERE</span> price = (<nobr><span class="sql-comment">/* 여기에 작성 */</span></nobr>);
+      </div>
+    </div>
+
+    <div class="practice">
+      <div class="practice-title">🧪 실습 3</div>
+      <p>최소 1개라도 주문한 사용자를 EXISTS로 조회하라</p>
+      <div class="code-block">
+        <span class="sql-comment">-- TODO 3</span><br>
+        <span class="sql-keyword">SELECT</span> *<br>
+        <span class="sql-keyword">FROM</span> users u<br>
+        <span class="sql-keyword">WHERE</span> <nobr><span class="sql-comment">/* 여기에 작성 */</span></nobr>;
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>8. 📝 정답</h2>
+    <details>
+      <summary>실습 1 정답 보기</summary>
+      <div class="code-block">
+        <span class="sql-keyword">SELECT</span> name<br>
+        <span class="sql-keyword">FROM</span> users<br>
+        <span class="sql-keyword">WHERE</span> id <span class="sql-keyword">IN</span> (<br>
+        &nbsp;&nbsp;<span class="sql-keyword">SELECT</span> user_id<br>
+        &nbsp;&nbsp;<span class="sql-keyword">FROM</span> orders<br>
+        &nbsp;&nbsp;<span class="sql-keyword">WHERE</span> product_id = <span class="sql-number">500</span><br>
+        );
+      </div>
+    </details>
+
+    <details>
+      <summary>실습 2 정답 보기</summary>
+      <div class="code-block">
+        <span class="sql-keyword">SELECT</span> name, price<br>
+        <span class="sql-keyword">FROM</span> products<br>
+        <span class="sql-keyword">WHERE</span> price = (<br>
+        &nbsp;&nbsp;<span class="sql-keyword">SELECT</span> <span class="sql-keyword">MAX</span>(price)<br>
+        &nbsp;&nbsp;<span class="sql-keyword">FROM</span> products<br>
+        );
+      </div>
+    </details>
+
+    <details>
+      <summary>실습 3 정답 보기</summary>
+      <div class="code-block">
+        <span class="sql-keyword">SELECT</span> *<br>
+        <span class="sql-keyword">FROM</span> users u<br>
+        <span class="sql-keyword">WHERE</span> <span class="sql-keyword">EXISTS</span> (<br>
+        &nbsp;&nbsp;<span class="sql-keyword">SELECT</span> <span class="sql-number">1</span><br>
+        &nbsp;&nbsp;<span class="sql-keyword">FROM</span> orders o<br>
+        &nbsp;&nbsp;<span class="sql-keyword">WHERE</span> o.user_id = u.id<br>
+        );
+      </div>
+    </details>
+  </div>
+
+  <script>
+    // 코드 블록에 구문 강조 적용
+    document.addEventListener('DOMContentLoaded', function() {
+      const codeBlocks = document.querySelectorAll('.code-block');
+      codeBlocks.forEach(block => {
+        let html = block.innerHTML;
+        // SQL 키워드 강조
+        const keywords = ['SELECT', 'FROM', 'WHERE', 'IN', 'EXISTS', 'AND', 'OR', 'NOT', 'AS', 'GROUP BY', 'ORDER BY', 'HAVING', 'LIMIT', 'OFFSET', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'OUTER', 'ON', 'UNION', 'ALL', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE', 'TABLE', 'ALTER', 'DROP', 'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'UNIQUE', 'INDEX', 'VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'BEGIN', 'END', 'IF', 'THEN', 'ELSE', 'WHILE', 'FOR', 'FOREACH', 'CASE', 'WHEN', 'ELSE', 'THEN', 'END', 'LOOP', 'EXIT', 'CONTINUE', 'RETURN', 'DECLARE', 'DEFAULT', 'NOT NULL', 'NULL', 'TRUE', 'FALSE', 'IS', 'BETWEEN', 'LIKE', 'IN', 'ANY', 'SOME', 'ALL', 'EXISTS', 'UNIQUE', 'DISTINCT', 'ASC', 'DESC', 'BY', 'HAVING', 'WITH', 'RECURSIVE', 'WINDOW', 'PARTITION', 'OVER', 'FILTER', 'INTERSECT', 'EXCEPT', 'CROSS', 'NATURAL', 'USING', 'LATERAL'];
+        
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`\\b(${keyword})\\b`, 'gi');
+          html = html.replace(regex, '<span class="sql-keyword">$1</span>');
+        });
+
+        // 숫자 강조
+        html = html.replace(/(\b\d+\b)/g, '<span class="sql-number">$1</span>');
+        
+        // 문자열 강조
+        html = html.replace(/'([^']*?)'/g, '<span class="sql-string">\'$1\'</span>');
+        
+        // 주석 강조
+        html = html.replace(/--(.*?)(?=<br>|$)/g, '<span class="sql-comment">--$1</span>');
+        
+        block.innerHTML = html;
+      });
+    });
+  </script>
+</body>
+</html>

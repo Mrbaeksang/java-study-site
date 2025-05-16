@@ -107,245 +107,354 @@
       position: absolute;
       left: -1.5rem;
     }
+
+    .api-nav {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      background: var(--vscode-darker);
+      border-bottom: 1.5px solid var(--vscode-highlight);
+      z-index: 100;
+      box-shadow: 0 2px 16px 0 rgba(0,0,0,0.17);
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 0.9rem 0 0.9rem 0;
+    }
+    .api-nav-link {
+      color: #fff;
+      background: linear-gradient(90deg, #005fa3 60%, #3af 100%);
+      border: none;
+      font-size: 1.1em;
+      font-weight: 700;
+      margin: 0 0.7em;
+      padding: 0.38em 1.4em;
+      border-radius: 2em;
+      transition: background 0.17s, color 0.17s, box-shadow 0.18s;
+      cursor: pointer;
+      box-shadow: 0 2px 10px 0 rgba(0,122,204,0.10);
+      letter-spacing: 0.01em;
+      outline: none;
+      display: flex;
+      align-items: center;
+    }
+    .api-nav-link:focus, .api-nav-link:hover {
+      background: linear-gradient(90deg, #0077cc 60%, #4fd5ff 100%);
+      color: #fff;
+      box-shadow: 0 4px 16px 0 rgba(0,122,204,0.17);
+    }
+    .api-nav-link.active {
+      background: #f97583;
+      color: #fff;
+      font-weight: 900;
+      border: 2px solid #fff;
+    }
+    @media (max-width: 700px) {
+      .api-nav { flex-direction: column; gap: 0.7rem; padding: 0.7rem 0; }
+      .api-nav-link { width: 98vw; justify-content: center; }
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>⚠️ Exception API 완벽 가이드</h1>
-    <nav>
-      <a href="index.html" class="button">홈으로 돌아가기</a>
+    <h1>🚨 Exception(예외) 완벽 가이드</h1>
+    <nav class="api-nav">
+      <a href="index.html" class="api-nav-link">홈</a>
+      <a href="exception.html" class="api-nav-link active" style="background:#f97583;color:white;">예외처리 가이드</a>
+      <a href="string.html" class="api-nav-link">String</a>
+      <a href="math.html" class="api-nav-link">Math</a>
+      <a href="arrays.html" class="api-nav-link">Arrays</a>
+      <a href="wrapper.html" class="api-nav-link">Wrapper</a>
+      <a href="stringbuilder.html" class="api-nav-link">StringBuilder</a>
+      <a href="arraylist.html" class="api-nav-link">ArrayList</a>
+      <a href="collections.html" class="api-nav-link">Collections</a>
+      <a href="hashset.html" class="api-nav-link">HashSet</a>
+      <a href="map.html" class="api-nav-link">Map</a>
+      <a href="stream.html" class="api-nav-link">Stream</a>
+    </nav>
+    <nav class="exception-toc" style="display:flex;flex-wrap:wrap;gap:0.7em;margin:1.2em 0 1.7em 0;">
+      <a href="#what">예외란?</a>
+      <a href="#why">왜 필요한가?</a>
+      <a href="#hierarchy">예외 계층 구조</a>
+      <a href="#checked-unchecked">Checked/Unchecked</a>
+      <a href="#syntax">기본 문법</a>
+      <a href="#main-examples">주요 예외 실전 예시</a>
+      <a href="#custom-exception">사용자 정의 예외</a>
+      <a href="#practice">실전 예제/미션</a>
+      <a href="#tips">실수 & 팁</a>
     </nav>
   </header>
-
   <main>
     <!-- 개요 섹션 -->
-    <section class="section">
-      <h2>📚 예외 처리 개요</h2>
-      <p>예외 처리는 프로그램 실행 중 발생할 수 있는 오류를 안전하게 처리하는 메커니즘입니다.</p>
-      
-      <div class="note">
-        <h3>예외의 종류</h3>
-        <div class="exception-hierarchy">
-          <ul>
-            <li>Throwable
-              <ul>
-                <li>Error (시스템 에러)
-                  <ul>
-                    <li>OutOfMemoryError</li>
-                    <li>StackOverflowError</li>
-                  </ul>
-                </li>
-                <li>Exception (프로그램 에러)
-                  <ul>
-                    <li>RuntimeException (Unchecked)
-                      <ul>
-                        <li>NullPointerException</li>
-                        <li>ArrayIndexOutOfBoundsException</li>
-                        <li>ClassCastException</li>
-                      </ul>
-                    </li>
-                    <li>IOException (Checked)
-                      <ul>
-                        <li>FileNotFoundException</li>
-                        <li>EOFException</li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="warning">
-        <h3>Checked vs Unchecked Exceptions</h3>
-        <table class="comparison-table">
-          <tr>
-            <th>특성</th>
-            <th>Checked Exception</th>
-            <th>Unchecked Exception</th>
-          </tr>
-          <tr>
-            <td>처리 필수</td>
-            <td>예 (컴파일 에러)</td>
-            <td>아니오</td>
-          </tr>
-          <tr>
-            <td>상속 계층</td>
-            <td>Exception</td>
-            <td>RuntimeException</td>
-          </tr>
-          <tr>
-            <td>대표 예시</td>
-            <td>IOException, SQLException</td>
-            <td>NullPointerException, IndexOutOfBoundsException</td>
-          </tr>
-          <tr>
-            <td>발생 원인</td>
-            <td>외부 요인</td>
-            <td>프로그래밍 오류</td>
-          </tr>
-        </table>
+    <section class="section" id="what">
+      <h2>❓ 예외란?</h2>
+      <div class="note">예외(Exception)는 프로그램 실행 중 <b>정상적인 흐름을 방해하는 사건</b>입니다.<br>예: 0으로 나누기, 없는 파일 열기, 잘못된 입력 등</div>
+    </section>
+    <section class="section" id="why">
+      <h2>💡 왜 예외처리가 필요할까?</h2>
+      <div class="example-box">
+        <ul>
+          <li>프로그램이 <b>비정상 종료</b>되지 않게 방지</li>
+          <li>문제 상황을 <b>명확히 파악</b>하고 대처</li>
+          <li>사용자에게 <b>친절한 안내</b> 제공</li>
+        </ul>
       </div>
     </section>
-
-    <!-- 기본 문법 -->
-    <section class="section">
-      <h2>🛠 기본 문법</h2>
-      
+    <section class="section" id="hierarchy">
+      <h2>🌳 예외 계층 구조</h2>
+      <div class="exception-hierarchy">
+        <ul>
+          <li>Throwable
+            <ul>
+              <li>Error (시스템 에러)
+                <ul>
+                  <li>OutOfMemoryError</li>
+                  <li>StackOverflowError</li>
+                </ul>
+              </li>
+              <li>Exception (프로그램 에러)
+                <ul>
+                  <li>RuntimeException (Unchecked)
+                    <ul>
+                      <li>NullPointerException</li>
+                      <li>ArrayIndexOutOfBoundsException</li>
+                      <li>ClassCastException</li>
+                    </ul>
+                  </li>
+                  <li>IOException (Checked)
+                    <ul>
+                      <li>FileNotFoundException</li>
+                      <li>EOFException</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <section class="section" id="checked-unchecked">
+      <h2>🔍 Checked vs Unchecked</h2>
+      <table class="comparison-table">
+        <tr><th>특성</th><th>Checked Exception</th><th>Unchecked Exception</th></tr>
+        <tr><td>처리 필수?</td><td>예 (컴파일 에러)</td><td>아니오</td></tr>
+        <tr><td>상속 계층</td><td>Exception</td><td>RuntimeException</td></tr>
+        <tr><td>대표 예시</td><td>IOException, SQLException</td><td>NullPointerException, IndexOutOfBoundsException</td></tr>
+        <tr><td>발생 원인</td><td>외부 요인</td><td>프로그래밍 오류</td></tr>
+      </table>
+    </section>
+    <section class="section" id="syntax">
+      <h2>🛠️ 예외처리 기본 문법</h2>
       <div class="method-grid">
-        <!-- try-catch -->
         <div class="card">
           <h3>try-catch</h3>
           <div class="tag">필수</div>
-          <div class="tag">기본</div>
-          
-          <div class="code-block">
-try {
-    // 예외 발생 가능 코드
+          <div class="code-block">try {
+  // 예외 발생 가능 코드
 } catch (Exception e) {
-    // 예외 처리 코드
-}
-          </div>
-          
-          <p>기본적인 예외 처리 구문입니다.</p>
+  // 예외 처리 코드
+}</div>
         </div>
-
-        <!-- try-catch-finally -->
         <div class="card">
           <h3>try-catch-finally</h3>
           <div class="tag">리소스 정리</div>
-          
-          <div class="code-block">
-try {
-    // 예외 발생 가능 코드
+          <div class="code-block">try {
+  // 예외 발생 가능 코드
 } catch (Exception e) {
-    // 예외 처리 코드
+  // 예외 처리 코드
 } finally {
-    // 항상 실행되는 코드
-}
-          </div>
-          
-          <p>리소스 정리가 필요할 때 사용합니다.</p>
+  // 항상 실행되는 코드
+}</div>
         </div>
-
-        <!-- try-with-resources -->
         <div class="card">
           <h3>try-with-resources</h3>
-          <div class="tag">모던 자바</div>
-          <div class="tag">자동 정리</div>
-          
-          <div class="code-block">
-try (Resource res = new Resource()) {
-    // 리소스 사용 코드
+          <div class="tag">자동 자원정리</div>
+          <div class="code-block">try (Resource res = new Resource()) {
+  // 리소스 사용 코드
 } catch (Exception e) {
-    // 예외 처리 코드
-}
-          </div>
-          
-          <p>자동으로 리소스를 닫아줍니다.</p>
+  // 예외 처리 코드
+}</div>
         </div>
       </div>
     </section>
-
-    <!-- 실전 예제 -->
-    <section class="section">
-      <h2>💡 실전 예제</h2>
-      
+    <section class="section" id="main-examples">
+      <h2>🔑 주요 예외 한눈에 보기</h2>
+      <div class="example-box">
+        <table class="method-table">
+          <tr>
+            <th>예외명</th>
+            <th>언제 발생?</th>
+            <th>사용 예</th>
+            <th>실전 활용</th>
+          </tr>
+          <tr>
+            <td>NullPointerException</td>
+            <td>null 객체 접근</td>
+            <td>str.length()</td>
+            <td>입력값 검증, Optional 활용</td>
+          </tr>
+          <tr>
+            <td>ArrayIndexOutOfBoundsException</td>
+            <td>배열 인덱스 초과</td>
+            <td>arr[10]</td>
+            <td>배열 길이 체크</td>
+          </tr>
+          <tr>
+            <td>NumberFormatException</td>
+            <td>문자열 → 숫자 변환 실패</td>
+            <td>Integer.parseInt("abc")</td>
+            <td>try-catch, 입력 안내</td>
+          </tr>
+          <tr>
+            <td>ArithmeticException</td>
+            <td>0으로 나누기 등</td>
+            <td>10/0</td>
+            <td>분모 체크</td>
+          </tr>
+          <tr>
+            <td>ClassCastException</td>
+            <td>잘못된 타입 변환</td>
+            <td>(String)obj</td>
+            <td>instanceof 체크</td>
+          </tr>
+          <tr>
+            <td>FileNotFoundException</td>
+            <td>파일 없음</td>
+            <td>new FileReader("x.txt")</td>
+            <td>파일 존재 확인</td>
+          </tr>
+          <tr>
+            <td>IOException</td>
+            <td>I/O 작업 실패</td>
+            <td>파일 읽기/쓰기</td>
+            <td>try-catch, 자원 정리</td>
+          </tr>
+        </table>
+      </div>
+      <!-- 상세 예외별 설명/예시/실수/미션 추가 -->
+      <div class="example-box">
+        <h3>NullPointerException</h3>
+        <div class="code-block">String s = null;\ns.length(); // 예외 발생</div>
+        <div class="tip">언제/왜? 객체가 null일 때 메서드 호출</div>
+        <div class="warning">실수: null 체크 없이 사용</div>
+        <b>미션: NullPointerException을 방지하는 코드를 작성해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">if (s != null) { s.length(); }</div></details>
+      </div>
+      <div class="example-box">
+        <h3>ArrayIndexOutOfBoundsException</h3>
+        <div class="code-block">int[] arr = {1,2,3};\nint x = arr[5]; // 예외 발생</div>
+        <div class="tip">언제/왜? 배열/리스트 인덱스 초과</div>
+        <div class="warning">실수: 인덱스 범위 체크 안함</div>
+        <b>미션: 배열 접근 전 안전하게 처리하는 코드를 작성해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">if (idx >= 0 && idx < arr.length) { ... }</div></details>
+      </div>
+      <div class="example-box">
+        <h3>NumberFormatException</h3>
+        <div class="code-block">String n = "abc";\nint x = Integer.parseInt(n); // 예외 발생</div>
+        <div class="tip">언제/왜? 숫자가 아닌 문자열 변환 시</div>
+        <div class="warning">실수: 입력값 검증 없이 변환 시도</div>
+        <b>미션: 안전하게 문자열을 숫자로 변환하는 코드를 작성해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">try { Integer.parseInt(n); } catch (NumberFormatException e) { ... }</div></details>
+      </div>
+      <div class="example-box">
+        <h3>ArithmeticException</h3>
+        <div class="code-block">int a = 10, b = 0;\nint x = a / b; // 예외 발생</div>
+        <div class="tip">언제/왜? 0으로 나눌 때</div>
+        <div class="warning">실수: 분모가 0인지 체크 안함</div>
+        <b>미션: 0으로 나누지 않도록 처리하는 코드를 작성해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">if (b != 0) { a / b; }</div></details>
+      </div>
+      <div class="example-box">
+        <h3>ClassCastException</h3>
+        <div class="code-block">Object obj = "hi";\nInteger n = (Integer)obj; // 예외 발생</div>
+        <div class="tip">언제/왜? 잘못된 타입 강제 변환</div>
+        <div class="warning">실수: instanceof 체크 없이 캐스팅</div>
+        <b>미션: 안전하게 타입 변환하는 코드를 작성해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">if (obj instanceof Integer) { ... }</div></details>
+      </div>
+      <div class="example-box">
+        <h3>FileNotFoundException</h3>
+        <div class="code-block">FileReader fr = new FileReader("x.txt"); // 파일 없으면 예외 발생</div>
+        <div class="tip">언제/왜? 파일이 존재하지 않을 때</div>
+        <div class="warning">실수: 파일 존재 확인 없이 열기</div>
+        <b>미션: 파일 존재 여부를 체크하는 코드를 작성해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">if (new File("x.txt").exists()) { ... }</div></details>
+      </div>
+      <div class="example-box">
+        <h3>IOException</h3>
+        <div class="code-block">BufferedReader br = new BufferedReader(new FileReader("x.txt"));\nbr.readLine(); // 입출력 오류 시 예외 발생</div>
+        <div class="tip">언제/왜? 파일/네트워크 등 I/O 작업 실패</div>
+        <div class="warning">실수: try-catch 없이 사용</div>
+        <b>미션: 안전하게 파일을 읽는 코드를 작성해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">try { ... } catch (IOException e) { ... }</div></details>
+      </div>
+    </section>
+    <section class="section" id="custom-exception">
+      <h2>📝 사용자 정의 예외</h2>
+      <div class="example-box">
+        <h3>사용자 예외 클래스 만들기</h3>
+        <div class="code-block">class MyException extends Exception {
+  public MyException(String msg) {
+    super(msg);
+  }
+}</div>
+        <div class="tip">특정 상황에 맞는 예외를 직접 정의할 수 있습니다.</div>
+      </div>
+      <div class="example-box">
+        <h3>사용 예시</h3>
+        <div class="code-block">public void checkAge(int age) throws MyException {
+  if (age < 0) {
+    throw new MyException("나이는 음수일 수 없습니다.");
+  }
+}</div>
+        <b>미션: 나이가 0 미만이면 예외를 발생시키는 코드를 작성해보세요.</b>
+        <details><summary>정답 보기</summary><div class="note">if (age < 0) throw new MyException(...);</div></details>
+      </div>
+    </section>
+    <section class="section" id="practice">
+      <h2>🏋️ 실전 예제/미션</h2>
       <div class="example-box">
         <h3>1. 다중 예외 처리</h3>
-        <div class="code-block">
-try {
-    int[] arr = new int[5];
-    arr[10] = 50;  // ArrayIndexOutOfBoundsException
-    int result = 10 / 0;  // ArithmeticException
+        <div class="code-block">try {
+  int[] arr = new int[5];
+  arr[10] = 50;  // ArrayIndexOutOfBoundsException
+  int result = 10 / 0;  // ArithmeticException
 } catch (ArrayIndexOutOfBoundsException e) {
-    System.out.println("배열 인덱스 오류: " + e.getMessage());
+  System.out.println("배열 인덱스 오류: " + e.getMessage());
 } catch (ArithmeticException e) {
-    System.out.println("산술 오류: " + e.getMessage());
+  System.out.println("산술 오류: " + e.getMessage());
 } catch (Exception e) {
-    System.out.println("기타 오류: " + e.getMessage());
-}
-        </div>
+  System.out.println("기타 오류: " + e.getMessage());
+}</div>
       </div>
-
       <div class="example-box">
         <h3>2. 파일 처리 예외</h3>
-        <div class="code-block">
-try (FileReader fr = new FileReader("file.txt");
+        <div class="code-block">try (FileReader fr = new FileReader("file.txt");
      BufferedReader br = new BufferedReader(fr)) {
-    String line;
-    while ((line = br.readLine()) != null) {
-        System.out.println(line);
-    }
+  String line;
+  while ((line = br.readLine()) != null) {
+    System.out.println(line);
+  }
 } catch (IOException e) {
-    System.err.println("파일 처리 오류: " + e.getMessage());
-}
-        </div>
-      </div>
-
-      <div class="example-box">
-        <h3>3. 사용자 정의 예외</h3>
-        <div class="code-block">
-class InvalidAgeException extends Exception {
-    public InvalidAgeException(String message) {
-        super(message);
-    }
-}
-
-public void checkAge(int age) throws InvalidAgeException {
-    if (age < 0) {
-        throw new InvalidAgeException("나이는 음수일 수 없습니다.");
-    }
-}
-        </div>
+  System.err.println("파일 처리 오류: " + e.getMessage());
+}</div>
       </div>
     </section>
-
-    <!-- 성능과 모범 사례 -->
-    <section class="section">
-      <h2>⚡ 성능과 모범 사례</h2>
-      
+    <section class="section" id="tips">
+      <h2>💡 실수 & 모범 사례</h2>
       <div class="tip">
-        <h3>1. 예외는 정말 예외적인 상황에만</h3>
-        <p>일반적인 흐름 제어에 예외를 사용하지 마세요.</p>
-        <div class="code-block">
-// 나쁜 예
-try {
-    while (true) {
-        process();
-    }
-} catch (EndOfProcessException e) { }
-
-// 좋은 예
-while (hasMoreToProcess()) {
-    process();
-}
-        </div>
+        <b>1. 예외는 정말 예외적인 상황에만!</b><br>일반 흐름 제어에 사용하지 말 것
       </div>
-
       <div class="tip">
-        <h3>2. 구체적인 예외 처리</h3>
-        <p>가능한 구체적인 예외를 먼저 잡으세요.</p>
-        <div class="code-block">
-try {
-    // 코드
-} catch (FileNotFoundException e) {
-    // 구체적인 처리
-} catch (IOException e) {
-    // 더 일반적인 처리
-} catch (Exception e) {
-    // 가장 일반적인 처리
-}
-        </div>
+        <b>2. 구체적인 예외부터 처리</b><br>catch 블록은 구체적인 예외 → 일반 예외 순
       </div>
-
       <div class="warning">
-        <h3>주의사항</h3>
+        <b>자주 하는 실수</b>
         <ul>
           <li>빈 catch 블록 피하기</li>
-          <li>예외 처리 시 로깅 필수</li>
+          <li>예외 발생 시 로깅/출력 필수</li>
           <li>finally 블록에서 예외 발생 주의</li>
           <li>예외 전환 시 원인 유지</li>
         </ul>

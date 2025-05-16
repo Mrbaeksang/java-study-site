@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔒 스프링 부트 보안 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .note {
+      border-left: 4px solid #4ec9b0;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(78, 201, 176, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔒 스프링 부트 보안</h1>
+      <p class="intro-text">스프링 시큐리티를 활용한 애플리케이션 보안 구현 방법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 스프링 시큐리티 소개</h2>
+        <p>스프링 시큐리티는 스프링 프레임워크의 보안 기능을 제공하는 프로젝트입니다. 주요 기능으로는:</p>
+        <ul>
+          <li>인증(Authentication)</li>
+          <li>인가(Authorization)</li>
+          <li>세션 관리</li>
+          <li>CSRF 보호</li>
+          <li>사용자 권한 관리</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>2. 기본 설정</h2>
+        <h3>2.1. 의존성 추가</h3>
+        <div class="code-block">
+          <pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+        </div>
+
+        <h3>2.2. 보안 설정 클래스</h3>
+        <div class="code-block">
+          <pre><code class="java">@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/public/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .permitAll()
+            )
+            .logout(logout -> logout.permitAll());
+        
+        return http.build();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. 사용자 인증</h2>
+        <h3>3.1. 메모리 기반 인증</h3>
+        <div class="code-block">
+          <pre><code class="java">@Bean
+public UserDetailsService userDetailsService() {
+    UserDetails user = User.withDefaultPasswordEncoder()
+        .username("user")
+        .password("password")
+        .roles("USER")
+        .build();
+    
+    return new InMemoryUserDetailsManager(user);
+}</code></pre>
+        </div>
+
+        <h3>3.2. 데이터베이스 기반 인증</h3>
+        <div class="code-block">
+          <pre><code class="java">@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+    @Autowired
+    private UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        
+        return new org.springframework.security.core.userdetails.User(
+            user.getUsername(), user.getPassword(),
+            user.isEnabled(), true, true, true,
+            AuthorityUtils.createAuthorityList("ROLE_USER")
+        );
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 권한 관리</h2>
+        <h3>4.1. @PreAuthorize 어노테이션</h3>
+        <div class="code-block">
+          <pre><code class="java">@RestController
+public class AdminController {
+    
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard() {
+        return "Admin Dashboard";
+    }
+}</code></pre>
+        </div>
+
+        <h3>4.2. @Secured 어노테이션</h3>
+        <div class="code-block">
+          <pre><code class="java">@RestController
+@Secured("ROLE_ADMIN")
+public class AdminController {
+    
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard() {
+        return "Admin Dashboard";
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>5. CSRF 보호</h2>
+        <p>스프링 시큐리티는 기본적으로 CSRF 보호를 활성화합니다. 폼에 CSRF 토큰을 추가하는 방법은 다음과 같습니다:</p>
+        <div class="code-block">
+          <pre><code class="html">&lt;form method="post" th:action="@{/login}"&gt;
+    &lt;input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/&gt;
+    
+    &lt;div&gt;
+        &lt;label&gt;Username:&lt;/label&gt;
+        &lt;input type="text" name="username"/&gt;
+    &lt;/div&gt;
+    
+    &lt;div&gt;
+        &lt;label&gt;Password:&lt;/label&gt;
+        &lt;input type="password" name="password"/&gt;
+    &lt;/div&gt;
+    
+    &lt;button type="submit">Login&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>6. JWT 기반 인증</h2>
+        <h3>6.1. JWT 토큰 생성</h3>
+        <div class="code-block">
+          <pre><code class="java">@Service
+public class JwtService {
+    private final String SECRET_KEY = "secretkey";
+    private final long EXPIRATION = 1000 * 60 * 60 * 24; // 24시간
+
+    public String generateToken(UserDetails userDetails) {
+        return Jwts.builder()
+            .setSubject(userDetails.getUsername())
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+            .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+            .compact();
+    }
+
+    private Key getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+}</code></pre>
+        </div>
+
+        <h3>6.2. JWT 필터</h3>
+        <div class="code-block">
+          <pre><code class="java">@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    @Autowired
+    private JwtService jwtService;
+    
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Override
+    protected void doFilterInternal(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
+    ) throws ServletException, IOException {
+        
+        final String authHeader = request.getHeader("Authorization");
+        final String jwt;
+        final String username;
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        jwt = authHeader.substring(7);
+        username = jwtService.extractUsername(jwt);
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
+                );
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+        filterChain.doFilter(request, response);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>7. 다음 단계</h2>
+        <p>이제 스프링 부트의 기본적인 보안 구현을 배웠습니다. 다음으로는 다음과 같은 주제들을 배우게 됩니다:</p>
+        <ul>
+          <li><a href="spring_boot_microservices.html">마이크로서비스 아키텍처</a></li>
+          <li><a href="spring_boot_cloud.html">클라우드 네이티브 개발</a></li>
+          <li><a href="spring_boot_performance.html">성능 최적화</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

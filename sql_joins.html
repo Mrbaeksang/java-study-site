@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📊 SQL 조인 (JOIN) - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    h4 {
+      margin-top: 1.5rem;
+      color: #ce9178;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    code {
+      background: var(--vscode-textCodeBlock-background);
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    pre {
+      background: var(--vscode-textCodeBlock-background);
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .note {
+      border-left: 4px solid #4ec9b0;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(78, 201, 176, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #ff9800;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(255, 152, 0, 0.1);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background-color: var(--vscode-editor-lineHighlightBorder);
+      color: var(--vscode-text);
+    }
+    .join-diagram {
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .join-diagram img {
+      max-width: 100%;
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📊 SQL 조인 (JOIN)</h1>
+      <p class="intro-text">여러 테이블의 데이터를 연결하여 조회하는 SQL 조인(JOIN)에 대해 학습합니다. 다양한 조인 유형과 사용 시나리오를 알아봅니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>🔍 조인(JOIN) 개요</h2>
+        <p>조인(JOIN)은 두 개 이상의 테이블에서 연관된 데이터를 결합하여 하나의 결과 집합으로 만드는 SQL의 핵심 기능입니다.</p>
+        
+        <div class="note">
+          <h3>📌 조인 사용 시나리오</h3>
+          <ul>
+            <li>고객 정보와 주문 내역을 함께 조회할 때</li>
+            <li>제품 정보와 카테고리 정보를 함께 표시할 때</li>
+            <li>여러 테이블에 분산된 데이터를 통합하여 분석할 때</li>
+            <li>관계형 데이터베이스의 정규화된 테이블을 연결할 때</li>
+          </ul>
+        </div>
+
+        <div class="join-diagram">
+          <h3>조인 다이어그램</h3>
+          <img src="https://www.w3schools.com/sql/img_innerjoin.gif" alt="SQL 조인 다이어그램">
+          <p>출처: W3Schools</p>
+        </div>
+      </div>
+
+      <div class="section" id="inner">
+        <h2>🤝 INNER JOIN (내부 조인)</h2>
+        <p>두 테이블에서 일치하는 레코드만 반환합니다. 교집합과 유사합니다.</p>
+        
+        <h3>기본 구문</h3>
+        <pre><code>SELECT 컬럼1, 컬럼2, ...
+FROM 테이블1
+INNER JOIN 테이블2 ON 테이블1.컬럼 = 테이블2.컬럼;</code></pre>
+
+        <h3>예제: 고객별 주문 내역 조회</h3>
+        <pre><code>-- 고객(Customers)과 주문(Orders) 테이블 조인
+SELECT c.CustomerID, c.CustomerName, o.OrderID, o.OrderDate
+FROM Customers c
+INNER JOIN Orders o ON c.CustomerID = o.CustomerID;
+
+-- 3개 이상의 테이블 조인
+SELECT c.CustomerName, o.OrderID, od.Quantity, p.ProductName
+FROM Customers c
+INNER JOIN Orders o ON c.CustomerID = o.CustomerID
+INNER JOIN OrderDetails od ON o.OrderID = od.OrderID
+INNER JOIN Products p ON od.ProductID = p.ProductID;</code></pre>
+
+        <h3>INNER JOIN 사용 시 주의사항</h3>
+        <ul>
+          <li>조인 조건을 명시하지 않으면 카티션 곱(Cartesian Product)이 발생할 수 있음</li>
+          <li>조인 조건에 사용되는 컬럼에는 인덱스가 있는 것이 성능에 유리</li>
+          <li>WHERE 절을 사용하여 추가 필터링 가능</li>
+        </ul>
+      </div>
+
+      <div class="section" id="outer">
+        <h2>🔄 OUTER JOIN (외부 조인)</h2>
+        <p>한 테이블의 모든 레코드와 다른 테이블의 일치하는 레코드를 반환합니다. 일치하지 않는 경우 NULL로 표시됩니다.</p>
+        
+        <h3>LEFT (OUTER) JOIN</h3>
+        <p>왼쪽 테이블의 모든 레코드와 오른쪽 테이블의 일치하는 레코드 반환</p>
+        <pre><code>-- 모든 고객과 그들의 주문 내역 (주문이 없는 고객도 포함)
+SELECT c.CustomerName, o.OrderID
+FROM Customers c
+LEFT JOIN Orders o ON c.CustomerID = o.CustomerID
+ORDER BY c.CustomerName;</code></pre>
+
+        <h3>RIGHT (OUTER) JOIN</h3>
+        <p>오른쪽 테이블의 모든 레코드와 왼쪽 테이블의 일치하는 레코드 반환</p>
+        <pre><code>-- 모든 주문과 해당 고객 정보 (고객이 없는 주문도 포함)
+SELECT c.CustomerName, o.OrderID
+FROM Customers c
+RIGHT JOIN Orders o ON c.CustomerID = o.CustomerID
+ORDER BY o.OrderID;</code></pre>
+
+        <h3>FULL (OUTER) JOIN</h3>
+        <p>양쪽 테이블의 모든 레코드 반환 (일치하지 않는 경우 NULL)</p>
+        <pre><code>-- 모든 고객과 모든 주문 (일치하지 않는 경우에도 포함)
+SELECT c.CustomerName, o.OrderID
+FROM Customers c
+FULL OUTER JOIN Orders o ON c.CustomerID = o.CustomerID
+ORDER BY c.CustomerName;</code></pre>
+
+        <div class="note">
+          <h3>📝 참고사항</h3>
+          <ul>
+            <li>MySQL은 FULL OUTER JOIN을 직접 지원하지 않음 (UNION으로 대체)</li>
+            <li>OUTER 키워드는 선택 사항 (LEFT JOIN과 LEFT OUTER JOIN은 동일)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section" id="self">
+        <h2>🔄 SELF JOIN (자기 조인)</h2>
+        <p>하나의 테이블을 자기 자신과 조인합니다. 계층적 데이터를 다룰 때 유용합니다.</p>
+        
+        <h3>예제: 직원과 그들의 매니저 조회</h3>
+        <pre><code>-- 직원(Employees) 테이블에서 직원과 그들의 매니저 조회
+SELECT 
+    e.EmployeeID, 
+    e.EmployeeName, 
+    e.Title,
+    m.EmployeeName AS ManagerName
+FROM Employees e
+LEFT JOIN Employees m ON e.ManagerID = m.EmployeeID;</code></pre>
+
+        <h3>예제: 동일 테이블 내에서 관계 조회</h3>
+        <pre><code>-- 같은 도시에 사는 고객들 찾기
+SELECT 
+    a.CustomerName AS Customer1, 
+    b.CustomerName AS Customer2, 
+    a.City
+FROM Customers a, Customers b
+WHERE a.CustomerID < b.CustomerID  -- 중복 제거
+AND a.City = b.City
+ORDER BY a.City;</code></pre>
+      </div>
+
+      <div class="section" id="cross">
+        <h2>✖️ CROSS JOIN (상호 조인)</h2>
+        <p>두 테이블의 모든 가능한 조합을 반환합니다. 카티션 곱(Cartesian Product)을 생성합니다.</p>
+        
+        <h3>기본 구문</h3>
+        <pre><code>SELECT 컬럼1, 컬럼2, ...
+FROM 테이블1
+CROSS JOIN 테이블2;</code></pre>
+
+        <h3>예제: 색상과 사이즈의 모든 조합 생성</h3>
+        <pre><code>-- 색상과 사이즈의 모든 조합 생성
+SELECT c.ColorName, s.SizeName
+FROM Colors c
+CROSS JOIN Sizes s
+ORDER BY c.ColorName, s.SizeOrder;</code></pre>
+
+        <h3>예제: 날짜 범위 생성</h3>
+        <pre><code>-- 2023년 1월의 모든 날짜 생성
+WITH DateRange AS (
+    SELECT DATE_ADD('2023-01-01', INTERVAL n DAY) AS DateValue
+    FROM (
+        SELECT a.N + b.N * 10 + c.N * 100 AS n
+        FROM (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a
+        CROSS JOIN (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b
+        CROSS JOIN (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2) c
+        HAVING n <= 30
+    ) numbers
+)
+SELECT DateValue, DAYNAME(DateValue) AS DayName
+FROM DateRange
+ORDER BY DateValue;</code></pre>
+
+        <div class="warning">
+          <h3>⚠️ 주의사항</h3>
+          <p>CROSS JOIN은 결과 집합이 매우 커질 수 있으므로 주의해서 사용해야 합니다. 대용량 테이블에서는 성능 저하를 일으킬 수 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>🔗 NATURAL JOIN과 USING 절</h2>
+        <p>조인 조건을 간소화하는 방법들입니다.</p>
+        
+        <h3>NATURAL JOIN</h3>
+        <p>두 테이블에서 동일한 이름을 가진 컬럼을 기준으로 자동으로 조인합니다.</p>
+        <pre><code>-- CustomerID 컬럼이 두 테이블에 모두 있는 경우
+SELECT *
+FROM Customers
+NATURAL JOIN Orders;</code></pre>
+
+        <h3>USING 절</h3>
+        <p>조인 조건에 사용할 컬럼을 명시적으로 지정합니다.</p>
+        <pre><code>-- USING 절을 사용한 조인
+SELECT c.CustomerName, o.OrderID
+FROM Customers c
+JOIN Orders o USING (CustomerID);</code></pre>
+
+        <div class="note">
+          <h3>📝 NATURAL JOIN vs USING</h3>
+          <ul>
+            <li><strong>NATURAL JOIN</strong>: 같은 이름의 모든 컬럼으로 조인 (유연성 ↓, 실수 가능성 ↑)</li>
+            <li><strong>USING</strong>: 지정한 컬럼으로만 조인 (명확성 ↑, 유지보수성 ↑)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>📊 조인 성능 최적화</h2>
+        <p>조인 쿼리의 성능을 향상시키는 방법들입니다.</p>
+        
+        <h3>1. 적절한 인덱스 사용</h3>
+        <pre><code>-- 조인 조건에 사용되는 컬럼에 인덱스 생성
+CREATE INDEX idx_customer_id ON Orders(CustomerID);
+CREATE INDEX idx_order_id ON OrderDetails(OrderID);</code></pre>
+
+        <h3>2. 필요한 컬럼만 선택</h3>
+        <pre><code>-- 나쁜 예: 모든 컬럼 선택
+SELECT * FROM Customers c JOIN Orders o ON c.CustomerID = o.CustomerID;
+
+-- 좋은 예: 필요한 컬럼만 선택
+SELECT c.CustomerName, o.OrderID, o.OrderDate 
+FROM Customers c 
+JOIN Orders o ON c.CustomerID = o.CustomerID;</code></pre>
+
+        <h3>3. 조인 순서 최적화</h3>
+        <p>작은 결과 집합을 먼저 필터링한 후 조인</p>
+        <pre><code>-- 나쁜 예: 전체 조인 후 필터링
+SELECT c.CustomerName, o.OrderID
+FROM Customers c
+JOIN Orders o ON c.CustomerID = o.CustomerID
+WHERE c.Country = 'Germany';
+
+-- 좋은 예: 먼저 필터링 후 조인
+SELECT c.CustomerName, o.OrderID
+FROM (SELECT * FROM Customers WHERE Country = 'Germany') c
+JOIN Orders o ON c.CustomerID = o.CustomerID;</code></pre>
+
+        <h3>4. EXPLAIN으로 실행 계획 확인</h3>
+        <pre><code>-- 실행 계획 확인
+EXPLAIN 
+SELECT c.CustomerName, o.OrderID
+FROM Customers c
+JOIN Orders o ON c.CustomerID = o.CustomerID
+WHERE c.Country = 'Germany';</code></pre>
+      </div>
+
+      <div class="section">
+        <h2>📌 조인 모범 사례</h2>
+        <div class="warning">
+          <h3>✅ 조인 사용 시 권장 사항</h3>
+          <ul>
+            <li><strong>조인 조건 명시</strong>: 항상 명시적인 조인 조건을 사용하세요 (암시적 조인보다 명시적 조인 권장).</li>
+            <li><strong>별칭 사용</strong>: 테이블에 의미 있는 별칭을 사용하여 가독성을 높이세요.</li>
+            <li><strong>인덱스 활용</strong>: 조인 조건에 사용되는 컬럼에 인덱스를 생성하세요.</li>
+            <li><strong>필터링 우선</strong>: WHERE 절을 사용하여 가능한 한 빨리 데이터를 필터링하세요.</li>
+            <li><strong>필요한 컬럼만 선택</strong>: SELECT * 대신 필요한 컬럼만 명시적으로 선택하세요.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_tcl.html" class="nav-button">이전: TCL (트랜잭션 제어 언어)</a>
+        <a href="sql_aggregate.html" class="nav-button">다음: 집계 함수</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

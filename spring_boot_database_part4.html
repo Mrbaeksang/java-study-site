@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 Spring Data JPA 리포지토리</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 이전과 동일한 스타일 유지 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    /* ... (나머지 스타일도 이전과 동일) ... */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📚 Spring Data JPA 리포지토리</h1>
+      <p class="intro-text">Spring Data JPA를 활용한 데이터 접근 계층 구현 방법을 알아봅시다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>5. Spring Data JPA 리포지토리</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> 기본 리포지토리 인터페이스</h3>
+          <p>Spring Data JPA는 인터페이스만으로도 기본적인 CRUD 기능을 제공합니다.</p>
+          
+          <pre class="code-block"><code class="language-java">package com.example.demo.repository;
+
+import com.example.demo.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    
+    // 이메일로 사용자 조회
+    Optional<User> findByEmail(String email);
+    
+    // 사용자명으로 사용자 존재 여부 확인
+    boolean existsByUsername(String username);
+    
+    // 활성 상태인 사용자 수 조회
+    long countByStatus(User.UserStatus status);
+    
+    // 성으로 사용자 목록 조회 (이름 오름차순 정렬)
+    List<User> findByLastNameOrderByFirstNameAsc(String lastName);
+    
+    // 이메일 도메인으로 사용자 목록 조회 (페이징 처리)
+    Page<User> findByEmailEndingWith(String emailDomain, Pageable pageable);
+    
+    // 생성일시 이후의 사용자 목록 조회
+    List<User> findByCreatedAtAfter(LocalDateTime dateTime);
+    
+    // 사용자명 또는 이메일로 검색
+    List<User> findByUsernameContainingOrEmailContaining(String username, String email);
+    
+    // 상태가 주어진 목록에 있는 사용자 조회
+    List<User> findByStatusIn(List<User.UserStatus> statuses);
+    
+    // 사용자명이 특정 패턴과 일치하는 사용자 조회 (대소문자 구분 없이)
+    List<User> findByUsernameLikeIgnoreCase(String pattern);
+    
+    // 생성일시가 특정 기간 내인 사용자 조회
+    List<User> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+    
+    // 게시글이 n개 이상인 사용자 조회
+    @Query("SELECT u FROM User u WHERE SIZE(u.posts) >= :minPosts")
+    List<User> findByMinPosts(@Param("minPosts") int minPosts);
+    
+    // 사용자와 연관된 게시글 수 업데이트
+    @Modifying
+    @Query("UPDATE User u SET u.postCount = (SELECT COUNT(p) FROM Post p WHERE p.author = u) WHERE u.id = :userId")
+    int updatePostCount(@Param("userId") Long userId);
+}
+
+// 게시글 리포지토리
+package com.example.demo.repository;
+
+import com.example.demo.entity.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface PostRepository extends JpaRepository<Post, Long> {
+    
+    // 제목으로 검색 (대소문자 구분 없이)
+    Page<Post> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+    
+    // 특정 사용자의 게시글 조회 (페이징 처리)
+    Page<Post> findByAuthorId(Long authorId, Pageable pageable);
+    
+    // 제목 또는 내용으로 검색 (JPQL)
+    @Query("SELECT p FROM Post p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Post> search(@Param("keyword") String keyword, Pageable pageable);
+    
+    // 특정 태그가 포함된 게시글 조회
+    @Query("SELECT p FROM Post p JOIN p.tags t WHERE t.name = :tagName")
+    Page<Post> findByTagName(@Param("tagName") String tagName, Pageable pageable);
+    
+    // 인기 게시글 조회 (댓글 수 기준)
+    @Query("SELECT p FROM Post p LEFT JOIN p.comments c GROUP BY p.id ORDER BY COUNT(c) DESC")
+    Page<Post> findPopularPosts(Pageable pageable);
+    
+    // 통계 조회 (예: 월별 게시글 수)
+    @Query(value = 
+        "SELECT TO_CHAR(created_at, 'YYYY-MM') AS month, COUNT(*) AS count " +
+        "FROM posts GROUP BY TO_CHAR(created_at, 'YYYY-MM') ORDER BY month",
+        nativeQuery = true)
+    List<Object[]> countPostsByMonth();
+    
+    // 특정 기간 동안의 일별 게시글 수 조회
+    @Query("SELECT DATE(p.createdAt) as date, COUNT(p) as count FROM Post p " +
+           "WHERE p.createdAt BETWEEN :startDate AND :endDate " +
+           "GROUP BY DATE(p.createdAt) ORDER BY date")
+    List<Object[]> countPostsByDate(
+        @Param("startDate") LocalDateTime startDate,
+        @Param("endDate") LocalDateTime endDate
+    );
+    
+    // 게시글과 작성자 정보를 함께 조회 (페치 조인)
+    @Query("SELECT p FROM Post p JOIN FETCH p.author WHERE p.id = :id")
+    Optional<Post> findByIdWithAuthor(@Param("id") Long id);
+    
+    // 게시글과 댓글 목록을 함께 조회 (컬렉션 페치 조인 + 페이징)
+    @Query(value = "SELECT p FROM Post p LEFT JOIN FETCH p.comments WHERE p.author.id = :authorId",
+           countQuery = "SELECT COUNT(p) FROM Post p WHERE p.author.id = :authorId")
+    Page<Post> findByAuthorIdWithComments(@Param("authorId") Long authorId, Pageable pageable);
+    
+    // 벌크 업데이트: 특정 사용자의 모든 게시글 비활성화
+    @Modifying
+    @Query("UPDATE Post p SET p.status = 'INACTIVE' WHERE p.author.id = :authorId")
+    int deactivatePostsByAuthorId(@Param("authorId") Long authorId);
+}</code></pre>
+          
+          <div class="tip">
+            <h4>💡 Spring Data JPA 쿼리 메서드 키워드</h4>
+            <ul>
+              <li><code>find...By</code>, <code>read...By</code>, <code>query...By</code>, <code>count...By</code>, <code>exists...By</code>: 쿼리 메서드 접두사</li>
+              <li><code>And</code>, <code>Or</code>: 조건 결합</li>
+              <li><code>Is</code>, <code>Equals</code>: 일치 검색 (=)</li>
+              <li><code>LessThan</code>, <code>LessThanEqual</code>, <code>GreaterThan</code>, <code>GreaterThanEqual</code>: 비교 연산</li>
+              <li><code>Between</code>: 범위 검색</li>
+              <li><code>IsNull</code>, <code>IsNotNull</code>: NULL 검사</li>
+              <li><code>Like</code>, <code>NotLike</code>: 패턴 매칭</li>
+              <li><code>StartingWith</code>, <code>EndingWith</code>, <code>Containing</code>: 문자열 포함 여부</li>
+              <li><code>OrderBy</code>: 정렬</li>
+              <li><code>IgnoreCase</code>: 대소문자 구분 없이 검색</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3><span class="step-number">2</span> 사용자 정의 리포지토리 구현</h3>
+          <p>복잡한 쿼리나 특정 기술에 의존하는 로직은 사용자 정의 리포지토리로 구현할 수 있습니다.</p>
+          
+          <pre class="code-block"><code class="language-java">// 1. 사용자 정의 리포지토리 인터페이스
+package com.example.demo.repository;
+
+import com.example.demo.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+
+public interface UserRepositoryCustom {
+    
+    // 사용자와 그들의 게시글 수 조회
+    List<Object[]> findUsersWithPostCount();
+    
+    // 검색 조건에 따른 동적 쿼리
+    Page<User> searchUsers(String keyword, User.UserStatus status, Pageable pageable);
+    
+    // 벌크 업데이트: 비활성 사용자의 게시글 일괄 삭제
+    int deleteInactiveUsersPosts();
+    
+    // 네이티브 쿼리를 사용한 복잡한 통계 조회
+    List<Object[]> getUserStatsByMonth(int year);
+}
+
+// 2. 사용자 정의 리포지토리 구현체
+package com.example.demo.repository.impl;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepositoryCustom;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import java.util.List;
+
+@Repository
+@RequiredArgsConstructor
+public class UserRepositoryImpl implements UserRepositoryCustom {
+    
+    @PersistenceContext
+    private final EntityManager em;
+    
+    private final JdbcTemplate jdbcTemplate;
+    
+    @Override
+    public List<Object[]> findUsersWithPostCount() {
+        String jpql = """
+            SELECT u, COUNT(p) 
+            FROM User u 
+            LEFT JOIN u.posts p 
+            GROUP BY u
+            """;
+        return em.createQuery(jpql, Object[].class).getResultList();
+    }
+    
+    @Override
+    public Page<User> searchUsers(String keyword, User.UserStatus status, Pageable pageable) {
+        // Criteria API를 사용한 동적 쿼리 구성
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> user = cq.from(User.class);
+        
+        // 동적 조건 구성
+        Predicate predicate = cb.conjunction();
+        
+        if (StringUtils.hasText(keyword)) {
+            Predicate keywordPredicate = cb.or(
+                cb.like(user.get("username"), "%" + keyword + "%"),
+                cb.like(user.get("email"), "%" + keyword + "%")
+            );
+            predicate = cb.and(predicate, keywordPredicate);
+        }
+        
+        if (status != null) {
+            predicate = cb.and(predicate, cb.equal(user.get("status"), status));
+        }
+        
+        cq.where(predicate);
+        
+        // 정렬 적용
+        if (pageable.getSort().isSorted()) {
+            pageable.getSort().stream()
+                .forEach(order -> {
+                    if (order.isAscending()) {
+                        cq.orderBy(cb.asc(user.get(order.getProperty())));
+                    } else {
+                        cq.orderBy(cb.desc(user.get(order.getProperty())));
+                    }
+                });
+        }
+        
+        // 페이징 적용
+        TypedQuery<User> query = em.createQuery(cq);
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+        
+        // 총 개수 조회를 위한 쿼리
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<User> countRoot = countQuery.from(User.class);
+        countQuery.select(cb.count(countRoot)).where(predicate);
+        
+        Long total = em.createQuery(countQuery).getSingleResult();
+        
+        return new PageImpl<>(query.getResultList(), pageable, total);
+    }
+    
+    @Override
+    public int deleteInactiveUsersPosts() {
+        String jpql = """
+            DELETE FROM Post p 
+            WHERE p.author IN (
+                SELECT u FROM User u 
+                WHERE u.status = 'INACTIVE' AND u.updatedAt < CURRENT_DATE - 30
+            )
+            """;
+            
+        return em.createQuery(jpql).executeUpdate();
+    }
+    
+    @Override
+    public List<Object[]> getUserStatsByMonth(int year) {
+        String sql = """
+            SELECT 
+                EXTRACT(MONTH FROM created_at) AS month,
+                COUNT(*) AS total_users,
+                SUM(CASE WHEN status = 'ACTIVE' THEN 1 ELSE 0 END) AS active_users,
+                SUM(CASE WHEN status = 'INACTIVE' THEN 1 ELSE 0 END) AS inactive_users
+            FROM users
+            WHERE EXTRACT(YEAR FROM created_at) = :year
+            GROUP BY EXTRACT(MONTH FROM created_at)
+            ORDER BY month
+            """;
+            
+        return jdbcTemplate.queryForList(sql)
+            .stream()
+            .map(row -> new Object[]{
+                row.get("month"),
+                row.get("total_users"),
+                row.get("active_users"),
+                row.get("inactive_users")
+            })
+            .collect(Collectors.toList());
+    }
+}
+
+// 3. 기존 리포지토리 인터페이스에 사용자 정의 인터페이스 상속
+public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
+    // 기존 메서드들...
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>6. JPA Auditing</h2>
+        
+        <div class="step">
+          <h3><span class="step-number">1</span> JPA Auditing 설정</h3>
+          <p>엔티티의 생성일시, 수정일시, 생성자, 수정자 등을 자동으로 관리할 수 있습니다.</p>
+          
+          <pre class="code-block"><code class="language-java">// 1. 메인 애플리케이션 클래스에 @EnableJpaAuditing 추가
+@SpringBootApplication
+@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
+public class DemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+    
+    @Bean
+    public AuditorAware<String> auditorProvider() {
+        // Spring Security와 연동하여 현재 사용자 ID 반환
+        return () -> Optional.ofNullable(SecurityContextHolder.getContext())
+            .map(SecurityContext::getAuthentication)
+            .filter(Authentication::isAuthenticated)
+            .map(Authentication::getName)
+            .or(() -> Optional.of("system"));
+    }
+}
+
+// 2. Auditing을 위한 베이스 엔티티
+@MappedSuperclass
+@Getter
+@EntityListeners(AuditingEntityListener.class)
+public abstract class BaseEntity {
+    
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+    
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    
+    @CreatedBy
+    @Column(name = "created_by", updatable = false)
+    private String createdBy;
+    
+    @LastModifiedBy
+    @Column(name = "updated_by")
+    private String updatedBy;
+    
+    @Version
+    @Column(name = "version")
+    private Long version;
+}
+
+// 3. 엔티티에서 상속하여 사용
+@Entity
+@Table(name = "posts")
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Post extends BaseEntity {
+    // 나머지 필드 및 메서드...
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="spring_boot_database_part3.html" class="nav-button">← 이전: JPA 엔티티 매핑</a>
+        <a href="spring_boot_database_part5.html" class="nav-button">다음: 트랜잭션 관리 →</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

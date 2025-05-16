@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>❌ 에러 응답 표준화 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 기존 스타일 재사용 */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>❌ 에러 응답 표준화</h1>
+      <p class="intro-text">스프링 부트에서 일관된 에러 응답 형식을 구현하는 방법을 배워보세요.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 에러 응답 DTO</h2>
+        <div class="code-block">
+          <pre><code class="java">public class ErrorResponse {
+    private final String code;
+    private final String message;
+    private final List&lt;String&gt; details;
+    private final LocalDateTime timestamp;
+
+    public ErrorResponse(String code, String message) {
+        this.code = code;
+        this.message = message;
+        this.details = Collections.emptyList();
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public ErrorResponse(String code, List&lt;String&gt; details) {
+        this.code = code;
+        this.details = details;
+        this.message = "Validation failed";
+        this.timestamp = LocalDateTime.now();
+    }
+}
+
+public class ApiError {
+    private final String code;
+    private final String message;
+    private final Object data;
+    private final LocalDateTime timestamp;
+
+    public ApiError(String code, String message, Object data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+        this.timestamp = LocalDateTime.now();
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. 예외 핸들러</h2>
+        <div class="code-block">
+          <pre><code class="java">@ControllerAdvice
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleResourceNotFoundException(
+        ResourceNotFoundException ex) {
+        return new ResponseEntity&lt;&gt;(
+            new ErrorResponse("NOT_FOUND", ex.getMessage()),
+            HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleValidationException(
+        MethodArgumentNotValidException ex) {
+        BindingResult result = ex.getBindingResult();
+        List&lt;String&gt; errors = result.getFieldErrors()
+            .stream()
+            .map(error -&gt; error.getField() + ": " + error.getDefaultMessage())
+            .collect(Collectors.toList());
+        
+        return new ResponseEntity&lt;&gt;(
+            new ErrorResponse("VALIDATION_ERROR", errors),
+            HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;ApiError&gt; handleException(Exception ex) {
+        return new ResponseEntity&lt;&gt;(
+            new ApiError("INTERNAL_ERROR", ex.getMessage(), null),
+            HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. REST API 응답 표준화</h2>
+        <div class="code-block">
+          <pre><code class="java">public class ApiResponse&lt;T&gt; {
+    private final String code;
+    private final String message;
+    private final T data;
+    private final LocalDateTime timestamp;
+
+    public ApiResponse(String code, String message, T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public static &lt;T&gt; ApiResponse&lt;T&gt; success(String code, String message, T data) {
+        return new ApiResponse&lt;&gt;(code, message, data);
+    }
+
+    public static &lt;T&gt; ApiResponse&lt;T&gt; error(String code, String message) {
+        return new ApiResponse&lt;&gt;(code, message, null);
+    }
+}
+
+@RestController
+public class ProductController {
+    
+    @GetMapping("/products/{id}")
+    public ResponseEntity&lt;ApiResponse&lt;Product&gt;&gt; getProduct(@PathVariable Long id) {
+        Product product = productService.findById(id);
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error("NOT_FOUND", "Product not found"));
+        }
+        return ResponseEntity.ok(ApiResponse.success("SUCCESS", "Product found", product));
+    }
+}
+</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. 다음 단계</h2>
+        <p>이제 에러 응답 표준화의 기본적인 구현을 배웠습니다. 다음으로는 다음과 같은 주제들을 배우게 됩니다:</p>
+        <ul>
+          <li><a href="spring_boot_validation.html">유효성 검사</a></li>
+          <li><a href="spring_boot_custom_exceptions.html">커스텀 예외</a></li>
+          <li><a href="spring_boot_exception_handling.html">전역 예외 처리</a></li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

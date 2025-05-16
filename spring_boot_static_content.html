@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📁 정적 리소스 처리 - 스프링 부트 완전 정복</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .directory-structure {
+      background: #2d2d2d;
+      border-radius: 6px;
+      padding: 1rem;
+      font-family: 'Consolas', monospace;
+      margin: 1rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📁 정적 리소스 처리</h1>
+      <p class="intro-text">스프링 부트에서 정적 리소스를 관리하고 제공하는 방법을 배웁니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 정적 리소스 기본 위치</h2>
+        <p>스프링 부트는 다음 위치에서 정적 리소스를 자동으로 제공합니다 (classpath 기준):</p>
+        
+        <div class="directory-structure">
+          <pre>src/
+  main/
+    resources/
+      static/          # 정적 리소스 기본 위치
+        css/
+        js/
+        images/
+      public/          # 공개 리소스 (권장)
+      resources/       # 리소스 번들
+      META-INF/
+        resources/      # 정적 리소스 대체 위치</pre>
+        </div>
+        
+        <div class="tip">
+          💡 <strong>팁</strong>: <code>static</code>과 <code>public</code> 중 하나를 선택하여 사용하는 것이 좋습니다. <code>public</code>이 더 명시적이라 권장됩니다.
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>2. 정적 리소스 접근</h2>
+        <p>정적 리소스는 루트 경로(<code>/</code>)를 기준으로 접근할 수 있습니다.</p>
+        
+        <h3>2.1 HTML에서 정적 리소스 참조</h3>
+        <div class="code-block">
+          <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;정적 리소스 예제&lt;/title&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/style.css}"&gt;
+    &lt;script th:src="@{/js/main.js}"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;정적 리소스 예제&lt;/h1&gt;
+    &lt;img th:src="@{/images/logo.png}" alt="로고"&gt;
+    
+    &lt;!-- CDN과 로컬 리소스 병행 사용 예시 --&gt;
+    &lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;
+    &lt;script th:src="@{/js/custom.js}"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        
+        <h3>2.2 컨트롤러에서 정적 리소스 링크 생성</h3>
+        <div class="code-block">
+          <pre><code>@Controller
+public class WebController {
+    
+    @GetMapping("/")
+    public String home(Model model) {
+        // 정적 리소스 경로를 모델에 추가
+        model.addAttribute("cssPath", "/css/style.css");
+        model.addAttribute("jsPath", "/js/main.js");
+        model.addAttribute("imagePath", "/images/banner.jpg");
+        
+        return "index";
+    }
+}</code></pre>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>3. 정적 리소스 설정 커스터마이징</h2>
+        <p><code>application.properties</code> 또는 <code>application.yml</code>을 사용하여 정적 리소스 처리를 커스터마이징할 수 있습니다.</p>
+        
+        <h3>3.1 기본 경로 변경</h3>
+        <div class="code-block">
+          <pre><code># application.properties
+spring.web.resources.static-locations=classpath:/static/,classpath:/public/,file:/custom/static/
+
+# application.yml
+spring:
+  web:
+    resources:
+      static-locations: 
+        - classpath:/static/
+        - classpath:/public/
+        - file:/custom/static/</code></pre>
+        </div>
+        
+        <h3>3.2 캐시 제어</h3>
+        <div class="code-block">
+          <pre><code># 정적 리소스 캐시 기간 설정 (초 단위)
+spring.web.resources.cache.period=3600
+
+# 캐시 무효화를 위한 버전 관리
+spring.web.resources.chain.strategy.content.enabled=true
+spring.web.resources.chain.strategy.content.paths=/**
+
+# 개발 시 캐시 비활성화
+spring.web.resources.cache.period=0</code></pre>
+        </div>
+        
+        <div class="note">
+          📌 <strong>참고</strong>: 프로덕션 환경에서는 정적 리소스에 장기 캐시를 설정하고, 파일 내용이 변경될 때마다 버전을 업데이트하거나 해시를 사용하는 것이 좋습니다.
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>4. 웹자원(WebJars) 사용하기</h2>
+        <p>WebJars는 클라이언트 측 라이브러리(jQuery, Bootstrap 등)를 JAR 파일로 패키징하여 의존성으로 관리할 수 있게 해줍니다.</p>
+        
+        <h3>4.1 WebJars 의존성 추가 (Maven)</h3>
+        <div class="code-block">
+          <pre><code>&lt;!-- WebJars --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.webjars&lt;/groupId&gt;
+    &lt;artifactId&gt;bootstrap&lt;/artifactId&gt;
+    &lt;version&gt;5.1.3&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.webjars&lt;/groupId&gt;
+    &lt;artifactId&gt;jquery&lt;/artifactId&gt;
+    &lt;version&gt;3.6.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.webjars&lt;/groupId&gt;
+    &lt;artifactId&gt;webjars-locator&lt;/artifactId&gt;
+    &lt;version&gt;0.45&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+        </div>
+        
+        <h3>4.2 WebJars 참조 (Thymeleaf 예시)</h3>
+        <div class="code-block">
+          <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;WebJars 예제&lt;/title&gt;
+    
+    &lt;!-- Bootstrap CSS --&gt;
+    &lt;link rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.3/css/bootstrap.min.css}"&gt;
+    
+    &lt;!-- 사용자 정의 CSS --&gt;
+    &lt;link rel="stylesheet" th:href="@{/css/style.css}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container mt-4"&gt;
+        &lt;h1&gt;WebJars 예제&lt;/h1&gt;
+        &lt;button id="alertBtn" class="btn btn-primary"&gt;알림 표시&lt;/button&gt;
+    &lt;/div&gt;
+    
+    &lt;!-- jQuery --&gt;
+    &lt;script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"&gt;&lt;/script&gt;
+    
+    &lt;!-- Bootstrap JS --&gt;
+    &lt;script th:src="@{/webjars/bootstrap/5.1.3/js/bootstrap.bundle.min.js}"&gt;&lt;/script&gt;
+    
+    &lt;!-- 사용자 정의 JS --&gt;
+    &lt;script th:src="@{/js/main.js}"&gt;&lt;/script&gt;
+    
+    &lt;script&gt;
+        // WebJars Locator를 사용한 버전 자동 관리
+        // (webjars-locator가 클래스패스에 있는 경우)
+        // $.getScript("/webjars-locator/jquery/jquery.min.js");
+        // $("link[href*='bootstrap']").attr("href", "/webjars-locator/bootstrap/css/bootstrap.min.css");
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        
+        <div class="tip">
+          💡 <strong>팁</strong>: <code>webjars-locator</code>를 사용하면 버전 번호 없이 WebJars를 참조할 수 있어 의존성 업데이트가 용이해집니다.
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>5. 고급 정적 리소스 처리</h2>
+        
+        <h3>5.1 리소스 핸들러 등록</h3>
+        <p><code>WebMvcConfigurer</code>를 구현하여 커스텀 리소스 핸들러를 등록할 수 있습니다.</p>
+        
+        <div class="code-block">
+          <pre><code>@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 기본 정적 리소스 핸들러
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/")
+                .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS));
+        
+        // 외부 디렉토리에서 정적 리소스 제공
+        String externalPath = "file:/path/to/external/files/";
+        registry.addResourceHandler("/external/**")
+                .addResourceLocations(externalPath)
+                .setCachePeriod(3600);
+        
+        // 버전 관리된 리소스
+        registry.addResourceHandler("/versioned/**")
+                .addResourceLocations("classpath:/versioned/")
+                .resourceChain(true)
+                .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
+    }
+    
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        // 정적 페이지 매핑
+        registry.addViewController("/about").setViewName("forward:/static/about.html");
+        registry.addViewController("/contact").setViewName("forward:/static/contact.html");
+    }
+}</code></pre>
+        </div>
+        
+        <h3>5.2 리소스 변환 및 최적화</h3>
+        <p>스프링의 <code>ResourceTransformer</code>를 사용하여 정적 리소스를 변환하거나 최적화할 수 있습니다.</p>
+        
+        <div class="code-block">
+          <pre><code>@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // CSS/JS 압축 및 최적화 예시
+        registry.addResourceHandler("/dist/**")
+                .addResourceLocations("classpath:/static/dist/")
+                .resourceChain(true)
+                .addTransformer(new CssLinkResourceTransformer())
+                .addTransformer(new AppCacheManifestTransformer())
+                .addTransformer(new CachingResourceTransformer())
+                .addResolver(new GzipResourceResolver())
+                .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
+    }
+    
+    // 개발 모드에서만 캐시 비활성화
+    @Bean
+    @Profile("!prod")
+    public WebMvcConfigurer resourceCacheConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                registry.addResourceHandler("/**")
+                        .addResourceLocations("classpath:/static/")
+                        .setCachePeriod(0);
+            }
+        };
+    }
+}</code></pre>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>© 2025 스프링 부트 완전 정복. 모든 권리 보유.</p>
+    </footer>
+  </div>
+</body>
+</html>

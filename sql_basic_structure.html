@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1️⃣ 관계형 DB 구조 이해 - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 공통 스타일 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    
+    /* 텍스트 스타일 */
+    h1, h2, h3, h4 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    h4 {
+      margin-top: 1.5rem;
+      color: #ce9178;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+
+    /* 코드 블록 스타일 */
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    /* 노트/팁/경고 스타일 */
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+
+    /* 테이블 스타일 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+
+    /* 네비게이션 버튼 스타일 */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+
+    /* SQL 구문 박스 스타일 */
+    .syntax-box {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      font-family: 'Consolas', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>1️⃣ 관계형 DB 구조 이해</h1>
+      <p>테이블, 행, 열, 키 개념을 체계적으로 학습합니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. 관계형 데이터베이스 기본 개념</h2>
+        <p>관계형 데이터베이스는 데이터를 표 형태의 테이블로 저장하고 관리하는 시스템입니다. 각 테이블은 관련된 데이터를 그룹화하여 저장합니다.</p>
+
+        <div class="example">
+          <h3>📝 예제: 학생 정보 테이블</h3>
+          <table class="result-table">
+            <thead>
+              <tr>
+                <th>학번</th>
+                <th>이름</th>
+                <th>학과</th>
+                <th>학년</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>20230001</td>
+                <td>김철수</td>
+                <td>컴퓨터공학</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>20230002</td>
+                <td>이영희</td>
+                <td>전자공학</td>
+                <td>3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>2. 테이블 구조 이해</h2>
+        <p>테이블은 행과 열로 구성됩니다:</p>
+        <ul>
+          <li>행(Record/Row): 테이블의 한 줄을 의미합니다.</li>
+          <li>열(Column/Field): 테이블의 한 칸을 의미합니다.</li>
+        </ul>
+
+        <h2>3. 키(Key)의 종류</h2>
+        <div class="example">
+          <h3>📝 키의 종류</h3>
+          <ul>
+            <li>프라이머리 키(Primary Key): 테이블의 각 행을 고유하게 식별하는 키</li>
+            <li>포리너 키(Foreign Key): 다른 테이블의 프라이머리 키를 참조하는 키</li>
+            <li>유니크 키(Unique Key): 중복되지 않는 값을 가진 키</li>
+          </ul>
+        </div>
+
+        <h2>4. 데이터 관계 이해</h2>
+        <p>테이블 간의 관계는 다음과 같이 나눌 수 있습니다:</p>
+        <ul>
+          <li>1:1 관계 (일대일)</li>
+          <li>1:N 관계 (일대다)</li>
+          <li>N:M 관계 (다대다)</li>
+        </ul>
+
+        <div class="tip">
+          <h3>💡 팁: 데이터 모델링의 중요성</h3>
+          <p>데이터베이스 설계 시 적절한 테이블 구조와 관계를 설계하는 것이 성능과 유지보수에 중요합니다.</p>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_main.html" class="nav-button">목차로 돌아가기</a>
+        <a href="sql_create_select.html" class="nav-button">다음: CREATE, INSERT, SELECT</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

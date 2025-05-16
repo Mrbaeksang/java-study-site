@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔍 SELECT 문 - SQL 완벽 가이드</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 공통 스타일 */
+    .section {
+      background: var(--vscode-darker);
+      border: 1px solid var(--vscode-highlight);
+      border-radius: 8px;
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 1000px;
+    }
+    h1, h2, h3 {
+      color: #4ec9b0;
+    }
+    h2 {
+      border-bottom: 2px solid var(--vscode-highlight);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    h3 {
+      margin-top: 2rem;
+      color: #9cdcfe;
+    }
+    p, li {
+      line-height: 1.7;
+      color: var(--vscode-text);
+    }
+    .code-block {
+      background: #2d2d2d;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: 'Consolas', monospace;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    .note {
+      border-left: 4px solid var(--vscode-blue);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(0, 122, 204, 0.1);
+    }
+    .tip {
+      border-left: 4px solid #85e89d;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(133, 232, 157, 0.1);
+    }
+    .warning {
+      border-left: 4px solid #f97583;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      background: rgba(249, 117, 131, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    th, td {
+      border: 1px solid var(--vscode-highlight);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: var(--vscode-bg);
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+    }
+    .nav-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .nav-button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    .syntax-box {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      font-family: 'Consolas', monospace;
+    }
+    .example {
+      background: #1e1e1e;
+      border-left: 4px solid #4ec9b0;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .example h4 {
+      margin-top: 0;
+      color: #4ec9b0;
+    }
+    .result-table {
+      width: 100%;
+      margin: 15px 0;
+      border-collapse: collapse;
+    }
+    .result-table th, .result-table td {
+      border: 1px solid #444;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .result-table th {
+      background-color: #2d2d2d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔍 SELECT 문</h1>
+      <p>데이터베이스에서 데이터를 조회하는 가장 기본적이고 중요한 SQL 문장입니다.</p>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>1. SELECT 문 기본 구조</h2>
+        <p>SELECT 문은 데이터베이스에서 데이터를 조회하는 데 사용되며, 가장 기본적인 형태는 다음과 같습니다.</p>
+        
+        <div class="syntax-box">
+          <strong>기본 구문:</strong>
+          <div class="code-block">
+            <span class="sql-keyword">SELECT</span> column1, column2, ...<br>
+            <span class="sql-keyword">FROM</span> table_name;
+          </div>
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 1: 모든 열 조회</h4>
+          <div class="code-block">
+            -- employees 테이블의 모든 열 조회<br>
+            <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> employees;
+          </div>
+          
+          <h4>📝 예제 2: 특정 열 조회</h4>
+          <div class="code-block">
+            -- employees 테이블에서 first_name과 last_name 열만 조회<br>
+            <span class="sql-keyword">SELECT</span> first_name, last_name <span class="sql-keyword">FROM</span> employees;
+          </div>
+        </div>
+        
+        <div class="tip">
+          <h3>💡 성능 팁</h3>
+          <p>필요한 열만 명시적으로 선택하는 것이 성능에 좋습니다. <code>SELECT *</code>는 모든 열을 가져오므로 네트워크와 메모리 사용량이 증가할 수 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>2. 열 별칭 사용하기 (AS)</h2>
+        <p>조회 결과의 열 이름을 변경하거나, 표현식에 의미 있는 이름을 부여할 때 사용합니다.</p>
+        
+        <div class="syntax-box">
+          <strong>구문:</strong>
+          <div class="code-block">
+            <span class="sql-keyword">SELECT</span> column_name <span class="sql-keyword">AS</span> alias_name<br>
+            <span class="sql-keyword">FROM</span> table_name;
+          </div>
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 1: 기본 별칭 사용</h4>
+          <div class="code-block">
+            -- first_name을 이름으로, last_name을 성으로 별칭 지정<br>
+            <span class="sql-keyword">SELECT</span> 
+              first_name <span class="sql-keyword">AS</span> 이름, 
+              last_name <span class="sql-keyword">AS</span> 성<br>
+            <span class="sql-keyword">FROM</span> employees;
+          </div>
+          
+          <h4>📝 예제 2: 공백이 포함된 별칭 사용</h4>
+          <div class="code-block">
+            -- 공백이 포함된 별칭은 큰따옴표나 대괄호로 감싸기<br>
+            <span class="sql-keyword">SELECT</span> 
+              first_name <span class="sql-keyword">AS</span> "이 름", 
+              last_name <span class="sql-keyword">AS</span> [성 (영문)]<br>
+            <span class="sql-keyword">FROM</span> employees;
+          </div>
+          
+          <h4>📝 예제 3: AS 키워드 생략</h4>
+          <div class="code-block">
+            -- AS 키워드는 생략 가능<br>
+            <span class="sql-keyword">SELECT</span> 
+              first_name 이름, 
+              last_name 성<br>
+            <span class="sql-keyword">FROM</span> employees;
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>3. DISTINCT - 중복 제거</h2>
+        <p>결과 집합에서 중복된 행을 제거할 때 사용합니다.</p>
+        
+        <div class="syntax-box">
+          <strong>구문:</strong>
+          <div class="code-block">
+            <span class="sql-keyword">SELECT</span> <span class="sql-keyword">DISTINCT</span> column1, column2, ...<br>
+            <span class="sql-keyword">FROM</span> table_name;
+          </div>
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 1: 단일 열에서 중복 제거</h4>
+          <div class="code-block">
+            -- 직원들이 속한 부서 ID 조회 (중복 제거)<br>
+            <span class="sql-keyword">SELECT</span> <span class="sql-keyword">DISTINCT</span> department_id <br>
+            <span class="sql-keyword">FROM</span> employees;
+          </div>
+          
+          <h4>📝 예제 2: 여러 열에서 중복 제거</h4>
+          <div class="code-block">
+            -- 성과 이름의 고유한 조합 조회<br>
+            <span class="sql-keyword">SELECT</span> <span class="sql-keyword">DISTINCT</span> first_name, last_name <br>
+            <span class="sql-keyword">FROM</span> employees;
+          </div>
+        </div>
+        
+        <div class="warning">
+          <h3>⚠️ 주의사항</h3>
+          <p>DISTINCT는 선택된 모든 열의 조합이 고유한 행만 반환합니다. 성능에 영향을 줄 수 있으므로 필요한 경우에만 사용하세요.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. ORDER BY - 결과 정렬</h2>
+        <p>조회 결과를 하나 이상의 열을 기준으로 정렬합니다.</p>
+        
+        <div class="syntax-box">
+          <strong>구문:</strong>
+          <div class="code-block">
+            <span class="sql-keyword">SELECT</span> column1, column2, ...<br>
+            <span class="sql-keyword">FROM</span> table_name<br>
+            <span class="sql-keyword">ORDER BY</span> column1 [<span class="sql-keyword">ASC</span>|<span class="sql-keyword">DESC</span>], column2 [<span class="sql-keyword">ASC</span>|<span class="sql-keyword">DESC</span>], ...;
+          </div>
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 1: 단일 열 기준 오름차순 정렬 (기본값)</h4>
+          <div class="code-block">
+            -- 이름을 기준으로 오름차순 정렬 (A-Z)<br>
+            <span class="sql-keyword">SELECT</span> first_name, last_name, salary<br>
+            <span class="sql-keyword">FROM</span> employees<br>
+            <span class="sql-keyword">ORDER BY</span> first_name <span class="sql-keyword">ASC</span>;  -- ASC는 생략 가능
+          </div>
+          
+          <h4>📝 예제 2: 단일 열 기준 내림차순 정렬</h4>
+          <div class="code-block">
+            -- 급여를 기준으로 내림차순 정렬 (높은 순서대로)<br>
+            <span class="sql-keyword">SELECT</span> first_name, last_name, salary<br>
+            <span class="sql-keyword">FROM</span> employees<br>
+            <span class="sql-keyword">ORDER BY</span> salary <span class="sql-keyword">DESC</span>;
+          </div>
+          
+          <h4>📝 예제 3: 여러 열 기준 정렬</h4>
+          <div class="code-block">
+            -- 부서별로 정렬 후, 같은 부서 내에서는 급여가 높은 순으로 정렬<br>
+            <span class="sql-keyword">SELECT</span> department_id, first_name, last_name, salary<br>
+            <span class="sql-keyword">FROM</span> employees<br>
+            <span class="sql-keyword">ORDER BY</span> department_id <span class="sql-keyword">ASC</span>, salary <span class="sql-keyword">DESC</span>;
+          </div>
+          
+          <h4>📝 예제 4: 열 번호로 정렬</h4>
+          <div class="code-block">
+            -- SELECT 절의 열 순서로 정렬 (첫 번째 열은 1, 두 번째 열은 2, ...)<br>
+            <span class="sql-keyword">SELECT</span> first_name, last_name, salary<br>
+            <span class="sql-keyword">FROM</span> employees<br>
+            <span class="sql-keyword">ORDER BY</span> 3 <span class="sql-keyword">DESC</span>;  -- 3번째 열(salary) 기준 내림차순
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>5. LIMIT / OFFSET - 결과 제한</h2>
+        <p>조회 결과의 행 수를 제한하거나, 특정 위치부터 결과를 가져올 때 사용합니다.</p>
+        
+        <div class="syntax-box">
+          <strong>구문 (MySQL, PostgreSQL, SQLite):</strong>
+          <div class="code-block">
+            <span class="sql-keyword">SELECT</span> column1, column2, ...<br>
+            <span class="sql-keyword">FROM</span> table_name<br>
+            <span class="sql-keyword">LIMIT</span> row_count <span class="sql-keyword">OFFSET</span> offset_value;
+          </div>
+          
+          <strong>구문 (SQL Server, Oracle):</strong>
+          <div class="code-block">
+            -- SQL Server<br>
+            <span class="sql-keyword">SELECT</span> <span class="sql-keyword">TOP</span> row_count column1, column2, ...<br>
+            <span class="sql-keyword">FROM</span> table_name;
+            
+            -- Oracle (12c 이상)<br>
+            <span class="sql-keyword">SELECT</span> column1, column2, ...<br>
+            <span class="sql-keyword">FROM</span> table_name<br>
+            <span class="sql-keyword">OFFSET</span> offset_value <span class="sql-keyword">ROWS</span> <span class="sql-keyword">FETCH</span> <span class="sql-keyword">NEXT</span> row_count <span class="sql-keyword">ROWS</span> <span class="sql-keyword">ONLY</span>;
+          </div>
+        </div>
+        
+        <div class="example">
+          <h4>📝 예제 1: 상위 N개 행만 조회</h4>
+          <div class="code-block">
+            -- 급여가 가장 높은 상위 5명의 직원 조회<br>
+            <span class="sql-keyword">SELECT</span> first_name, last_name, salary<br>
+            <span class="sql-keyword">FROM</span> employees<br>
+            <span class="sql-keyword">ORDER BY</span> salary <span class="sql-keyword">DESC</span><br>
+            <span class="sql-keyword">LIMIT</span> 5;  -- 상위 5개 행만 조회
+            
+            -- SQL Server에서는 다음과 같이 사용<br>
+            <span class="sql-comment">-- SELECT TOP 5 first_name, last_name, salary</span><br>
+            <span class="sql-comment">-- FROM employees</span><br>
+            <span class="sql-comment">-- ORDER BY salary DESC;</span>
+          </div>
+          
+          <h4>📝 예제 2: 페이징 처리 (OFFSET 사용)</h4>
+          <div class="code-block">
+            -- 페이지 당 10개씩 조회 (2페이지)<br>
+            <span class="sql-keyword">SELECT</span> first_name, last_name, salary<br>
+            <span class="sql-keyword">FROM</span> employees<br>
+            <span class="sql-keyword">ORDER BY</span> employee_id<br>
+            <span class="sql-keyword">LIMIT</span> 10 <span class="sql-keyword">OFFSET</span> 10;  -- 11번째 행부터 10개 조회 (2페이지)
+            
+            -- LIMIT와 OFFSET 순서를 바꿔서 사용할 수도 있음<br>
+            <span class="sql-comment">-- LIMIT 10, 10  -- OFFSET 10 LIMIT 10과 동일</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>6. 실전 예제</h2>
+        <p>지금까지 배운 내용을 종합한 실전 예제를 살펴보겠습니다.</p>
+        
+        <div class="example">
+          <h4>📝 예제: 부서별 평균 급여 조회</h4>
+          <p>각 부서별로 평균 급여를 계산하고, 평균 급여가 높은 순으로 상위 5개 부서를 조회합니다.</p>
+          
+          <div class="code-block">
+            <span class="sql-keyword">SELECT</span> 
+              d.department_name <span class="sql-keyword">AS</span> 부서명,
+              <span class="sql-keyword">ROUND</span>(<span class="sql-keyword">AVG</span>(e.salary), 2) <span class="sql-keyword">AS</span> 평균급여,
+              <span class="sql-keyword">COUNT</span>(e.employee_id) <span class="sql-keyword">AS</span> 직원수<br>
+            <span class="sql-keyword">FROM</span> employees e<br>
+            <span class="sql-keyword">JOIN</span> departments d <span class="sql-keyword">ON</span> e.department_id = d.department_id<br>
+            <span class="sql-keyword">GROUP BY</span> d.department_name<br>
+            <span class="sql-keyword">HAVING</span> <span class="sql-keyword">COUNT</span>(e.employee_id) > 0<br>
+            <span class="sql-keyword">ORDER BY</span> 평균급여 <span class="sql-keyword">DESC</span><br>
+            <span class="sql-keyword">LIMIT</span> 5;
+          </div>
+          
+          <h5>실행 결과 예시:</h5>
+          <table class="result-table">
+            <tr>
+              <th>부서명</th>
+              <th>평균급여</th>
+              <th>직원수</th>
+            </tr>
+            <tr>
+              <td>Executive</td>
+              <td>19,000.00</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>IT</td>
+              <td>15,000.00</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>Finance</td>
+              <td>12,000.00</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>Marketing</td>
+              <td>11,000.00</td>
+              <td>8</td>
+            </tr>
+            <tr>
+              <td>Sales</td>
+              <td>10,000.00</td>
+              <td>12</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>7. 연습 문제</h2>
+        <p>다음 문제를 풀어보세요. 정답은 각 문제 아래에서 확인할 수 있습니다.</p>
+        
+        <div class="example">
+          <h4>문제 1: 직원 테이블에서 이름이 'John'인 직원의 이름, 성, 이메일을 조회하세요.</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 정답</span><br>
+            <span class="sql-keyword">SELECT</span> first_name, last_name, email<br>
+            <span class="sql-keyword">FROM</span> employees<br>
+            <span class="sql-keyword">WHERE</span> first_name = 'John';
+          </div>
+          
+          <h4>문제 2: 급여가 10,000 이상인 직원들을 급여가 높은 순으로 정렬하여 상위 10명을 조회하세요.</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 정답</span><br>
+            <span class="sql-keyword">SELECT</span> first_name, last_name, salary<br>
+            <span class="sql-keyword">FROM</span> employees<br>
+            <span class="sql-keyword">WHERE</span> salary >= 10000<br>
+            <span class="sql-keyword">ORDER BY</span> salary <span class="sql-keyword">DESC</span><br>
+            <span class="sql-keyword">LIMIT</span> 10;
+          </div>
+          
+          <h4>문제 3: 직원들의 고용일(year)별로 몇 명이 입사했는지 조회하세요.</h4>
+          <div class="code-block">
+            <span class="sql-comment">-- 정답 (MySQL)</span><br>
+            <span class="sql-keyword">SELECT</span> 
+              <span class="sql-keyword">YEAR</span>(hire_date) <span class="sql-keyword">AS</span> 입사년도,
+              <span class="sql-keyword">COUNT</span>(*) <span class="sql-keyword">AS</span> 인원수<br>
+            <span class="sql-keyword">FROM</span> employees<br>
+            <span class="sql-keyword">GROUP BY</span> <span class="sql-keyword">YEAR</span>(hire_date)<br>
+            <span class="sql-keyword">ORDER BY</span> 입사년도;
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="sql_basic_syntax.html" class="nav-button">◀️ 이전 강의: 기본 문법</a>
+        <a href="sql_where.html" class="nav-button">다음 강의: WHERE 절 ▶️</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // SQL 구문 강조
+    document.addEventListener('DOMContentLoaded', function() {
+      const codeBlocks = document.querySelectorAll('.code-block');
+      codeBlocks.forEach(block => {
+        let html = block.innerHTML;
+        // SQL 키워드 강조
+        const keywords = ['SELECT', 'FROM', 'WHERE', 'AS', 'DISTINCT', 'CONCAT', 'AND', 'OR', 'NOT', 'GROUP BY', 'ORDER BY', 'HAVING', 'LIMIT', 'OFFSET', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'OUTER', 'ON', 'UNION', 'ALL', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE', 'TABLE', 'ALTER', 'DROP', 'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'UNIQUE', 'INDEX', 'VIEW', 'PROCEDURE', 'FUNCTION', 'TRIGGER', 'BEGIN', 'END', 'IF', 'THEN', 'ELSE', 'WHILE', 'FOR', 'FOREACH', 'CASE', 'WHEN', 'ELSE', 'THEN', 'END', 'LOOP', 'EXIT', 'CONTINUE', 'RETURN', 'DECLARE', 'DEFAULT', 'NOT NULL', 'NULL', 'TRUE', 'FALSE', 'IS', 'BETWEEN', 'LIKE', 'IN', 'ANY', 'SOME', 'ALL', 'EXISTS', 'UNIQUE', 'DISTINCT', 'ASC', 'DESC', 'BY', 'HAVING', 'WITH', 'RECURSIVE', 'WINDOW', 'PARTITION', 'OVER', 'FILTER', 'INTERSECT', 'EXCEPT', 'CROSS', 'NATURAL', 'USING', 'LATERAL'];
+        
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`\\b(${keyword})\\b`, 'gi');
+          html = html.replace(regex, '<span class="sql-keyword">$1</span>');
+        });
+
+        // 숫자 강조
+        html = html.replace(/(\b\d+\b)/g, '<span class="sql-number">$1</span>');
+        
+        // 문자열 강조
+        html = html.replace(/'([^']*?)'/g, '<span class="sql-string">\'$1\'</span>');
+        
+        // 주석 강조
+        html = html.replace(/--(.*?)(?=<br>|$)/g, '<span class="sql-comment">--$1</span>');
+        
+        block.innerHTML = html;
+      });
+    });
+  </script>
+</body>
+</html>
